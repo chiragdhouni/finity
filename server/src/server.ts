@@ -7,7 +7,7 @@ import itemRoutes from './routes/itemRoutes';
 
 const app = express();
 app.use(express.json());
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
 const PORT = process.env.PORT || 3000;
 const MONGO_URI:string = 'mongodb+srv://chirag:chirag@cluster0.dgdbyqm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 

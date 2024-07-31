@@ -1,21 +1,35 @@
 // import 'package:finity/app.dart';
 
 import 'package:finity/design/theme/theme.dart';
+import 'package:finity/features/auth/bloc/auth_bloc.dart';
 import 'package:finity/features/auth/repos/auth_repo.dart';
 import 'package:finity/features/auth/ui/pages/login_page.dart';
-
 import 'package:finity/features/home/home_screen.dart';
 import 'package:finity/provider/user_provider.dart';
+
 import 'package:finity/router.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MultiProvider(providers: [
-    ChangeNotifierProvider(
-      create: (context) => UserProvider(),
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => UserProvider(),
+        ),
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<AuthBloc>(
+            create: (context) => AuthBloc(AuthService()),
+          ),
+        ],
+        child: MyApp(),
+      ),
     ),
-  ], child: MyApp()));
+  );
 }
 
 class MyApp extends StatefulWidget {

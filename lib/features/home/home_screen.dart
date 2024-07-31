@@ -99,9 +99,16 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text("Location Example"),
       ),
       body: Center(
-        child: Text(_locationMessage,
-            style: TextStyle(fontSize: 20, color: Colors.white)),
+        child: Text(
+          "hello",
+          style: TextStyle(color: Colors.white),
+        ),
       ),
+      // body: Center(
+      //   child:
+      //    Text(_locationMessage,
+      //       style: TextStyle(fontSize: 20, color: Colors.white)),
+      // ),
     );
   }
 }
