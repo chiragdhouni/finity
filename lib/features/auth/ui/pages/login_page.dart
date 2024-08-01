@@ -116,6 +116,7 @@
 // }
 
 import 'package:finity/features/auth/ui/pages/signup_page.dart';
+import 'package:finity/features/home/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:finity/design/widgets/custom_field.dart';
@@ -160,7 +161,7 @@ class _LoginPageState extends State<LoginPage> {
             });
             Navigator.pushNamedAndRemoveUntil(
               context,
-              HomeScreen.routeName,
+              BottomNavBar.routeName,
               (route) => false,
             );
           }

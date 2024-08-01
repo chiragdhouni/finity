@@ -49,6 +49,10 @@ class AuthService {
     required String password,
     required context,
   }) async {
+    log(jsonEncode({
+      'email': email,
+      'password': password,
+    }));
     http.Response res = await http.post(
       Uri.parse('${Config.serverURL}auth/login'),
       body: jsonEncode({
@@ -59,11 +63,12 @@ class AuthService {
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );
+    log(res.body);
+    log(res.statusCode.toString());
     SharedPreferences prefs = await SharedPreferences.getInstance();
     Provider.of<UserProvider>(context, listen: false).setUser(res.body);
     await prefs.setString('x-auth-token', jsonDecode(res.body)['token']);
 
-    log(res.body);
     if (res.statusCode == 201) {
       return "login successful";
     }

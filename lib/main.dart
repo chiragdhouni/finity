@@ -4,6 +4,7 @@ import 'package:finity/design/theme/theme.dart';
 import 'package:finity/features/auth/bloc/auth_bloc.dart';
 import 'package:finity/features/auth/repos/auth_repo.dart';
 import 'package:finity/features/auth/ui/pages/login_page.dart';
+import 'package:finity/features/home/bottom_nav_bar.dart';
 import 'package:finity/features/home/home_screen.dart';
 import 'package:finity/provider/user_provider.dart';
 
@@ -53,7 +54,7 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         theme: AppTheme.darkThemeMode,
         home: Provider.of<UserProvider>(context).user.id.isNotEmpty
-            ? HomeScreen()
+            ? BottomNavBar()
             : const LoginPage());
   }
 }

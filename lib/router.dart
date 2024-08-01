@@ -1,5 +1,6 @@
 import 'package:finity/features/auth/ui/pages/login_page.dart';
 import 'package:finity/features/auth/ui/pages/signup_page.dart';
+import 'package:finity/features/home/bottom_nav_bar.dart';
 import 'package:finity/features/home/home_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -17,11 +18,16 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
         builder: (_) => const SignUpPage(),
       );
 
-    case HomeScreen.routeName:
+    case BottomNavBar.routeName:
       return MaterialPageRoute(
         settings: routeSettings,
-        builder: (_) => HomeScreen(),
+        builder: (_) => const BottomNavBar(),
       );
+    // case HomeScreen.routeName:
+    //   return MaterialPageRoute(
+    //     settings: routeSettings,
+    //     builder: (_) => HomeScreen(),
+    //   );
     default:
       return MaterialPageRoute(
         settings: routeSettings,
