@@ -1,3 +1,4 @@
+import 'package:finity/features/home/ui/pages/home_screen.dart';
 import 'package:flutter/material.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -10,7 +11,7 @@ class BottomNavBar extends StatefulWidget {
 class _BottomNavBarState extends State<BottomNavBar> {
   int _selectedIndex = 0;
   final List<Widget> _widgetOptions = <Widget>[
-    Text('Home'),
+    HomeScreen(),
     Text('Search by category'),
     Text('Notification'),
     Text('Profile'),
@@ -18,23 +19,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Welcome to Finity',
-          style: TextStyle(color: Colors.white, fontSize: 25),
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.logout,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              Navigator.pushNamed(context, '/loginPage');
-            },
-          ),
-        ],
-      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(

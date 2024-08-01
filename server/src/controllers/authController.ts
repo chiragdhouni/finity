@@ -5,7 +5,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 const bcryptjs = require("bcryptjs");
 // User registration
 export const registerUser = async (req: Request, res: Response) => {
-  const {  name, email, password, location } = req.body;
+  const {  name, email, password, address,location } = req.body;
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -14,7 +14,7 @@ export const registerUser = async (req: Request, res: Response) => {
         .json({ msg: "User with same email already exists!" });
     }
     const hashedPassword = await bcryptjs.hash(password, 10);
-    const user = new User({ name, email, password: hashedPassword, location, itemsLended: [], itemsBorrowed: [], itemsRequested: [] });
+    const user = new User({ name, email, password: hashedPassword,address, location,itemsListed:[] ,itemsLended: [], itemsBorrowed: [], itemsRequested: [] });
     await user.save();
     res.status(201).json({ user });
   } catch (error) {

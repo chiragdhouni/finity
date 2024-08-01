@@ -28,9 +28,16 @@ const UserSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true },
     password: { type: String, required: true }, // Password field
-    location: { type: String, required: true },
-    itemsLended: { type: [String], default: [] },
-    itemsBorrowed: { type: [String], default: [] },
-    itemsRequested: { type: [String], default: [] },
+    address: { type: String, required: true },
+    // Use ObjectId type for item references
+    itemsListed: { type: [mongoose_1.default.Schema.Types.ObjectId], ref: 'Item', default: [] },
+    itemsLended: { type: [mongoose_1.default.Schema.Types.ObjectId], ref: 'Item', default: [] },
+    itemsBorrowed: { type: [mongoose_1.default.Schema.Types.ObjectId], ref: 'Item', default: [] },
+    itemsRequested: { type: [mongoose_1.default.Schema.Types.ObjectId], ref: 'Item', default: [] },
+    location: {
+        type: { type: String, enum: ['Point'], required: true },
+        coordinates: { type: [Number], required: true },
+    },
 });
+UserSchema.index({ location: '2dsphere' });
 exports.default = mongoose_1.default.model('User', UserSchema);

@@ -4,7 +4,8 @@ import {
   requestToBorrowItem,
   lendItem,
   returnItem,
-  getItemsByLocation
+  getNearbyItems,
+ 
 } from '../controllers/itemController';
 
 const itemRouter = Router();
@@ -13,6 +14,6 @@ itemRouter.post('/add', addItem);
 itemRouter.post('/request', requestToBorrowItem);
 itemRouter.put('/lend', lendItem);
 itemRouter.put('/return', returnItem);
-itemRouter.get('/location', getItemsByLocation);
+itemRouter.get('/nearby', getNearbyItems);
 
 export default itemRouter;

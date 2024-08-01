@@ -122,7 +122,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:finity/design/widgets/custom_field.dart';
 import 'package:finity/features/auth/bloc/auth_bloc.dart';
 import 'package:finity/features/auth/ui/widgets/gradient_button.dart';
-import 'package:finity/features/home/home_screen.dart';
+import 'package:finity/features/home/ui/pages/home_screen.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

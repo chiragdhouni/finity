@@ -5,7 +5,7 @@ import 'package:finity/features/auth/bloc/auth_bloc.dart';
 import 'package:finity/features/auth/repos/auth_repo.dart';
 import 'package:finity/features/auth/ui/pages/login_page.dart';
 import 'package:finity/features/home/bottom_nav_bar.dart';
-import 'package:finity/features/home/home_screen.dart';
+import 'package:finity/features/home/ui/pages/home_screen.dart';
 import 'package:finity/provider/user_provider.dart';
 
 import 'package:finity/router.dart';

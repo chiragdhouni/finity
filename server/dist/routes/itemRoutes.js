@@ -7,5 +7,5 @@ itemRouter.post('/add', itemController_1.addItem);
 itemRouter.post('/request', itemController_1.requestToBorrowItem);
 itemRouter.put('/lend', itemController_1.lendItem);
 itemRouter.put('/return', itemController_1.returnItem);
-itemRouter.get('/location', itemController_1.getItemsByLocation);
+itemRouter.get('/nearby', itemController_1.getNearbyItems);
 exports.default = itemRouter;

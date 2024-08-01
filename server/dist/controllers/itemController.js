@@ -12,12 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.returnItem = exports.getItemsByLocation = exports.lendItem = exports.requestToBorrowItem = exports.addItem = void 0;
+exports.returnItem = exports.getNearbyItems = exports.lendItem = exports.requestToBorrowItem = exports.addItem = void 0;
 const item_1 = __importDefault(require("../models/item"));
 const user_1 = __importDefault(require("../models/user"));
 // Adding an item to be listed for lending
 const addItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, description, category, ownerId, location } = req.body;
+    const { name, description, category, ownerId } = req.body;
     try {
         const owner = yield user_1.default.findById(ownerId);
         if (!owner) {
@@ -31,12 +31,14 @@ const addItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 id: owner._id,
                 name: owner.name,
                 email: owner.email,
-                location: owner.location
+                address: owner.address
             },
             status: 'available',
-            location
+            location: owner.location,
         });
         yield item.save();
+        owner.itemsListed.push(item._id);
+        yield owner.save();
         res.status(201).send(item);
     }
     catch (error) {
@@ -60,6 +62,8 @@ const requestToBorrowItem = (req, res) => __awaiter(void 0, void 0, void 0, func
         if (!borrower) {
             return res.status(404).send('Borrower not found');
         }
+        borrower.itemsRequested.push(itemId);
+        yield borrower.save();
         res.status(200).send({
             message: 'Borrow request submitted',
             item,
@@ -73,7 +77,6 @@ const requestToBorrowItem = (req, res) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.requestToBorrowItem = requestToBorrowItem;
-// Confirm the lending of an item
 const lendItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { itemId, borrowerId, dueDate } = req.body;
     try {
@@ -94,7 +97,7 @@ const lendItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             id: borrower._id,
             name: borrower.name,
             email: borrower.email,
-            location: borrower.location
+            address: borrower.address,
         };
         yield item.save();
         const owner = yield user_1.default.findById(item.owner.id);
@@ -103,6 +106,7 @@ const lendItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             yield owner.save();
         }
         borrower.itemsBorrowed.push(itemId);
+        borrower.itemsRequested = borrower.itemsRequested.filter((requestedItemId) => requestedItemId !== itemId);
         yield borrower.save();
         res.status(200).send(item);
     }
@@ -112,19 +116,43 @@ const lendItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.lendItem = lendItem;
-// Get items by location
-const getItemsByLocation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { location } = req.query;
+const getNearbyItems = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { latitude, longitude, maxDistance } = req.query;
     try {
-        const items = yield item_1.default.find({ location });
-        res.status(200).send(items);
+        const items = yield item_1.default.aggregate([
+            {
+                $geoNear: {
+                    near: {
+                        type: 'Point',
+                        coordinates: [parseFloat(longitude), parseFloat(latitude)],
+                    },
+                    distanceField: 'dist.calculated',
+                    maxDistance: parseFloat(maxDistance), // Maximum distance in meters
+                    spherical: true,
+                },
+            },
+            {
+                $project: {
+                    name: 1,
+                    description: 1,
+                    category: 1,
+                    status: 1,
+                    owner: 1,
+                    borrower: 1,
+                    dueDate: 1,
+                    location: 1,
+                    address: 1,
+                    distance: '$dist.calculated',
+                },
+            },
+        ]);
+        res.status(200).json(items);
     }
     catch (error) {
-        console.error(`Error fetching items: ${error.message}`);
-        res.status(400).send(error);
+        res.status(500).json({ error: error.message });
     }
 });
-exports.getItemsByLocation = getItemsByLocation;
+exports.getNearbyItems = getNearbyItems;
 // Return an item
 const returnItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
@@ -141,11 +169,6 @@ const returnItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         if (!borrower) {
             return res.status(404).send('Borrower not found');
         }
-        // Reset item fields
-        item.status = 'available';
-        item.dueDate = undefined;
-        item.borrower = undefined;
-        yield item.save();
         // Remove item from borrower's itemsBorrowed list
         borrower.itemsBorrowed = borrower.itemsBorrowed.filter((borrowedItemId) => borrowedItemId !== itemId);
         yield borrower.save();
@@ -155,6 +178,11 @@ const returnItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             owner.itemsLended = owner.itemsLended.filter((lendedItemId) => lendedItemId !== itemId);
             yield owner.save();
         }
+        // Reset item fields
+        item.status = 'available';
+        item.dueDate = null;
+        item.borrower = null;
+        yield item.save();
         res.status(200).send(item);
     }
     catch (error) {

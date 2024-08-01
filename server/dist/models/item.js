@@ -28,20 +28,24 @@ const ItemSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     description: { type: String, required: true },
     category: { type: String, required: true },
+    status: { type: String, required: true, enum: ['available', 'lended', 'borrowed'] },
     owner: {
-        id: { type: String, required: true },
+        id: { type: mongoose_1.default.Schema.Types.ObjectId, required: true }, // ObjectId type
         name: { type: String, required: true },
         email: { type: String, required: true },
-        location: { type: String, required: true }
+        address: { type: String, required: true }
     },
-    status: { type: String, required: true, default: 'available' },
-    dueDate: { type: Date },
     borrower: {
-        id: { type: String },
-        name: { type: String },
-        email: { type: String },
-        location: { type: String }
+        id: { type: mongoose_1.default.Schema.Types.ObjectId, default: null }, // ObjectId type
+        name: { type: String, default: null },
+        email: { type: String, default: null },
+        address: { type: String, default: null }
     },
-    location: { type: String, required: true }
+    dueDate: { type: Date, default: null },
+    location: {
+        type: { type: String, enum: ['Point'], required: true },
+        coordinates: { type: [Number], required: true },
+    },
 });
+ItemSchema.index({ location: '2dsphere' });
 exports.default = mongoose_1.default.model('Item', ItemSchema);

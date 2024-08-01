@@ -18,7 +18,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcryptjs = require("bcryptjs");
 // User registration
 const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, email, password, location } = req.body;
+    const { name, email, password, address, location } = req.body;
     try {
         const existingUser = yield user_1.default.findOne({ email });
         if (existingUser) {
@@ -27,7 +27,7 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 .json({ msg: "User with same email already exists!" });
         }
         const hashedPassword = yield bcryptjs.hash(password, 10);
-        const user = new user_1.default({ name, email, password: hashedPassword, location, itemsLended: [], itemsBorrowed: [], itemsRequested: [] });
+        const user = new user_1.default({ name, email, password: hashedPassword, address, location, itemsListed: [], itemsLended: [], itemsBorrowed: [], itemsRequested: [] });
         yield user.save();
         res.status(201).json({ user });
     }
