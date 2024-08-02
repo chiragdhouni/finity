@@ -12,13 +12,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.tokenIsValid = exports.loginUser = exports.registerUser = void 0;
+exports.updateUserLocation = exports.tokenIsValid = exports.loginUser = exports.registerUser = void 0;
 const user_1 = __importDefault(require("../models/user"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcryptjs = require("bcryptjs");
 // User registration
 const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, email, password, address, location } = req.body;
+    const { name, email, password, address } = req.body;
     try {
         const existingUser = yield user_1.default.findOne({ email });
         if (existingUser) {
@@ -27,7 +27,7 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 .json({ msg: "User with same email already exists!" });
         }
         const hashedPassword = yield bcryptjs.hash(password, 10);
-        const user = new user_1.default({ name, email, password: hashedPassword, address, location, itemsListed: [], itemsLended: [], itemsBorrowed: [], itemsRequested: [] });
+        const user = new user_1.default({ name, email, password: hashedPassword, address, location: "", itemsListed: [], itemsLended: [], itemsBorrowed: [], itemsRequested: [] });
         yield user.save();
         res.status(201).json({ user });
     }
@@ -91,3 +91,27 @@ exports.tokenIsValid = tokenIsValid;
 //     res.status(500).json({ error: (error as Error).message });
 //   }
 // };
+// Update user location
+const updateUserLocation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { userId } = req.params;
+    const { latitude, longitude } = req.body;
+    if (!latitude || !longitude) {
+        return res.status(400).json({ error: 'Latitude and longitude are required.' });
+    }
+    try {
+        const user = yield user_1.default.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found.' });
+        }
+        user.location = {
+            type: 'Point',
+            coordinates: [longitude, latitude],
+        };
+        yield user.save();
+        res.status(200).json({ message: 'Location updated successfully.', user });
+    }
+    catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+exports.updateUserLocation = updateUserLocation;

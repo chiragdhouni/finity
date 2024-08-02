@@ -47,5 +47,6 @@ const ItemSchema = new mongoose_1.Schema({
         coordinates: { type: [Number], required: true },
     },
 });
+// Create a 2dsphere index for geospatial queries
 ItemSchema.index({ location: '2dsphere' });
 exports.default = mongoose_1.default.model('Item', ItemSchema);

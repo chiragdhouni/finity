@@ -5,7 +5,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 const bcryptjs = require("bcryptjs");
 // User registration
 export const registerUser = async (req: Request, res: Response) => {
-  const {  name, email, password, address,location } = req.body;
+  const {  name, email, password, address} = req.body;
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -14,7 +14,7 @@ export const registerUser = async (req: Request, res: Response) => {
         .json({ msg: "User with same email already exists!" });
     }
     const hashedPassword = await bcryptjs.hash(password, 10);
-    const user = new User({ name, email, password: hashedPassword,address, location,itemsListed:[] ,itemsLended: [], itemsBorrowed: [], itemsRequested: [] });
+    const user = new User({ name, email, password: hashedPassword, address, location: "", itemsListed: [], itemsLended: [], itemsBorrowed: [], itemsRequested: [] });
     await user.save();
     res.status(201).json({ user });
   } catch (error) {
@@ -99,5 +99,33 @@ declare global {
 
 // };
 
+
+// Update user location
+export const updateUserLocation = async (req: Request, res: Response) => {
+  const { userId } = req.params;
+  const { latitude, longitude } = req.body;
+
+  if (!latitude || !longitude) {
+    return res.status(400).json({ error: 'Latitude and longitude are required.' });
+  }
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+
+    user.location = {
+      type: 'Point',
+      coordinates: [longitude, latitude],
+    };
+
+    await user.save();
+
+    res.status(200).json({ message: 'Location updated successfully.', user });
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message });
+  }
+};
 
 

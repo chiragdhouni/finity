@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { registerUser, loginUser ,tokenIsValid} from '../controllers/authController';
+import { registerUser, loginUser ,tokenIsValid, updateUserLocation} from '../controllers/authController';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import {auth} from '../middlewares/auth';
 import User from '../models/user';
@@ -8,7 +8,7 @@ const authRouter = Router();
 authRouter.post('/register', registerUser);
 authRouter.post('/login', loginUser);
 authRouter.post('/tokenIsValid',tokenIsValid);
-
+authRouter.patch('/:userId/location', updateUserLocation);
 
 
 

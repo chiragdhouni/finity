@@ -9,7 +9,7 @@ interface IUser extends Document {
   itemsLended: Types.ObjectId[];
   itemsBorrowed: Types.ObjectId[];
   itemsRequested: Types.ObjectId[];
-  location: {
+  location?: {
     type: string;
     coordinates: [number, number];
   };
@@ -28,11 +28,15 @@ const UserSchema: Schema = new Schema({
   itemsRequested: { type: [mongoose.Schema.Types.ObjectId], ref: 'Item', default: [] },
 
   location: {
-    type: { type: String, enum: ['Point'], required: true },
-    coordinates: { type: [Number], required: true },
+    type: { type: String, enum: ['Point'], default: null }, // Allowing type to be nullable
+    coordinates: {
+      type: [Number],
+      default: undefined, // Default to undefined to make it optional
+    },
   },
 });
 
+// Create a 2dsphere index for geospatial queries if location is provided
 UserSchema.index({ location: '2dsphere' });
 
 export default mongoose.model<IUser>('User', UserSchema);

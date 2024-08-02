@@ -48,6 +48,7 @@ const ItemSchema: Schema = new Schema({
   },
 });
 
+// Create a 2dsphere index for geospatial queries
 ItemSchema.index({ location: '2dsphere' });
 
 export default mongoose.model<IItem>('Item', ItemSchema);

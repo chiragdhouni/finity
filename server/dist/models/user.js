@@ -35,9 +35,13 @@ const UserSchema = new mongoose_1.Schema({
     itemsBorrowed: { type: [mongoose_1.default.Schema.Types.ObjectId], ref: 'Item', default: [] },
     itemsRequested: { type: [mongoose_1.default.Schema.Types.ObjectId], ref: 'Item', default: [] },
     location: {
-        type: { type: String, enum: ['Point'], required: true },
-        coordinates: { type: [Number], required: true },
+        type: { type: String, enum: ['Point'], default: null }, // Allowing type to be nullable
+        coordinates: {
+            type: [Number],
+            default: undefined, // Default to undefined to make it optional
+        },
     },
 });
+// Create a 2dsphere index for geospatial queries if location is provided
 UserSchema.index({ location: '2dsphere' });
 exports.default = mongoose_1.default.model('User', UserSchema);
