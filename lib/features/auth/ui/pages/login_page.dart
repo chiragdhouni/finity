@@ -122,7 +122,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:finity/design/widgets/custom_field.dart';
 import 'package:finity/features/auth/bloc/auth_bloc.dart';
 import 'package:finity/features/auth/ui/widgets/gradient_button.dart';
-import 'package:finity/features/home/ui/pages/home_screen.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -168,81 +167,83 @@ class _LoginPageState extends State<LoginPage> {
         },
         child: Padding(
           padding: const EdgeInsets.only(left: 20, right: 20),
-          child: Form(
-            key: formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Login',
-                  style: TextStyle(fontSize: 40, fontWeight: FontWeight.w500),
-                ),
-                const SizedBox(height: 30),
-                CustomField(
-                  hintText: 'enter your email',
-                  controller: emailController,
-                  suffixIcon: const Icon(Icons.email),
-                ),
-                const SizedBox(height: 20),
-                CustomField(
-                  hintText: 'enter your password',
-                  controller: passwordController,
-                  isObscureText: true,
-                  suffixIcon: const Icon(Icons.lock),
-                ),
-                const SizedBox(height: 20),
-                isLoading
-                    ? const CircularProgressIndicator()
-                    : GradientButton(
-                        text: Text(
-                          "Login",
-                          style: TextStyle(fontWeight: FontWeight.w600),
+          child: SingleChildScrollView(
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Login',
+                    style: TextStyle(fontSize: 40, fontWeight: FontWeight.w500),
+                  ),
+                  const SizedBox(height: 30),
+                  CustomField(
+                    hintText: 'enter your email',
+                    controller: emailController,
+                    suffixIcon: const Icon(Icons.email),
+                  ),
+                  const SizedBox(height: 20),
+                  CustomField(
+                    hintText: 'enter your password',
+                    controller: passwordController,
+                    isObscureText: true,
+                    suffixIcon: const Icon(Icons.lock),
+                  ),
+                  const SizedBox(height: 20),
+                  isLoading
+                      ? const CircularProgressIndicator()
+                      : GradientButton(
+                          text: Text(
+                            "Login",
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                          onPressed: () {
+                            if (formKey.currentState!.validate()) {
+                              BlocProvider.of<AuthBloc>(context).add(
+                                AuthLoginEvent(
+                                  context: context,
+                                  email: emailController.text,
+                                  password: passwordController.text,
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Please fill all the fields'),
+                                ),
+                              );
+                            }
+                          },
                         ),
-                        onPressed: () {
-                          if (formKey.currentState!.validate()) {
-                            BlocProvider.of<AuthBloc>(context).add(
-                              AuthLoginEvent(
-                                context: context,
-                                email: emailController.text,
-                                password: passwordController.text,
-                              ),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Please fill all the fields'),
-                              ),
-                            );
-                          }
-                        },
+                  const SizedBox(height: 20),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SignUpPage(),
+                        ),
+                      );
+                    },
+                    child: RichText(
+                      text: const TextSpan(
+                        children: [
+                          TextSpan(
+                            text: "Don't have an account? ",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          TextSpan(
+                            text: "SignUp",
+                            style: TextStyle(color: Colors.blue),
+                          ),
+                        ],
                       ),
-                const SizedBox(height: 20),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const SignUpPage(),
-                      ),
-                    );
-                  },
-                  child: RichText(
-                    text: const TextSpan(
-                      children: [
-                        TextSpan(
-                          text: "Don't have an account? ",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        TextSpan(
-                          text: "SignUp",
-                          style: TextStyle(color: Colors.blue),
-                        ),
-                      ],
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

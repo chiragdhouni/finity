@@ -150,7 +150,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController locationController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
   final formKey = GlobalKey<FormState>();
   bool isLoading = false;
 
@@ -218,8 +218,8 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   const SizedBox(height: 20),
                   CustomField(
-                    hintText: 'enter your location',
-                    controller: locationController,
+                    hintText: 'enter your address',
+                    controller: addressController,
                     suffixIcon: const Icon(Icons.location_on),
                   ),
                   const SizedBox(height: 20),
@@ -237,7 +237,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                   email: emailController.text,
                                   password: passwordController.text,
                                   name: nameController.text,
-                                  location: locationController.text,
+                                  address: addressController.text,
                                 ),
                               );
                             } else {

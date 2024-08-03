@@ -1,5 +1,7 @@
 // import 'package:finity/app.dart';
 
+import 'dart:developer';
+
 import 'package:finity/design/theme/theme.dart';
 import 'package:finity/features/auth/bloc/auth_bloc.dart';
 import 'package:finity/features/auth/repos/auth_repo.dart';
@@ -49,6 +51,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    log(Provider.of<UserProvider>(context).user.id);
     return MaterialApp(
         onGenerateRoute: (settings) => generateRoute(settings),
         debugShowCheckedModeBanner: false,

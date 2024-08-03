@@ -7,7 +7,7 @@ const authRouter = Router();
 
 authRouter.post('/register', registerUser);
 authRouter.post('/login', loginUser);
-authRouter.post('/tokenIsValid',tokenIsValid);
+authRouter.get('/tokenIsValid',tokenIsValid);
 authRouter.patch('/:userId/location', updateUserLocation);
 
 

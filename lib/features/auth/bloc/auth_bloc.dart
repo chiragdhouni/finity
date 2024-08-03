@@ -24,7 +24,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         email: event.email,
         password: event.password,
         name: event.name,
-        location: event.location,
+        address: event.address,
       );
       emit(AuthInitial());
     } catch (e) {

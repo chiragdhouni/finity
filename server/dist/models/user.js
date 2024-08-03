@@ -35,10 +35,10 @@ const UserSchema = new mongoose_1.Schema({
     itemsBorrowed: { type: [mongoose_1.default.Schema.Types.ObjectId], ref: 'Item', default: [] },
     itemsRequested: { type: [mongoose_1.default.Schema.Types.ObjectId], ref: 'Item', default: [] },
     location: {
-        type: { type: String, enum: ['Point'], default: null }, // Allowing type to be nullable
+        type: { type: String, enum: ['Point'], default: 'Point' }, // Default to 'Point' for a valid GeoJSON
         coordinates: {
             type: [Number],
-            default: undefined, // Default to undefined to make it optional
+            default: [], // Default to an empty array
         },
     },
 });

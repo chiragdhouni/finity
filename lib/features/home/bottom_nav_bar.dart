@@ -1,5 +1,9 @@
+import 'package:finity/features/home/repos/location_service.dart';
 import 'package:finity/features/home/ui/pages/home_screen.dart';
+import 'package:finity/provider/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
@@ -16,6 +20,30 @@ class _BottomNavBarState extends State<BottomNavBar> {
     Text('Notification'),
     Text('Profile'),
   ];
+
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _updateUserLocationIfNeeded();
+  }
+
+  Future<void> _updateUserLocationIfNeeded() async {
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
+
+    // Check if location is empty
+    if (userProvider.user.location.isEmpty ||
+        // ignore: unnecessary_null_comparison
+        userProvider.user.location == null) {
+      Position position = await LocationService.getCurrentLocation();
+      double latitude = position.latitude;
+      double longitude = position.longitude;
+
+      // Update user location
+      await userProvider.updateLocation(latitude, longitude);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

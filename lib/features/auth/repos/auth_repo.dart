@@ -15,7 +15,7 @@ class AuthService {
     required String email,
     required String password,
     required String name,
-    required String location,
+    required String address,
   }) async {
     UserModel user = UserModel(
       id: "",
@@ -23,7 +23,8 @@ class AuthService {
       email: email,
       password: password,
       token: "",
-      location: location,
+      address: address,
+      location: {},
       itemsLended: [],
       itemsBorrowed: [],
       itemsRequested: [],
@@ -145,38 +146,57 @@ class AuthService {
   //   return null;
   // }
   // get user data
-  void getUserData(
-    BuildContext context,
-  ) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('x-auth-token');
-    log(token.toString());
-    if (token == null) {
-      prefs.setString('x-auth-token', '');
-    }
 
-    var tokenRes = await http.post(
-      Uri.parse('${Config.serverURL}auth/tokenIsValid'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'x-auth-token': token!
-      },
-    );
+  Future<void> getUserData(BuildContext context) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('x-auth-token');
 
-    var response = jsonDecode(tokenRes.body);
-    log(response.toString());
-    if (response == true) {
-      http.Response userRes = await http.get(
-        Uri.parse('${Config.serverURL}auth/user'),
+      // Set a default token if not found
+      if (token == null) {
+        token = '';
+        prefs.setString('x-auth-token', token);
+      }
+
+      // Check if the token is valid
+      var tokenRes = await http.get(
+        Uri.parse('${Config.serverURL}auth/tokenIsValid'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'x-auth-token': token
         },
       );
-      log(userRes.body);
-      var userProvider = Provider.of<UserProvider>(context, listen: false);
-      userProvider.setUser(userRes.body);
-      log(userProvider.user.toString());
+
+      if (tokenRes.statusCode == 200) {
+        var isTokenValid = jsonDecode(tokenRes.body);
+
+        if (isTokenValid == true) {
+          // Fetch user data if the token is valid
+          http.Response userRes = await http.get(
+            Uri.parse('${Config.serverURL}auth/user'),
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+              'x-auth-token': token
+            },
+          );
+
+          if (userRes.statusCode == 200) {
+            var userProvider =
+                Provider.of<UserProvider>(context, listen: false);
+            log(userRes.body);
+            userProvider.setUser(userRes.body);
+            log(userProvider.user.toString());
+          } else {
+            log('Failed to fetch user data: ${userRes.statusCode}');
+          }
+        } else {
+          log('Token is invalid');
+        }
+      } else {
+        log('Failed to validate token: ${tokenRes.statusCode}');
+      }
+    } catch (e) {
+      log('Error: $e');
     }
   }
 }

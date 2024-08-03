@@ -19,7 +19,7 @@ const user_1 = __importDefault(require("../models/user"));
 const authRouter = (0, express_1.Router)();
 authRouter.post('/register', authController_1.registerUser);
 authRouter.post('/login', authController_1.loginUser);
-authRouter.post('/tokenIsValid', authController_1.tokenIsValid);
+authRouter.get('/tokenIsValid', authController_1.tokenIsValid);
 authRouter.patch('/:userId/location', authController_1.updateUserLocation);
 authRouter.get("/user", auth_1.auth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
