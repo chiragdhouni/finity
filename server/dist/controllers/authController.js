@@ -15,19 +15,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateUserLocation = exports.tokenIsValid = exports.loginUser = exports.registerUser = void 0;
 const user_1 = __importDefault(require("../models/user"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const bcryptjs = require("bcryptjs");
-// User registration
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, email, password, address } = req.body;
     try {
         const existingUser = yield user_1.default.findOne({ email });
         if (existingUser) {
-            return res
-                .status(400)
-                .json({ msg: "User with same email already exists!" });
+            return res.status(400).json({ msg: "User with the same email already exists!" });
         }
-        const hashedPassword = yield bcryptjs.hash(password, 10);
-        const user = new user_1.default({ name, email, password: hashedPassword, address, location: "", itemsListed: [], itemsLended: [], itemsBorrowed: [], itemsRequested: [] });
+        const hashedPassword = yield bcryptjs_1.default.hash(password, 10);
+        const user = new user_1.default({
+            name,
+            email,
+            password: hashedPassword,
+            address,
+            location: { type: "Point", coordinates: [0.0, 0.0] }, // Initialize with default coordinates
+            itemsListed: [],
+            itemsLended: [],
+            itemsBorrowed: [],
+            itemsRequested: [],
+        });
         yield user.save();
         res.status(201).json({ user });
     }
@@ -41,11 +48,9 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = yield user_1.default.findOne({ email }).lean(); // Use lean() to get a plain object
         if (!user) {
-            return res
-                .status(400)
-                .json({ msg: "User with this email does not exist!" });
+            return res.status(400).json({ msg: "User with this email does not exist!" });
         }
-        const isMatch = yield bcryptjs.compare(password, user.password);
+        const isMatch = yield bcryptjs_1.default.compare(password, user.password);
         if (!isMatch) {
             return res.status(400).json({ msg: "Incorrect password." });
         }

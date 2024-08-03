@@ -31,10 +31,11 @@ class _BottomNavBarState extends State<BottomNavBar> {
     UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);
 
-    // Check if location is empty
-    if (userProvider.user.location.isEmpty ||
-        // ignore: unnecessary_null_comparison
-        userProvider.user.location == null) {
+    // Check if location is empty or contains invalid coordinates
+    if (userProvider.user.location[0] == 0.0 ||
+        userProvider.user.location[1] == 0.0 ||
+        userProvider.user.location[0] == 0 ||
+        userProvider.user.location[1] == 0) {
       Position position = await LocationService.getCurrentLocation();
       double latitude = position.latitude;
       double longitude = position.longitude;

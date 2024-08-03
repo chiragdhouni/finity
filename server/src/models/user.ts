@@ -30,8 +30,8 @@ const UserSchema: Schema = new Schema({
   location: {
     type: { type: String, enum: ['Point'], default: 'Point' }, // Default to 'Point' for a valid GeoJSON
     coordinates: {
-      type: [Number],
-      default: [], // Default to an empty array
+      type: [],
+      default: [0.0,0.0], // Default to an empty array
     },
   },
 });

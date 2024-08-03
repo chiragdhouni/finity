@@ -7,7 +7,7 @@ class UserModel {
   String? token; // Made optional
   String password;
   String address;
-  Map<String, dynamic> location; // Updated to Map<String, dynamic>
+  List<double> location; // Updated to List<double>
   List<String> itemsLended;
   List<String> itemsBorrowed;
   List<String> itemsRequested;
@@ -19,7 +19,7 @@ class UserModel {
     this.token,
     required this.password,
     required this.address,
-    this.location = const {}, // Default to empty map
+    this.location = const [0.0, 0.0], // Default to [0.0, 0.0]
     required this.itemsLended,
     required this.itemsBorrowed,
     required this.itemsRequested,
@@ -48,13 +48,17 @@ class UserModel {
       token: map['token'] as String?,
       password: map['password'] as String? ?? '',
       address: map['address'] as String? ?? '',
-      location: map['location'] as Map<String, dynamic>? ?? {},
+      location: map['location'] != null
+          ? [
+              (map['location']['coordinates'][0] as num).toDouble(),
+              (map['location']['coordinates'][1] as num).toDouble(),
+            ]
+          : [0.0, 0.0],
       itemsLended: List<String>.from(map['itemsLended'] ?? []),
       itemsBorrowed: List<String>.from(map['itemsBorrowed'] ?? []),
       itemsRequested: List<String>.from(map['itemsRequested'] ?? []),
     );
   }
-
   String toJson() => json.encode(toMap());
 
   factory UserModel.fromJson(String source) =>

@@ -1,20 +1,29 @@
 import { Request, Response , RequestHandler} from 'express';
 import User from '../models/user';
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import bcryptjs from 'bcryptjs';
 
-const bcryptjs = require("bcryptjs");
-// User registration
 export const registerUser = async (req: Request, res: Response) => {
-  const {  name, email, password, address} = req.body;
+  const { name, email, password, address } = req.body;
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ msg: "User with same email already exists!" });
+      return res.status(400).json({ msg: "User with the same email already exists!" });
     }
     const hashedPassword = await bcryptjs.hash(password, 10);
-    const user = new User({ name, email, password: hashedPassword, address, location: "", itemsListed: [], itemsLended: [], itemsBorrowed: [], itemsRequested: [] });
+
+    const user = new User({
+      name,
+      email,
+      password: hashedPassword,
+      address,
+      location: { type: "Point", coordinates: [0.0, 0.0] }, // Initialize with default coordinates
+      itemsListed: [],
+      itemsLended: [],
+      itemsBorrowed: [],
+      itemsRequested: [],
+    });
+
     await user.save();
     res.status(201).json({ user });
   } catch (error) {
@@ -22,15 +31,12 @@ export const registerUser = async (req: Request, res: Response) => {
   }
 };
 
-
 export const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email }).lean(); // Use lean() to get a plain object
     if (!user) {
-      return res
-        .status(400)
-        .json({ msg: "User with this email does not exist!" });
+      return res.status(400).json({ msg: "User with this email does not exist!" });
     }
 
     const isMatch = await bcryptjs.compare(password, user.password);
@@ -40,11 +46,11 @@ export const loginUser = async (req: Request, res: Response) => {
 
     const token = jwt.sign({ id: user._id }, "passwordKey");
     res.status(201).json({ token, user });
-
   } catch (error) {
     res.status(400).send({ error: (error as Error).message });
   }
 };
+
 
 
 // Define an interface for the expected JWT payload

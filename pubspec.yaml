@@ -35,6 +35,7 @@ dependencies:
     sdk: flutter
   flutter_bloc: ^8.1.6
   geolocator: ^8.1.0
+  google_maps_flutter: ^2.7.1
   http: null
   provider: ^6.1.2
   shared_preferences: ^2.2.3
