@@ -6,7 +6,9 @@ import 'package:finity/design/theme/theme.dart';
 import 'package:finity/features/auth/bloc/auth_bloc.dart';
 import 'package:finity/features/auth/repos/auth_repo.dart';
 import 'package:finity/features/auth/ui/pages/login_page.dart';
+import 'package:finity/features/home/bloc/item_bloc/bloc/item_bloc.dart';
 import 'package:finity/features/home/bottom_nav_bar.dart';
+import 'package:finity/features/home/repos/home_repo.dart';
 
 import 'package:finity/provider/user_provider.dart';
 
@@ -27,6 +29,9 @@ void main() {
         providers: [
           BlocProvider<AuthBloc>(
             create: (context) => AuthBloc(AuthService()),
+          ),
+          BlocProvider<ItemBloc>(
+            create: (context) => ItemBloc(HomeRepo()),
           ),
         ],
         child: MyApp(),

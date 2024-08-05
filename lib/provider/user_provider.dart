@@ -1,9 +1,12 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:finity/features/auth/models/user_model.dart';
-import 'package:finity/features/home/repos/home_repo.dart';
+
+import 'package:finity/features/home/services/location_service.dart';
 import 'package:flutter/material.dart';
 
+//
 class UserProvider extends ChangeNotifier {
   UserModel _user = UserModel(
     id: '',
@@ -19,9 +22,11 @@ class UserProvider extends ChangeNotifier {
   );
 
   UserModel get user => _user;
-
-  void setUser(String user) {
-    _user = UserModel.fromJson(user);
+  void setUser(String userJson) {
+    final userMap = jsonDecode(userJson);
+    log("Parsed user map: ${userMap.toString()}");
+    _user = UserModel.fromJson(userMap);
+    log('User set with ID: ${_user.id}, Location: ${_user.location}');
     notifyListeners();
   }
 
@@ -33,7 +38,23 @@ class UserProvider extends ChangeNotifier {
   Future<void> updateLocation(double latitude, double longitude) async {
     _user.location = [latitude, longitude];
     log('heello ${_user.id}');
-    await HomeService.updateUserLocation(_user.id, latitude, longitude);
+    await LocationService.updateUserLocation(_user.id, latitude, longitude);
+    notifyListeners();
+  }
+
+  void logout() {
+    _user = UserModel(
+      id: '',
+      name: '',
+      email: '',
+      token: '',
+      address: '',
+      password: '',
+      location: [],
+      itemsLended: [],
+      itemsBorrowed: [],
+      itemsRequested: [],
+    );
     notifyListeners();
   }
 }

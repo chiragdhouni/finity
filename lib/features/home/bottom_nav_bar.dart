@@ -1,4 +1,7 @@
-import 'package:finity/features/home/repos/location_service.dart';
+import 'dart:developer';
+
+import 'package:finity/features/auth/repos/auth_repo.dart';
+import 'package:finity/features/home/services/location_service.dart';
 import 'package:finity/features/home/ui/pages/home_screen.dart';
 import 'package:finity/provider/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +18,9 @@ class BottomNavBar extends StatefulWidget {
 class _BottomNavBarState extends State<BottomNavBar> {
   int _selectedIndex = 0;
   final List<Widget> _widgetOptions = <Widget>[
-    HomeScreen(),
+    App(
+      authService: AuthService(),
+    ),
     Text('Search by category'),
     Text('Notification'),
     Text('Profile'),
@@ -37,11 +42,13 @@ class _BottomNavBarState extends State<BottomNavBar> {
         userProvider.user.location[0] == 0 ||
         userProvider.user.location[1] == 0) {
       Position position = await LocationService.getCurrentLocation();
+      // log('Position: $position.latitude, $position.longitude');
       double latitude = position.latitude;
       double longitude = position.longitude;
 
       // Update user location
       await userProvider.updateLocation(latitude, longitude);
+      //location updated
     }
   }
 

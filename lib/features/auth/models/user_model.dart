@@ -7,7 +7,7 @@ class UserModel {
   String? token; // Made optional
   String password;
   String address;
-  List<double> location; // Updated to List<double>
+  List<double> location; // Updated to List<num>
   List<String> itemsLended;
   List<String> itemsBorrowed;
   List<String> itemsRequested;
@@ -50,8 +50,8 @@ class UserModel {
       address: map['address'] as String? ?? '',
       location: map['location'] != null
           ? [
-              (map['location']['coordinates'][0] as num).toDouble(),
-              (map['location']['coordinates'][1] as num).toDouble(),
+              (map['location']['coordinates'][0]).toDouble(),
+              (map['location']['coordinates'][1]).toDouble(),
             ]
           : [0.0, 0.0],
       itemsLended: List<String>.from(map['itemsLended'] ?? []),
@@ -60,7 +60,21 @@ class UserModel {
     );
   }
   String toJson() => json.encode(toMap());
-
-  factory UserModel.fromJson(String source) =>
-      UserModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    var userInfo = json['user'];
+    return UserModel(
+      id: json['user']['_id'] as String,
+      name: json['user']['name'] as String,
+      email: json['user']['email'] as String,
+      token: json['token'] as String,
+      address: json['user']['address'] as String,
+      password: json['user']['password'] as String,
+      location: List<double>.from(
+          (json['user']['location']['coordinates'] as List)
+              .map((x) => (x as num).toDouble())),
+      itemsLended: List<String>.from(json['user']['itemsLended']),
+      itemsBorrowed: List<String>.from(json['user']['itemsBorrowed']),
+      itemsRequested: List<String>.from(json['user']['itemsRequested']),
+    );
+  }
 }

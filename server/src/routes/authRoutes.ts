@@ -23,7 +23,11 @@ authRouter.get("/user", auth, async (req: Request, res: Response) => {
         return res.status(404).json({ msg: "User not found." });
       }
   
-      res.json(user);
+        // Retrieve the token from the request header
+  const token = req.header('x-auth-token');
+
+  // Add the token to the response object
+  res.status(201).json({ token, user });
     } catch (error) {
       res.status(500).json({ error: (error as Error).message });
     }

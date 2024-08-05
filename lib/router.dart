@@ -1,3 +1,4 @@
+import 'package:finity/features/auth/repos/auth_repo.dart';
 import 'package:finity/features/auth/ui/pages/login_page.dart';
 import 'package:finity/features/auth/ui/pages/signup_page.dart';
 import 'package:finity/features/home/bottom_nav_bar.dart';
@@ -23,10 +24,17 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
         settings: routeSettings,
         builder: (_) => const BottomNavBar(),
       );
-    case HomeScreen.routeName:
+    // case HomeScreen.routeName:
+    //   return MaterialPageRoute(
+    //     settings: routeSettings,
+    //     builder: (_) => HomeScreen(),
+    //   );
+    case App.routeName:
       return MaterialPageRoute(
         settings: routeSettings,
-        builder: (_) => HomeScreen(),
+        builder: (_) => App(
+          authService: AuthService(),
+        ),
       );
     default:
       return MaterialPageRoute(

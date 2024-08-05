@@ -17,8 +17,11 @@ const item_1 = __importDefault(require("../models/item"));
 const user_1 = __importDefault(require("../models/user"));
 // Adding an item to be listed for lending
 const addItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, description, category, ownerId } = req.body;
+    const { name, description, category, ownerId, dueDate } = req.body;
     try {
+        if (!name || !description || !category || !ownerId) {
+            return res.status(400).send('Missing required fields');
+        }
         const owner = yield user_1.default.findById(ownerId);
         if (!owner) {
             return res.status(404).send('Owner not found');
@@ -35,6 +38,7 @@ const addItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             },
             status: 'available',
             location: owner.location,
+            dueDate: dueDate ? new Date(dueDate) : null, // Parse and set the due date if provided
         });
         yield item.save();
         owner.itemsListed.push(item._id);
@@ -142,7 +146,7 @@ const getNearbyItems = (req, res) => __awaiter(void 0, void 0, void 0, function*
                     dueDate: 1,
                     location: 1,
                     address: 1,
-                    distance: '$dist.calculated',
+                    // distance: '$dist.calculated',
                 },
             },
         ]);

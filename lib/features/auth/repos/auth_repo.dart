@@ -181,7 +181,6 @@ class AuthService {
     }
   }
 
-  // Sign in user
   Future<String> signInUser({
     required String email,
     required String password,
@@ -210,7 +209,7 @@ class AuthService {
 
         // Store the token from the response
         await prefs.setString('x-auth-token', jsonDecode(res.body)['token']);
-
+        log('Token stored: ${jsonDecode(res.body)['token']}');
         return "login successful";
       }
 
@@ -254,11 +253,11 @@ class AuthService {
             },
           );
 
-          if (userRes.statusCode == 200) {
+          if (userRes.statusCode == 201) {
             var userProvider =
                 Provider.of<UserProvider>(context, listen: false);
             log('Fetched user data: ${userRes.body}');
-            log(userRes.body);
+
             userProvider.setUser(userRes.body);
             log('UserProvider user: ${userProvider.user.toString()}');
           } else {
@@ -272,6 +271,18 @@ class AuthService {
       }
     } catch (e) {
       log('Error fetching user data: $e');
+    }
+  }
+
+  // Sign out user
+  Future<void> logOut(BuildContext context) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.remove('x-auth-token');
+      log('${prefs.get('x-auth-token')}');
+      Provider.of<UserProvider>(context, listen: false).logout();
+    } catch (e) {
+      log('Error signing out: $e');
     }
   }
 }

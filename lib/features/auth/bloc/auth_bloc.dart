@@ -13,7 +13,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc(this.authService) : super(AuthInitial()) {
     on<AuthSignUpEvent>(_onSignUpRequested);
     on<AuthLoginEvent>(_onSignInRequested);
-    // on<AuthCheckRequestedEvent>(_onAuthCheckRequested);
+    on<AuthLogoutEvent>(_onLogoutRequested);
   }
 
   void _onSignUpRequested(
@@ -51,18 +51,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  // void _onAuthCheckRequested(
-  //     AuthCheckRequestedEvent event, Emitter<AuthState> emit) async {
-  //   emit(AuthLoading());
-  //   try {
-  //     final user = await authService.getUserData();
-  //     if (user != null) {
-  //       emit(AuthAuthenticated());
-  //     } else {
-  //       emit(AuthInitial());
-  //     }
-  //   } catch (e) {
-  //     emit(AuthErrorState(e.toString()));
-  //   }
-  // }
+  FutureOr<void> _onLogoutRequested(
+      AuthLogoutEvent event, Emitter<AuthState> emit) {
+    emit(AuthLoading());
+    try {
+      authService.logOut(event.context);
+      emit(AuthInitial());
+    } catch (e) {
+      emit(AuthErrorState(e.toString()));
+    }
+  }
 }

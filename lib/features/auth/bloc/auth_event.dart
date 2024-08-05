@@ -23,4 +23,7 @@ class AuthSignUpEvent extends AuthEvent {
       required this.name});
 }
 
-// class AuthCheckRequestedEvent extends AuthEvent {}
+class AuthLogoutEvent extends AuthEvent {
+  final BuildContext context;
+  AuthLogoutEvent({required this.context});
+}

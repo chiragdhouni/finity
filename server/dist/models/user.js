@@ -37,7 +37,7 @@ const UserSchema = new mongoose_1.Schema({
     location: {
         type: { type: String, enum: ['Point'], default: 'Point' }, // Default to 'Point' for a valid GeoJSON
         coordinates: {
-            type: [Number],
+            type: [],
             default: [0.0, 0.0], // Default to an empty array
         },
     },

@@ -4,13 +4,18 @@ import User from '../models/user';
 import { ObjectId } from 'mongodb';
 
 // Adding an item to be listed for lending
+
 export const addItem = async (req: Request, res: Response) => {
-  const { name, description, category, ownerId } = req.body;
+  const { name, description, category, ownerId, dueDate } = req.body;
   try {
+    if(!name || !description || !category || !ownerId) { 
+      return res.status(400).send('Missing required fields');
+    }
     const owner = await User.findById(ownerId);
     if (!owner) {
       return res.status(404).send('Owner not found');
     }
+
     const item = new Item({
       name,
       description,
@@ -23,7 +28,9 @@ export const addItem = async (req: Request, res: Response) => {
       },
       status: 'available',
       location: owner.location,
+      dueDate: dueDate ? new Date(dueDate) : null, // Parse and set the due date if provided
     });
+
     await item.save();
     owner.itemsListed.push(item._id as ObjectId);
     await owner.save();
@@ -33,6 +40,7 @@ export const addItem = async (req: Request, res: Response) => {
     res.status(400).send(error);
   }
 };
+
 
 // Request to borrow an item
 export const requestToBorrowItem = async (req: Request, res: Response) => {
@@ -134,7 +142,7 @@ export const getNearbyItems = async (req: Request, res: Response) => {
           dueDate: 1,
           location: 1,
           address: 1,
-          distance: '$dist.calculated',
+          // distance: '$dist.calculated',
         },
       },
     ]);

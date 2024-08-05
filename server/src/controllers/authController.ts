@@ -87,23 +87,6 @@ declare global {
   }
 }
 
-// export const getUser =  auth, async (req: Request, res: Response)=> {
-//   try {
-//     if (!req.user) {
-//       return res.status(400).json({ msg: "User ID not found in request." });
-//     }
-
-//     const user = await User.findById(req.user);
-//     if (!user) {
-//       return res.status(404).json({ msg: "User not found." });
-//     }
-
-//     res.json(user);
-//   } catch (error) {
-//     res.status(500).json({ error: (error as Error).message });
-//   }
-
-// };
 
 
 // Update user location
