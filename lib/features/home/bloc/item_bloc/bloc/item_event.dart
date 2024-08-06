@@ -19,14 +19,14 @@ class AddItemEvent extends ItemEvent {
   });
 }
 
-class RequestToBorrowItemEvent extends ItemEvent {
-  final String itemId;
-  final String borrowerId;
-  final String dueDate;
+class FetchNearbyItemsEvent extends ItemEvent {
+  final double latitude;
+  final double longitude;
+  final double maxDistance;
 
-  RequestToBorrowItemEvent({
-    required this.itemId,
-    required this.borrowerId,
-    required this.dueDate,
+  FetchNearbyItemsEvent({
+    required this.latitude,
+    required this.longitude,
+    required this.maxDistance,
   });
 }

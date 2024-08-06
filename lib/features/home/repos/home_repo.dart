@@ -56,29 +56,48 @@ class HomeRepo {
     }
   }
 
-  Future<void> fetchNearbyItems(
+  Future<List<ItemModel>?> fetchNearbyItems(
       double latitude, double longitude, double maxDistance) async {
-    final String apiUrl = '${Config.serverURL}items/neaby';
-    final uri = Uri.parse(apiUrl).replace(
-      queryParameters: {
-        'latitude': latitude.toString(),
-        'longitude': longitude.toString(),
-        'maxDistance': maxDistance.toString(),
-      },
-    );
+    final String apiUrl = '${Config.serverURL}items/nearby';
+    // final uri = Uri.parse(apiUrl).replace(
+    //   queryParameters: {
+    //     'latitude': latitude.toString(),
+    //     'longitude': longitude.toString(),
+    //     'maxDistance': maxDistance.toString(),
+    //   },
+    // );
 
     try {
-      final response = await http.get(uri);
+      log('latitude: $latitude, longitude: $longitude, maxDistance: $maxDistance');
+      log(latitude.runtimeType.toString());
+      final response = await http.get(
+        Uri.parse(apiUrl).replace(
+          queryParameters: {
+            'latitude': longitude.toDouble().toString(),
+            'longitude': latitude.toDouble().toString(),
+            'maxDistance': maxDistance.toDouble().toString(),
+          },
+        ),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      log('Response: ${response.body}  ${response.statusCode}');
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        log('Nearby Items: $data');
+        List<ItemModel> data = (json.decode(response.body) as List)
+            .map((e) => ItemModel.fromMap(e))
+            .toList();
+        log('Nearby Items: ${data}');
         // Handle the data (e.g., update state or use in the UI)
+        return data;
       } else {
         throw Exception('Failed to load nearby items');
       }
     } catch (error) {
       log('Error fetching nearby items: $error');
     }
+    return null;
   }
 }

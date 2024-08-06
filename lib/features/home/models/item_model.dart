@@ -89,16 +89,16 @@ class Location {
 }
 
 class Borrower {
-  final String id;
-  final String name;
-  final String email;
-  final String address;
+  final String? id;
+  final String? name;
+  final String? email;
+  final String? address;
 
   Borrower({
-    required this.id,
-    required this.name,
-    required this.email,
-    required this.address,
+    this.id,
+    this.name,
+    this.email,
+    this.address,
   });
 
   Map<String, dynamic> toMap() {
@@ -112,10 +112,10 @@ class Borrower {
 
   factory Borrower.fromMap(Map<String, dynamic> map) {
     return Borrower(
-      id: map['_id'] as String,
-      name: map['name'] as String,
-      email: map['email'] as String,
-      address: map['address'] as String,
+      id: map['id'] as String?,
+      name: map['name'] as String?,
+      email: map['email'] as String?,
+      address: map['address'] as String?,
     );
   }
 
@@ -149,7 +149,7 @@ class Owner {
 
   factory Owner.fromMap(Map<String, dynamic> map) {
     return Owner(
-      id: map['_id'] as String,
+      id: map['id'] as String,
       name: map['name'] as String,
       email: map['email'] as String,
       address: map['address'] as String,

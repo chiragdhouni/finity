@@ -61,7 +61,7 @@ class UserModel {
   }
   String toJson() => json.encode(toMap());
   factory UserModel.fromJson(Map<String, dynamic> json) {
-    var userInfo = json['user'];
+    // var userInfo = json['user'];
     return UserModel(
       id: json['user']['_id'] as String,
       name: json['user']['name'] as String,

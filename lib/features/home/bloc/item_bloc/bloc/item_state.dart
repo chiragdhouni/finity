@@ -14,3 +14,9 @@ class ItemError extends ItemState {
 
   ItemError({required this.error});
 }
+
+class ItemFetched extends ItemState {
+  final List<ItemModel>? data;
+
+  ItemFetched(this.data);
+}

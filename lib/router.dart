@@ -2,6 +2,7 @@ import 'package:finity/features/auth/repos/auth_repo.dart';
 import 'package:finity/features/auth/ui/pages/login_page.dart';
 import 'package:finity/features/auth/ui/pages/signup_page.dart';
 import 'package:finity/features/home/bottom_nav_bar.dart';
+import 'package:finity/features/home/ui/pages/display_items_screen.dart';
 import 'package:finity/features/home/ui/pages/home_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -35,6 +36,12 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
         builder: (_) => App(
           authService: AuthService(),
         ),
+      );
+
+    case DisplayItemsScreen.routeName:
+      return MaterialPageRoute(
+        settings: routeSettings,
+        builder: (_) => const DisplayItemsScreen(),
       );
     default:
       return MaterialPageRoute(

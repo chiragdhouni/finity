@@ -1,11 +1,12 @@
 import 'package:finity/features/home/bloc/item_bloc/bloc/item_bloc.dart';
+import 'package:finity/features/home/ui/pages/display_items_screen.dart';
 import 'package:finity/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 // Import your BLoC files here
 
-void _showAddItemDialog(BuildContext context) {
+void showAddItemDialog(BuildContext context) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -19,7 +20,7 @@ class ResponsiveCardLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void _showAddItemDialog(BuildContext context) {
+    void showAddItemDialog(BuildContext context) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -42,7 +43,7 @@ class ResponsiveCardLayout extends StatelessWidget {
               Expanded(
                 child: InkWell(
                   onTap: () {
-                    _showAddItemDialog(context);
+                    showAddItemDialog(context);
                   },
                   child: Card(
                     color: Colors.blue,
@@ -54,10 +55,16 @@ class ResponsiveCardLayout extends StatelessWidget {
               ),
               SizedBox(width: 8.0), // Space between the two cards
               Expanded(
-                child: Card(
-                  color: Colors.blue,
-                  child: Center(
-                    child: Text('Borrow'),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(context)
+                        .pushNamed(DisplayItemsScreen.routeName);
+                  },
+                  child: Card(
+                    color: Colors.blue,
+                    child: Center(
+                      child: Text('Borrow'),
+                    ),
                   ),
                 ),
               ),
