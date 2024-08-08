@@ -134,7 +134,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:finity/core/config/config.dart';
-import 'package:finity/features/auth/models/user_model.dart';
+import 'package:finity/models/user_model.dart';
 import 'package:finity/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -156,7 +156,9 @@ class AuthService {
       password: password,
       token: "",
       address: address,
+      events: [],
       location: [], // Ensure location is initialized as a list
+      itemsListed: [],
       itemsLended: [],
       itemsBorrowed: [],
       itemsRequested: [],

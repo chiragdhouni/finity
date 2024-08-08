@@ -5,6 +5,7 @@ interface IUser extends Document {
   email: string;
   password: string;
   address: string;
+  events: Types.ObjectId[];
   itemsListed: Types.ObjectId[];
   itemsLended: Types.ObjectId[];
   itemsBorrowed: Types.ObjectId[];
@@ -21,7 +22,7 @@ const UserSchema: Schema = new Schema({
   password: { type: String, required: true }, // Password field
   address: { type: String, required: true },
 
-  // Use ObjectId type for item references
+  events: { type: [mongoose.Schema.Types.ObjectId], ref: 'Event', default: [] },
   itemsListed: { type: [mongoose.Schema.Types.ObjectId], ref: 'Item', default: [] },
   itemsLended: { type: [mongoose.Schema.Types.ObjectId], ref: 'Item', default: [] },
   itemsBorrowed: { type: [mongoose.Schema.Types.ObjectId], ref: 'Item', default: [] },

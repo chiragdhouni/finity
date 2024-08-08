@@ -7,9 +7,11 @@ class UserModel {
   String? token; // Made optional
   String password;
   String address;
+  List<String> events;
   List<double> location; // Updated to List<num>
   List<String> itemsLended;
   List<String> itemsBorrowed;
+  List<String> itemsListed;
   List<String> itemsRequested;
 
   UserModel({
@@ -19,7 +21,9 @@ class UserModel {
     this.token,
     required this.password,
     required this.address,
+    required this.events,
     this.location = const [0.0, 0.0], // Default to [0.0, 0.0]
+    required this.itemsListed,
     required this.itemsLended,
     required this.itemsBorrowed,
     required this.itemsRequested,
@@ -34,6 +38,8 @@ class UserModel {
       'password': password,
       'address': address,
       'location': location,
+      'events': events,
+      'itemsListed': itemsListed,
       'itemsLended': itemsLended,
       'itemsBorrowed': itemsBorrowed,
       'itemsRequested': itemsRequested,
@@ -54,6 +60,8 @@ class UserModel {
               (map['location']['coordinates'][1]).toDouble(),
             ]
           : [0.0, 0.0],
+      events: List<String>.from(map['events'] ?? []),
+      itemsListed: List<String>.from(map['itemsListed'] ?? []),
       itemsLended: List<String>.from(map['itemsLended'] ?? []),
       itemsBorrowed: List<String>.from(map['itemsBorrowed'] ?? []),
       itemsRequested: List<String>.from(map['itemsRequested'] ?? []),
@@ -72,6 +80,8 @@ class UserModel {
       location: List<double>.from(
           (json['user']['location']['coordinates'] as List)
               .map((x) => (x as num).toDouble())),
+      events: List<String>.from(json['user']['events']),
+      itemsListed: List<String>.from(json['user']['itemsListed']),
       itemsLended: List<String>.from(json['user']['itemsLended']),
       itemsBorrowed: List<String>.from(json['user']['itemsBorrowed']),
       itemsRequested: List<String>.from(json['user']['itemsRequested']),

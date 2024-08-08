@@ -1,4 +1,6 @@
-import 'package:finity/features/auth/models/user_model.dart';
+import 'dart:developer';
+
+import 'package:finity/models/user_model.dart';
 import 'package:finity/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +26,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     List<String> itemBorrowed = userData.itemsBorrowed;
     List<String> itemLended = userData.itemsLended;
     List<String> itemRequested = userData.itemsRequested;
+    List<String> itemListed = userData.itemsListed;
+    List<String> events = userData.events;
+    log('User data: ${userData.toString()}');
     return Scaffold(
       appBar: AppBar(
         title: Text('Profile',
@@ -64,7 +69,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             height: 20,
           ),
           Expanded(
-            child: Row(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Expanded(
@@ -137,10 +142,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           Expanded(
                             child: ListView.builder(
-                              itemCount: itemRequested.length,
+                              itemCount: events.length,
                               itemBuilder: (context, index) {
                                 return ListTile(
-                                  title: Text(itemRequested[index],
+                                  title: Text(events[index],
                                       style: TextStyle(color: Colors.white)),
                                 );
                               },
@@ -149,6 +154,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ],
                       ),
                     ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                const Text(
+                  'Items Listed',
+                  style: TextStyle(fontSize: 20, color: Colors.white),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: itemListed.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(itemListed[index],
+                            style: TextStyle(color: Colors.white)),
+                      );
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                const Text(
+                  'events',
+                  style: TextStyle(fontSize: 20, color: Colors.white),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: events.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(events[index],
+                            style: TextStyle(color: Colors.white)),
+                      );
+                    },
                   ),
                 ),
               ],

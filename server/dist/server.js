@@ -8,6 +8,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const body_parser_1 = __importDefault(require("body-parser")); // Import the bodyParser module
 const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
 const itemRoutes_1 = __importDefault(require("./routes/itemRoutes"));
+const eventRoutes_1 = __importDefault(require("./routes/eventRoutes"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use(body_parser_1.default.json());
@@ -18,6 +19,7 @@ mongoose_1.default.connect(MONGO_URI)
     .catch(err => console.log(err));
 app.use('/api/auth', authRoutes_1.default);
 app.use('/api/items', itemRoutes_1.default);
+app.use('/api/events', eventRoutes_1.default);
 app.get('/', (req, res) => {
     res.send('Hello World');
 });

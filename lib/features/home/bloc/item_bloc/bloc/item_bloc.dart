@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:finity/features/home/models/item_model.dart';
+import 'package:finity/models/item_model.dart';
 import 'package:finity/features/home/repos/home_repo.dart';
 import 'package:meta/meta.dart';
 
@@ -41,8 +41,7 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
           event.latitude, event.longitude, event.maxDistance);
       if (data != null && data.isNotEmpty) {
         emit(ItemFetched(data));
-      }
-      else{
+      } else {
         emit(ItemError(error: 'No items found'));
       }
     } catch (e) {

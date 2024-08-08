@@ -24,24 +24,22 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const UserSchema = new mongoose_1.Schema({
-    name: { type: String, required: true },
-    email: { type: String, required: true },
-    password: { type: String, required: true }, // Password field
+const EventSchema = new mongoose_1.Schema({
+    title: { type: String, required: true },
+    description: { type: String, required: true },
+    owner: {
+        id: { type: mongoose_1.default.Schema.Types.ObjectId, required: true },
+        name: { type: String, required: true },
+        email: { type: String, required: true },
+        address: { type: String, required: true },
+    },
+    date: { type: Date, required: true },
     address: { type: String, required: true },
-    events: { type: [mongoose_1.default.Schema.Types.ObjectId], ref: 'Event', default: [] },
-    itemsListed: { type: [mongoose_1.default.Schema.Types.ObjectId], ref: 'Item', default: [] },
-    itemsLended: { type: [mongoose_1.default.Schema.Types.ObjectId], ref: 'Item', default: [] },
-    itemsBorrowed: { type: [mongoose_1.default.Schema.Types.ObjectId], ref: 'Item', default: [] },
-    itemsRequested: { type: [mongoose_1.default.Schema.Types.ObjectId], ref: 'Item', default: [] },
     location: {
-        type: { type: String, enum: ['Point'], default: 'Point' }, // Default to 'Point' for a valid GeoJSON
-        coordinates: {
-            type: [],
-            default: [0.0, 0.0], // Default to an empty array
-        },
+        type: { type: String, enum: ['Point'], required: true },
+        coordinates: { type: [Number], required: true },
     },
 });
-// Create a 2dsphere index for geospatial queries if location is provided
-UserSchema.index({ location: '2dsphere' });
-exports.default = mongoose_1.default.model('User', UserSchema);
+// Create a geospatial index on the location field
+EventSchema.index({ location: '2dsphere' });
+exports.default = mongoose_1.default.model('Event', EventSchema);

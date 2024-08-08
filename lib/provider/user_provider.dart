@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:finity/features/auth/models/user_model.dart';
+import 'package:finity/models/user_model.dart';
 
 import 'package:finity/features/home/services/location_service.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +16,8 @@ class UserProvider extends ChangeNotifier {
     address: '',
     password: '',
     location: [],
+    itemsListed: [],
+    events: [],
     itemsLended: [],
     itemsBorrowed: [],
     itemsRequested: [],
@@ -51,6 +53,8 @@ class UserProvider extends ChangeNotifier {
       address: '',
       password: '',
       location: [],
+      events: [],
+      itemsListed: [],
       itemsLended: [],
       itemsBorrowed: [],
       itemsRequested: [],

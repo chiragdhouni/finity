@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser'; // Import the bodyParser module
 import authRoutes from './routes/authRoutes';
 import itemRoutes from './routes/itemRoutes';
+import eventRoutes from './routes/eventRoutes';
 
 
 const app = express();
@@ -18,6 +19,7 @@ mongoose.connect(MONGO_URI)
 
 app.use('/api/auth', authRoutes);
 app.use('/api/items', itemRoutes);
+app.use('/api/events', eventRoutes);
 app.get('/', (req, res) => {
     res.send('Hello World');
   });

@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:finity/core/config/config.dart';
-import 'package:finity/features/home/models/item_model.dart';
+import 'package:finity/models/item_model.dart';
 import 'package:http/http.dart' as http;
 
 class HomeRepo {
