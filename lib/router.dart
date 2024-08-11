@@ -37,6 +37,11 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
           authService: AuthService(),
         ),
       );
+    // case ItemSearchPage.routeName:
+    //   return MaterialPageRoute(
+    //     settings: routeSettings,
+    //     builder: (_) => ItemSearchPage(),
+    //   );
 
     case DisplayItemsScreen.routeName:
       return MaterialPageRoute(

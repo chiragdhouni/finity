@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.returnItem = exports.getNearbyItems = exports.lendItem = exports.requestToBorrowItem = exports.addItem = void 0;
+exports.searchItems = exports.returnItem = exports.getNearbyItems = exports.lendItem = exports.requestToBorrowItem = exports.addItem = void 0;
 const item_1 = __importDefault(require("../models/item"));
 const user_1 = __importDefault(require("../models/user"));
 // Adding an item to be listed for lending
@@ -195,3 +195,15 @@ const returnItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.returnItem = returnItem;
+const searchItems = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { query } = req.query;
+    try {
+        const items = yield item_1.default.find({ name: { $regex: query, $options: 'i' } });
+        res.status(200).json(items);
+    }
+    catch (error) {
+        console.error(`Error searching items: ${error.message}`);
+        res.status(400).send(error);
+    }
+});
+exports.searchItems = searchItems;

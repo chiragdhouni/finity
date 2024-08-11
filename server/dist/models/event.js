@@ -26,6 +26,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const EventSchema = new mongoose_1.Schema({
     title: { type: String, required: true },
+    image: { type: String, required: true },
     description: { type: String, required: true },
     owner: {
         id: { type: mongoose_1.default.Schema.Types.ObjectId, required: true },

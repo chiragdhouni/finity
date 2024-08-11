@@ -30,3 +30,9 @@ class FetchNearbyItemsEvent extends ItemEvent {
     required this.maxDistance,
   });
 }
+
+class SearchItemsEvent extends ItemEvent {
+  final String query;
+
+  SearchItemsEvent(this.query);
+}

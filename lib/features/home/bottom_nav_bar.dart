@@ -22,6 +22,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     App(
       authService: AuthService(),
     ),
+    // ItemSearchPage(),
     Text('Search by category'),
     Text('Notification'),
     ProfileScreen()

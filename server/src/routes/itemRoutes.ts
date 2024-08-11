@@ -5,6 +5,7 @@ import {
   lendItem,
   returnItem,
   getNearbyItems,
+  searchItems,
  
 } from '../controllers/itemController';
 
@@ -15,5 +16,6 @@ itemRouter.post('/request', requestToBorrowItem);
 itemRouter.put('/lend', lendItem);
 itemRouter.put('/return', returnItem);
 itemRouter.get('/nearby', getNearbyItems);
+itemRouter.get('/search',searchItems);
 
 export default itemRouter;

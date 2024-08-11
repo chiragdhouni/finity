@@ -6,8 +6,10 @@ import 'package:finity/design/theme/theme.dart';
 import 'package:finity/features/auth/bloc/auth_bloc.dart';
 import 'package:finity/features/auth/repos/auth_repo.dart';
 import 'package:finity/features/auth/ui/pages/login_page.dart';
+import 'package:finity/features/home/bloc/event_bloc/bloc/ad_bloc.dart';
 import 'package:finity/features/home/bloc/item_bloc/bloc/item_bloc.dart';
 import 'package:finity/features/home/bottom_nav_bar.dart';
+import 'package:finity/features/home/repos/event_repo.dart';
 import 'package:finity/features/home/repos/home_repo.dart';
 
 import 'package:finity/provider/user_provider.dart';
@@ -32,6 +34,9 @@ void main() {
           ),
           BlocProvider<ItemBloc>(
             create: (context) => ItemBloc(HomeRepo()),
+          ),
+          BlocProvider<AdBloc>(
+            create: (context) => AdBloc(EventRepo()),
           ),
         ],
         child: MyApp(),

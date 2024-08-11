@@ -1,15 +1,17 @@
-class Event {
+class EventModel {
   String id;
   String title;
+  String image;
   String description;
   Owner owner;
   DateTime date;
   String address;
   Location location;
 
-  Event({
+  EventModel({
     required this.id,
     required this.title,
+    required this.image,
     required this.description,
     required this.owner,
     required this.date,
@@ -17,10 +19,11 @@ class Event {
     required this.location,
   });
 
-  factory Event.fromJson(Map<String, dynamic> json) {
-    return Event(
+  factory EventModel.fromJson(Map<String, dynamic> json) {
+    return EventModel(
       id: json['_id'] ?? '',
       title: json['title'],
+      image: json['image'],
       description: json['description'],
       owner: Owner.fromJson(json['owner']),
       date: DateTime.parse(json['date']),
@@ -33,6 +36,7 @@ class Event {
     return {
       '_id': id,
       'title': title,
+      'image': image,
       'description': description,
       'owner': owner.toJson(),
       'date': date.toIso8601String(),

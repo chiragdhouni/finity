@@ -25,7 +25,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     List<String> itemBorrowed = userData.itemsBorrowed;
     List<String> itemLended = userData.itemsLended;
-    List<String> itemRequested = userData.itemsRequested;
+    // List<String> itemRequested = userData.itemsRequested;
     List<String> itemListed = userData.itemsListed;
     List<String> events = userData.events;
     log('User data: ${userData.toString()}');
@@ -34,168 +34,162 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: Text('Profile',
             style: TextStyle(color: Colors.white, fontSize: 20)),
       ),
-      body: Column(
-        children: [
-          SizedBox(
-            height: 30,
-          ),
-          CircleAvatar(
-            radius: 50,
-            backgroundImage: NetworkImage(
-                "https://images.unsplash.com/photo-1664193314424-7f823ccaa301?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Text(
-            userData.name,
-            style: TextStyle(fontSize: 20, color: Colors.white),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Text(
-            userData.email,
-            style: TextStyle(fontSize: 20, color: Colors.white),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Text(
-            userData.address,
-            style: TextStyle(fontSize: 20, color: Colors.white),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Expanded(
-                  child: Card(
-                    color: Colors.grey[850],
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Items Lended',
-                            style: TextStyle(fontSize: 20, color: Colors.white),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              const SizedBox(height: 30),
+              const CircleAvatar(
+                radius: 50,
+                backgroundImage: NetworkImage(
+                    "https://images.unsplash.com/photo-1664193314424-7f823ccaa301?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                userData.name,
+                style: const TextStyle(fontSize: 20, color: Colors.white),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                userData.email,
+                style: const TextStyle(fontSize: 20, color: Colors.white),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                userData.address,
+                style: const TextStyle(fontSize: 20, color: Colors.white),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                height: 150, // Fixed height for the card
+                child: Card(
+                  color: Colors.grey[850],
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Items Lended',
+                          style: TextStyle(fontSize: 20, color: Colors.white),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: itemLended.length,
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                title: Text(itemLended[index],
+                                    style:
+                                        const TextStyle(color: Colors.white)),
+                              );
+                            },
                           ),
-                          Expanded(
-                            child: ListView.builder(
-                              itemCount: itemLended.length,
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                  title: Text(itemLended[index],
-                                      style: TextStyle(color: Colors.white)),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                Expanded(
-                  child: Card(
-                    color: Colors.grey[850],
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Items Borrowed',
-                            style: TextStyle(fontSize: 20, color: Colors.white),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                height: 150, // Fixed height for the card
+                child: Card(
+                  color: Colors.grey[850],
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Items Borrowed',
+                          style: TextStyle(fontSize: 20, color: Colors.white),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: itemBorrowed.length,
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                title: Text(itemBorrowed[index],
+                                    style:
+                                        const TextStyle(color: Colors.white)),
+                              );
+                            },
                           ),
-                          Expanded(
-                            child: ListView.builder(
-                              itemCount: itemBorrowed.length,
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                  title: Text(itemBorrowed[index],
-                                      style: TextStyle(color: Colors.white)),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                Expanded(
-                  child: Card(
-                    color: Colors.grey[850],
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Items Requested',
-                            style: TextStyle(fontSize: 20, color: Colors.white),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                height: 150, // Fixed height for the card
+                child: Card(
+                  color: Colors.grey[850],
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Items Requested',
+                          style: TextStyle(fontSize: 20, color: Colors.white),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: events.length,
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                title: Text(events[index],
+                                    style:
+                                        const TextStyle(color: Colors.white)),
+                              );
+                            },
                           ),
-                          Expanded(
-                            child: ListView.builder(
-                              itemCount: events.length,
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                  title: Text(events[index],
-                                      style: TextStyle(color: Colors.white)),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 20,
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Items Listed',
+                style: TextStyle(fontSize: 20, color: Colors.white),
+              ),
+              SizedBox(
+                height: 150, // Fixed height for the card
+                child: ListView.builder(
+                  itemCount: itemListed.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(itemListed[index],
+                          style: const TextStyle(color: Colors.white)),
+                    );
+                  },
                 ),
-                const Text(
-                  'Items Listed',
-                  style: TextStyle(fontSize: 20, color: Colors.white),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Events',
+                style: TextStyle(fontSize: 20, color: Colors.white),
+              ),
+              SizedBox(
+                height: 150, // Fixed height for the card
+                child: ListView.builder(
+                  itemCount: events.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(events[index],
+                          style: const TextStyle(color: Colors.white)),
+                    );
+                  },
                 ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: itemListed.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(itemListed[index],
-                            style: TextStyle(color: Colors.white)),
-                      );
-                    },
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                const Text(
-                  'events',
-                  style: TextStyle(fontSize: 20, color: Colors.white),
-                ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: events.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(events[index],
-                            style: TextStyle(color: Colors.white)),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

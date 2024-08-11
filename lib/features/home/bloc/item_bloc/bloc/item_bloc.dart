@@ -13,6 +13,7 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
   ItemBloc(this.homeRepo) : super(ItemInitial()) {
     on<AddItemEvent>(_onAddItemEvent);
     on<FetchNearbyItemsEvent>(_onFetchNearbyItemsEvent);
+    on<SearchItemsEvent>(_onSearchItemsEvent);
   }
 
   FutureOr<void> _onAddItemEvent(
@@ -46,6 +47,21 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
       }
     } catch (e) {
       emit(ItemError(error: e.toString()));
+    }
+  }
+
+  FutureOr<void> _onSearchItemsEvent(
+      SearchItemsEvent event, Emitter<ItemState> emit) async {
+    emit(ItemSearchLoading());
+    try {
+      List<ItemModel> searchResults = await homeRepo.searchItems(event.query);
+      if (searchResults.isNotEmpty) {
+        emit(ItemSearchSuccess(searchResults));
+      } else {
+        emit(ItemSearchError('No items found'));
+      }
+    } catch (e) {
+      emit(ItemSearchError(e.toString()));
     }
   }
 }

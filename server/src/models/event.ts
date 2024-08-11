@@ -2,6 +2,7 @@ import mongoose, { Schema, Document, Types } from 'mongoose';
 
 interface IEvent extends Document {
     title: string;
+    image: string;
     description: string;
     owner: {
         id: Types.ObjectId;
@@ -19,6 +20,7 @@ interface IEvent extends Document {
 
 const EventSchema: Schema = new Schema({
     title: { type: String, required: true },
+    image: { type: String, required: true },
     description: { type: String, required: true },
     owner: {
         id: { type: mongoose.Schema.Types.ObjectId, required: true },

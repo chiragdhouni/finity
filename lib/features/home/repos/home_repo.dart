@@ -100,4 +100,25 @@ class HomeRepo {
     }
     return null;
   }
+
+  Future<List<ItemModel>> searchItems(String query) async {
+    try {
+      final response = await http.get(
+        Uri.parse('${Config.serverURL}items/search?query=$query'),
+      );
+
+      if (response.statusCode == 200) {
+        // Parse the JSON response into a list of ItemModel objects
+        List<dynamic> jsonList = json.decode(response.body);
+        List<ItemModel> items =
+            jsonList.map((json) => ItemModel.fromMap(json)).toList();
+        return items;
+      } else {
+        throw Exception('Failed to load items');
+      }
+    } catch (error) {
+      log('Error searching items: $error');
+      return [];
+    }
+  }
 }

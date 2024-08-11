@@ -18,7 +18,7 @@ const user_1 = __importDefault(require("../models/user")); // Import the User cl
 // Create a new event
 const createEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { title, description, ownerId, date, address, location } = req.body;
+        const { title, image, description, ownerId, date, address, location } = req.body;
         // const event = new Event(req.body);
         const owner = yield user_1.default.findById(ownerId);
         if (!owner) {
@@ -26,6 +26,7 @@ const createEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         }
         const event = new event_1.default({
             title,
+            image,
             description,
             owner: {
                 id: owner._id,
@@ -102,28 +103,34 @@ const deleteEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.deleteEvent = deleteEvent;
-// Get events near a location
+// Get events near a location, sorted by distance
 const getEventsNearLocation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { longitude, latitude, maxDistance } = req.query;
         if (!longitude || !latitude) {
             return res.status(400).json({ message: 'Longitude and latitude are required' });
         }
-        const events = yield event_1.default.find({
-            location: {
-                $near: {
-                    $geometry: {
+        const events = yield event_1.default.aggregate([
+            {
+                $geoNear: {
+                    near: {
                         type: 'Point',
-                        coordinates: [parseFloat(longitude), parseFloat(latitude)],
+                        coordinates: [parseFloat(longitude), parseFloat(latitude),]
                     },
-                    $maxDistance: parseInt(maxDistance) || 10000, // Default to 10 km
-                },
+                    distanceField: 'dist.calculated', // Field to add to the output documents containing the distance
+                    maxDistance: parseFloat(maxDistance), // Default to 10 km
+                    spherical: true,
+                }
             },
-        });
+            {
+                $sort: { distance: 1 } // Sort by distance, ascending order
+            }
+        ]);
         res.status(200).json(events);
     }
     catch (error) {
-        console.error(`Error adding item: ${error.message}`);
+        console.error(`Error fetching events near location: ${error.message}`);
+        res.status(500).json({ message: 'Error fetching events near location' });
     }
 });
 exports.getEventsNearLocation = getEventsNearLocation;

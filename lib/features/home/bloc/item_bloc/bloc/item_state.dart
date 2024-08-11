@@ -20,3 +20,17 @@ class ItemFetched extends ItemState {
 
   ItemFetched(this.data);
 }
+
+class ItemSearchLoading extends ItemState {}
+
+class ItemSearchSuccess extends ItemState {
+  final List<ItemModel> searchResults;
+
+  ItemSearchSuccess(this.searchResults);
+}
+
+class ItemSearchError extends ItemState {
+  final String error;
+
+  ItemSearchError(this.error);
+}

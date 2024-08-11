@@ -9,7 +9,7 @@ import { ObjectId } from 'mongodb';
 // Create a new event
 export const createEvent = async (req: Request, res: Response) => {
     try {
-        const {title, description, ownerId, date, address, location} = req.body;
+        const {title,image, description, ownerId, date, address, location} = req.body;
         // const event = new Event(req.body);
         const owner = await User.findById(ownerId);
 
@@ -18,6 +18,7 @@ export const createEvent = async (req: Request, res: Response) => {
         }
         const event = new Event({
             title,
+            image,
             description,
             owner: {
                 id: owner._id,
@@ -105,10 +106,10 @@ export const getEventsNearLocation = async (req: Request, res: Response) => {
                 $geoNear: {
                     near: {
                         type: 'Point',
-                        coordinates: [parseFloat(longitude as string), parseFloat(latitude as string)]
+                        coordinates: [parseFloat(longitude as string), parseFloat(latitude as string),]
                     },
-                    distanceField: 'distance', // Field to add to the output documents containing the distance
-                    maxDistance: parseInt(maxDistance as string) || 10000, // Default to 10 km
+                    distanceField: 'dist.calculated', // Field to add to the output documents containing the distance
+                    maxDistance: parseFloat(maxDistance as string) , // Default to 10 km
                     spherical: true,
                 }
             },
@@ -123,3 +124,6 @@ export const getEventsNearLocation = async (req: Request, res: Response) => {
         res.status(500).json({ message: 'Error fetching events near location' });
     }
 };
+
+
+
