@@ -193,6 +193,7 @@ import 'dart:async';
 import 'package:finity/features/auth/bloc/auth_bloc.dart';
 import 'package:finity/features/auth/repos/auth_repo.dart';
 import 'package:finity/features/home/bloc/item_bloc/bloc/item_bloc.dart';
+import 'package:finity/features/home/ui/pages/display_items_screen.dart';
 import 'package:finity/features/home/ui/widgets/categories.dart';
 import 'package:finity/features/home/ui/widgets/event_slider.dart';
 import 'package:flutter/material.dart';
@@ -285,15 +286,14 @@ class _AppState extends State<App> {
             ],
           ),
           body: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // EventSlider with fixed height
-                EventSlider(),
-                const SizedBox(height: 15),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextField(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  EventSlider(),
+                  const SizedBox(height: 15),
+                  TextField(
                     controller: _searchController,
                     decoration: InputDecoration(
                       hintText: 'Enter item name...',
@@ -301,63 +301,45 @@ class _AppState extends State<App> {
                     ),
                     onChanged: _onSearchChanged,
                   ),
-                ),
-                const SizedBox(height: 10),
-                BlocBuilder<ItemBloc, ItemState>(
-                  builder: (context, state) {
-                    if (state is ItemSearchLoading) {
-                      return Center(child: CircularProgressIndicator());
-                    } else if (state is ItemSearchSuccess) {
-                      if (state.searchResults.isEmpty) {
-                        return Center(child: Text('No items found'));
+                  const SizedBox(height: 10),
+                  BlocBuilder<ItemBloc, ItemState>(
+                    builder: (context, state) {
+                      if (state is ItemSearchLoading) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (state is ItemSearchSuccess) {
+                        if (state.searchResults.isEmpty) {
+                          return Center(child: Text('No items found'));
+                        }
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: state.searchResults.length,
+                          itemBuilder: (context, index) {
+                            final item = state.searchResults[index];
+                            return Container(
+                              color: index % 2 == 0
+                                  ? Colors.grey[200]
+                                  : Colors.grey[300],
+                              child: ListTile(
+                                title: Text(item.name),
+                                subtitle: Text(item.description),
+                                onTap: () {
+                                  // Handle item click to show details
+                                },
+                              ),
+                            );
+                          },
+                        );
+                      } else if (state is ItemSearchError) {
+                        return Center(child: Text(state.error));
                       }
-                      return temp
-                          ? ListView.builder(
-                              shrinkWrap: true,
-                              physics:
-                                  NeverScrollableScrollPhysics(), // Disable scrolling within ListView
-                              itemCount: state.searchResults.length,
-                              itemBuilder: (context, index) {
-                                final item = state.searchResults[index];
-                                return Container(
-                                  color: index % 2 == 0
-                                      ? Colors.grey[200]
-                                      : Colors.grey[300],
-                                  child: ListTile(
-                                    title: Text(item.name),
-                                    subtitle: Text(item.description),
-                                    onTap: () {
-                                      // Handle item click to show details
-                                    },
-                                  ),
-                                );
-                              },
-                            )
-                          : Container();
-                    } else if (state is ItemSearchError) {
-                      return Center(child: Text(state.error));
-                    }
-                    return Container(); // Return an empty container for initial state
-                  },
-                ),
-                const SizedBox(height: 10),
-                Categories(), // Static Categories section
-                // Uncomment if you have additional widgets
-                // ResponsiveCardLayout(),
-                // const SizedBox(height: 15),
-                // Align(
-                //   alignment: Alignment.centerLeft,
-                //   child: Text(
-                //     'Lost Items',
-                //     style: TextStyle(
-                //       fontSize: 20,
-                //       fontWeight: FontWeight.bold,
-                //     ),
-                //   ),
-                // ),
-                // const SizedBox(height: 10),
-                // LostItemList(),
-              ],
+                      return Container(); // Return an empty container for initial state
+                    },
+                  ),
+                  Text('Items Near you'),
+                  DisplayItemsScreen(),
+                ],
+              ),
             ),
           ),
         ),
