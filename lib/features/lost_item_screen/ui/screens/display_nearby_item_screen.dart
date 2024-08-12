@@ -1,4 +1,5 @@
 import 'package:finity/features/lost_item_screen/bloc/bloc/lost_item_bloc.dart';
+import 'package:finity/features/lost_item_screen/ui/widgets/lost_item_card.dart';
 import 'package:finity/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -49,16 +50,7 @@ class _NearByItemScreenState extends State<NearByItemScreen> {
                 itemCount: state.lostItems.length,
                 itemBuilder: (context, index) {
                   final item = state.lostItems[index];
-                  return Container(
-                    color: Colors.red,
-                    child: ListTile(
-                      title: Text(item.name),
-                      subtitle: Text(item.description),
-                      onTap: () {
-                        // Handle item click to show details
-                      },
-                    ),
-                  );
+                  return LostItemCard(item: item);
                 },
               );
             } else if (state is LostItemError) {
