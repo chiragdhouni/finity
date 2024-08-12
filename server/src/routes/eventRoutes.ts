@@ -18,5 +18,6 @@ eventRouter.put('/:id', updateEvent);
 eventRouter.delete('/:id', deleteEvent);
 eventRouter.get('/near', getEventsNearLocation);
 
+
 export default eventRouter;
 

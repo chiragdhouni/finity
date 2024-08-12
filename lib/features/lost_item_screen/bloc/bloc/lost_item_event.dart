@@ -1,9 +1,8 @@
 part of 'lost_item_bloc.dart';
 
-@immutable
 sealed class LostItemEvent {}
 
-class CreateLostItem extends LostItemEvent {
+class CreateLostItemEvent extends LostItemEvent {
   final String name;
   final String description;
   final String status;
@@ -16,7 +15,7 @@ class CreateLostItem extends LostItemEvent {
   final double latitude;
   final double longitude;
 
-  CreateLostItem({
+  CreateLostItemEvent({
     required this.name,
     required this.description,
     required this.status,
@@ -28,5 +27,29 @@ class CreateLostItem extends LostItemEvent {
     required this.ownerAddress,
     required this.latitude,
     required this.longitude,
+  });
+}
+
+// class searchLostItemsByLocation extends LostItemEvent {
+//   final double latitude;
+//   final double longitude;
+//   final double maxDistance;
+
+//   searchLostItemsByLocation({
+//     required this.latitude,
+//     required this.longitude,
+//     required this.maxDistance,
+//   });
+// }
+
+class getNearByLostItemsEvent extends LostItemEvent {
+  final double latitude;
+  final double longitude;
+  final double maxDistance;
+
+  getNearByLostItemsEvent({
+    required this.latitude,
+    required this.longitude,
+    required this.maxDistance,
   });
 }

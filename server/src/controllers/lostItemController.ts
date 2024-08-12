@@ -61,8 +61,31 @@ export const deleteLostItem = async (req: Request, res: Response) => {
     }
 };
 
-// Search for lost items by location
-export const searchLostItemsByLocation = async (req: Request, res: Response) => {
+// // Search for lost items by location
+// export const searchLostItemsByLocation = async (req: Request, res: Response) => {
+//     const { longitude, latitude, maxDistance } = req.query;
+
+//     try {
+//         const lostItems = await LostItem.find({
+//             location: {
+//                 $near: {
+//                     $geometry: {
+//                         type: 'Point',
+//                         coordinates: [parseFloat(longitude as string), parseFloat(latitude as string)],
+//                     },
+//                     $maxDistance: parseInt(maxDistance as string),
+//                 },
+//             },
+//         });
+
+//         return res.status(200).json(lostItems);
+//     } catch (err) {
+//         return res.status(400).json({ error: 'Error searching lost items by location', details: err });
+//     }
+// };
+
+// get nearby lost items
+export const getNearbyLostItems = async (req: Request, res: Response) => {
     const { longitude, latitude, maxDistance } = req.query;
 
     try {
@@ -80,6 +103,25 @@ export const searchLostItemsByLocation = async (req: Request, res: Response) => 
 
         return res.status(200).json(lostItems);
     } catch (err) {
-        return res.status(400).json({ error: 'Error searching lost items by location', details: err });
+        return res.status(400).json({ error: 'Error fetching nearby lost items', details: err });
     }
 };
+
+
+//search lost item
+export const searchLostItem = async (req: Request, res: Response) => {
+    const { query } = req.query;
+
+    try {
+        const lostItems = await LostItem.find({
+            $or: [
+                { title: { $regex: query as string, $options: 'i' } },
+                { description: { $regex: query as string, $options: 'i' } },
+            ],
+        });
+
+        return res.status(200).json(lostItems);
+    } catch (err) {
+        return res.status(400).json({ error: 'Error searching lost items', details: err });
+    }
+}

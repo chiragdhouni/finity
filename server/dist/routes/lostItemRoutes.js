@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const lostItemController_1 = require("../controllers/lostItemController");
+const lostItemRouter = (0, express_1.Router)();
+lostItemRouter.post('/add', lostItemController_1.createLostItem);
+lostItemRouter.get('/:id', lostItemController_1.getLostItemById);
+lostItemRouter.get('/getAll', lostItemController_1.getAllLostItems);
+lostItemRouter.put('/update/:id', lostItemController_1.updateLostItem);
+lostItemRouter.delete('/delete/:id', lostItemController_1.deleteLostItem);
+lostItemRouter.get('/nearby', lostItemController_1.getNearbyLostItems);
+exports.default = lostItemRouter;
