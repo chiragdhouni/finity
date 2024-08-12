@@ -53,3 +53,13 @@ class getNearByLostItemsEvent extends LostItemEvent {
     required this.maxDistance,
   });
 }
+
+class searchLostItemEvent extends LostItemEvent {
+  final String searchQuery;
+
+  searchLostItemEvent({
+    required this.searchQuery,
+  });
+}
+
+class ClearSearchResultsEvent extends LostItemEvent {}

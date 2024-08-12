@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getNearbyLostItems = exports.searchLostItemsByLocation = exports.deleteLostItem = exports.updateLostItem = exports.getAllLostItems = exports.getLostItemById = exports.createLostItem = void 0;
+exports.searchLostItem = exports.getNearbyLostItems = exports.deleteLostItem = exports.updateLostItem = exports.getAllLostItems = exports.getLostItemById = exports.createLostItem = void 0;
 const lostItem_1 = __importDefault(require("../models/lostItem"));
 // Create a new lost item
 const createLostItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -79,28 +79,26 @@ const deleteLostItem = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.deleteLostItem = deleteLostItem;
-// Search for lost items by location
-const searchLostItemsByLocation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { longitude, latitude, maxDistance } = req.query;
-    try {
-        const lostItems = yield lostItem_1.default.find({
-            location: {
-                $near: {
-                    $geometry: {
-                        type: 'Point',
-                        coordinates: [parseFloat(longitude), parseFloat(latitude)],
-                    },
-                    $maxDistance: parseInt(maxDistance),
-                },
-            },
-        });
-        return res.status(200).json(lostItems);
-    }
-    catch (err) {
-        return res.status(400).json({ error: 'Error searching lost items by location', details: err });
-    }
-});
-exports.searchLostItemsByLocation = searchLostItemsByLocation;
+// // Search for lost items by location
+// export const searchLostItemsByLocation = async (req: Request, res: Response) => {
+//     const { longitude, latitude, maxDistance } = req.query;
+//     try {
+//         const lostItems = await LostItem.find({
+//             location: {
+//                 $near: {
+//                     $geometry: {
+//                         type: 'Point',
+//                         coordinates: [parseFloat(longitude as string), parseFloat(latitude as string)],
+//                     },
+//                     $maxDistance: parseInt(maxDistance as string),
+//                 },
+//             },
+//         });
+//         return res.status(200).json(lostItems);
+//     } catch (err) {
+//         return res.status(400).json({ error: 'Error searching lost items by location', details: err });
+//     }
+// };
 // get nearby lost items
 const getNearbyLostItems = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { longitude, latitude, maxDistance } = req.query;
@@ -123,3 +121,20 @@ const getNearbyLostItems = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.getNearbyLostItems = getNearbyLostItems;
+//search lost item
+const searchLostItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { query } = req.query;
+    try {
+        const lostItems = yield lostItem_1.default.find({
+            $or: [
+                { title: { $regex: query, $options: 'i' } },
+                { description: { $regex: query, $options: 'i' } },
+            ],
+        });
+        return res.status(200).json(lostItems);
+    }
+    catch (err) {
+        return res.status(400).json({ error: 'Error searching lost items', details: err });
+    }
+});
+exports.searchLostItem = searchLostItem;

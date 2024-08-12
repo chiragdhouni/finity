@@ -4,6 +4,7 @@ import 'package:finity/features/auth/repos/auth_repo.dart';
 import 'package:finity/features/home/services/location_service.dart';
 import 'package:finity/features/home/ui/pages/home_screen.dart';
 import 'package:finity/features/home/ui/pages/profile_screen.dart';
+import 'package:finity/features/lost_item_screen/ui/screens/lost_item_screen.dart';
 import 'package:finity/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -24,7 +25,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     ),
     // ItemSearchPage(),
     Text('Search by category'),
-    Text('Notification'),
+    LostItemScreen(),
     ProfileScreen()
   ];
 
@@ -68,8 +69,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
             label: 'seach by category',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.notification_add),
-            label: 'Notification',
+            icon: Icon(Icons.luggage),
+            label: 'lost and found',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

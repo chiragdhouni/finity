@@ -1,31 +1,33 @@
+// lost_item_state.dart
 part of 'lost_item_bloc.dart';
 
-sealed class LostItemState {}
+abstract class LostItemState {}
 
-final class LostItemInitial extends LostItemState {}
+class LostItemInitial extends LostItemState {}
 
-final class LostItemLoading extends LostItemState {}
+class LostItemLoading extends LostItemState {}
 
-final class LostItemSuccess extends LostItemState {
+class lostItemCreated extends LostItemState {
   final LostItem lostItem;
+  lostItemCreated(this.lostItem);
+}
 
+class LostItemSuccess extends LostItemState {
+  final LostItem lostItem;
   LostItemSuccess(this.lostItem);
 }
 
-final class LostItemFailure extends LostItemState {
+class SearchLostItemSuccess extends LostItemState {
+  final List<LostItem> lostItems;
+  SearchLostItemSuccess(this.lostItems);
+}
+
+class NearByLostItemSuccess extends LostItemState {
+  final List<LostItem> lostItems;
+  NearByLostItemSuccess(this.lostItems);
+}
+
+class LostItemError extends LostItemState {
   final String message;
-
-  LostItemFailure(this.message);
-}
-
-final class LostItemSearchSuccess extends LostItemState {
-  final List<LostItem> lostItems;
-
-  LostItemSearchSuccess(this.lostItems);
-}
-
-final class nearByLostItemSuccess extends LostItemState {
-  final List<LostItem> lostItems;
-
-  nearByLostItemSuccess(this.lostItems);
+  LostItemError(this.message);
 }

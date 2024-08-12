@@ -20,21 +20,23 @@ class LostItem {
   });
 
   factory LostItem.fromJson(Map<String, dynamic> json) {
+    // Provide default values if fields are null or missing
     return LostItem(
       id: json['_id'] ?? '',
-      name: json['name'],
-      description: json['description'],
-      status: json['status'],
-      dateLost: DateTime.parse(json['dateLost']),
-      contactInfo: json['contactInfo'],
+      name: json['name'] ?? '',
+      description: json['description'] ?? '',
+      status: json['status'] ?? '',
+      dateLost: DateTime.tryParse(json['dateLost']) ?? DateTime.now(),
+      contactInfo: json['contactInfo'] ?? '',
       owner: Owner.fromJson(json['owner']),
       location: Location.fromJson(json['location']),
     );
   }
 
   Map<String, dynamic> toJson() {
+    // Ensure id is not empty or null when sending to MongoDB
     return {
-      '_id': id,
+      '_id': id.isEmpty ? null : id,
       'name': name,
       'description': description,
       'status': status,
@@ -61,10 +63,10 @@ class Owner {
 
   factory Owner.fromJson(Map<String, dynamic> json) {
     return Owner(
-      id: json['id'],
-      name: json['name'],
-      email: json['email'],
-      address: json['address'],
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      email: json['email'] ?? '',
+      address: json['address'] ?? '',
     );
   }
 
@@ -89,8 +91,8 @@ class Location {
 
   factory Location.fromJson(Map<String, dynamic> json) {
     return Location(
-      type: json['type'],
-      coordinates: List<double>.from(json['coordinates']),
+      type: json['type'] ?? 'Point',
+      coordinates: List<double>.from(json['coordinates'] ?? []),
     );
   }
 

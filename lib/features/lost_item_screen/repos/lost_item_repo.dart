@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:finity/core/config/config.dart';
 import 'package:finity/models/lost_item_model.dart';
 import 'package:http/http.dart' as http;
@@ -37,14 +38,14 @@ class LostItemService {
         coordinates: [longitude, latitude],
       ),
     );
-
+    log(json.encode(lostItem.toJson()));
     // Making the API call to create the lost item
     final response = await http.post(
-      Uri.parse('${Config.serverURL}/lostItems/add'),
+      Uri.parse('${Config.serverURL}lostItems/add'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode(lostItem.toJson()),
     );
-
+    log(response.body);
     if (response.statusCode == 201) {
       return LostItem.fromJson(json.decode(response.body));
     } else {
@@ -99,17 +100,39 @@ class LostItemService {
 //     }
 //   }
 
-  // Search for lost items by location
-  Future<List<LostItem>> searchLostItemsByLocation({
+  // // Search for lost items by location
+  // Future<List<LostItem>> searchLostItemsByLocation({
+  //   required double longitude,
+  //   required double latitude,
+  //   required double maxDistance,
+  // }) async {
+  //   final response = await http.get(
+  //     Uri.parse(
+  //         '${Config.serverURL}/lostItems/search?longitude=$longitude&latitude=$latitude&maxDistance=$maxDistance'),
+  //   );
+
+  //   if (response.statusCode == 200) {
+  //     Iterable l = json.decode(response.body);
+  //     return List<LostItem>.from(l.map((model) => LostItem.fromJson(model)));
+  //   } else {
+  //     throw Exception('Failed to search lost items by location');
+  //   }
+  // }
+
+  //get near by lost items
+  Future<List<LostItem>> getNearByLostItems({
     required double longitude,
     required double latitude,
     required double maxDistance,
   }) async {
+    // log('${Config.serverURL}lostItems/nearby?longitude=$longitude&latitude=$latitude&maxDistance=$maxDistance');
     final response = await http.get(
       Uri.parse(
-          '${Config.serverURL}/lostItems/search?longitude=$longitude&latitude=$latitude&maxDistance=$maxDistance'),
+          '${Config.serverURL}lostItems/nearby?longitude=$latitude&latitude=$longitude&maxDistance=$maxDistance'),
     );
 
+    log(response.body);
+    log(response.statusCode.toString());
     if (response.statusCode == 200) {
       Iterable l = json.decode(response.body);
       return List<LostItem>.from(l.map((model) => LostItem.fromJson(model)));
@@ -118,22 +141,17 @@ class LostItemService {
     }
   }
 
-  //get near by lost items
-  Future<List<LostItem>> getNearByLostItems({
-    required double longitude,
-    required double latitude,
-    required double maxDistance,
-  }) async {
+  // Search for lost items by query
+  Future<List<LostItem>> searchLostItems(String searchQuery) async {
     final response = await http.get(
-      Uri.parse(
-          '${Config.serverURL}/lostItems/nearby?longitude=$longitude&latitude=$latitude&maxDistance=$maxDistance'),
+      Uri.parse('${Config.serverURL}lostItems/search?query=$searchQuery'),
     );
 
     if (response.statusCode == 200) {
       Iterable l = json.decode(response.body);
       return List<LostItem>.from(l.map((model) => LostItem.fromJson(model)));
     } else {
-      throw Exception('Failed to search lost items by location');
+      throw Exception('Failed to search lost items by query');
     }
   }
 }

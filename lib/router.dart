@@ -4,6 +4,7 @@ import 'package:finity/features/auth/ui/pages/signup_page.dart';
 import 'package:finity/features/home/bottom_nav_bar.dart';
 import 'package:finity/features/home/ui/pages/display_items_screen.dart';
 import 'package:finity/features/home/ui/pages/home_screen.dart';
+import 'package:finity/features/lost_item_screen/ui/screens/add_lost_item_screen.dart';
 import 'package:flutter/material.dart';
 
 Route<dynamic> generateRoute(RouteSettings routeSettings) {
@@ -47,6 +48,12 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
       return MaterialPageRoute(
         settings: routeSettings,
         builder: (_) => const DisplayItemsScreen(),
+      );
+
+    case AddLostItemScreen.routeName:
+      return MaterialPageRoute(
+        settings: routeSettings,
+        builder: (_) => AddLostItemScreen(),
       );
     default:
       return MaterialPageRoute(

@@ -5,6 +5,7 @@ import LostItem from '../models/lostItem';
 export const createLostItem = async (req: Request, res: Response) => {
     try {
         const lostItem = new LostItem(req.body);
+        
         await lostItem.save();
         return res.status(201).json(lostItem);
     } catch (err) {
