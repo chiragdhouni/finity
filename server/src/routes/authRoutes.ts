@@ -3,6 +3,7 @@ import { registerUser, loginUser ,tokenIsValid, updateUserLocation} from '../con
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import {auth} from '../middlewares/auth';
 import User from '../models/user';
+import { getUserNotifications } from '../controllers/notification_controller';
 const authRouter = Router();
 
 authRouter.post('/register', registerUser);
@@ -10,27 +11,25 @@ authRouter.post('/login', loginUser);
 authRouter.get('/tokenIsValid',tokenIsValid);
 authRouter.patch('/:userId/location', updateUserLocation);
 
-
+authRouter.get('/notifications', getUserNotifications);
 
 authRouter.get("/user", auth, async (req: Request, res: Response) => {
-    try {
-      if (!req.user) {
-        return res.status(400).json({ msg: "User ID not found in request." });
-      }
-  
-      const user = await User.findById(req.user);
-      if (!user) {
-        return res.status(404).json({ msg: "User not found." });
-      }
-  
-        // Retrieve the token from the request header
-  const token = req.header('x-auth-token');
+  try {
+    // Since req.user now contains the full user object
+    const user = req.user;
 
-  // Add the token to the response object
-  res.status(201).json({ token, user });
-    } catch (error) {
-      res.status(500).json({ error: (error as Error).message });
+    if (!user) {
+      return res.status(404).json({ msg: "User not found." });
     }
-  });
+
+    // Retrieve the token from the request header
+    const token = req.header('x-auth-token');
+
+    // Add the token to the response object
+    res.status(200).json({ token, user });
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message });
+  }
+});
 
 export default authRouter;

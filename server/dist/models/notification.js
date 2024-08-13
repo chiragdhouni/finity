@@ -23,25 +23,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Notification = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-const LostItemSchema = new mongoose_1.Schema({
-    name: { type: String, required: true },
-    description: { type: String, required: true },
-    // category: { type: String, required: true },
-    status: { type: String, required: true, enum: ['lost', 'found'] },
-    dateLost: { type: Date, required: true },
-    contactInfo: { type: String, required: true },
-    claims: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: 'Claim' }],
-    owner: {
-        id: { type: mongoose_1.default.Schema.Types.ObjectId, required: true },
-        name: { type: String, required: true },
-        email: { type: String, required: true },
-        address: { type: String, required: true }
-    },
-    location: {
-        type: { type: String, enum: ['Point'], required: true },
-        coordinates: { type: [Number], required: true },
-    },
+const NotificationSchema = new mongoose_1.Schema({
+    userId: { type: mongoose_1.default.Schema.Types.ObjectId, ref: 'User', required: true },
+    message: { type: String, required: true },
+    read: { type: Boolean, default: false },
+}, {
+    timestamps: true,
 });
-LostItemSchema.index({ location: '2dsphere' });
-exports.default = mongoose_1.default.model('LostItem', LostItemSchema);
+exports.Notification = mongoose_1.default.model('Notification', NotificationSchema);

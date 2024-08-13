@@ -1,5 +1,8 @@
 import 'package:finity/models/lost_item_model.dart';
+import 'package:finity/models/user_model.dart';
+import 'package:finity/provider/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LostItemCard extends StatefulWidget {
   final LostItem item;
@@ -61,6 +64,7 @@ class LostItemDetail extends StatefulWidget {
 class _LostItemDetailState extends State<LostItemDetail> {
   @override
   Widget build(BuildContext context) {
+    UserModel user = Provider.of<UserProvider>(context).user;
     LostItem item = widget.item;
     return Scaffold(
       appBar: AppBar(
@@ -77,6 +81,30 @@ class _LostItemDetailState extends State<LostItemDetail> {
             Text(item.owner.address),
             Text(item.owner.email),
             Text(item.contactInfo),
+            ElevatedButton(
+              onPressed: () {},
+              child: Text('Claim Item', style: TextStyle(color: Colors.white)),
+            ),
+            user.id == item.owner.id
+                ? Row(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {},
+                        child: Text('Edit Item',
+                            style: TextStyle(color: Colors.white)),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {},
+                        child: Text('Delete Item',
+                            style: TextStyle(color: Colors.white)),
+                      ),
+                      ElevatedButton(
+                          onPressed: () {},
+                          child: Text('Mark as Found',
+                              style: TextStyle(color: Colors.white)))
+                    ],
+                  )
+                : Container()
           ],
         ),
       ),

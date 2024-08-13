@@ -34,6 +34,7 @@ const UserSchema = new mongoose_1.Schema({
     itemsLended: { type: [mongoose_1.default.Schema.Types.ObjectId], ref: 'Item', default: [] },
     itemsBorrowed: { type: [mongoose_1.default.Schema.Types.ObjectId], ref: 'Item', default: [] },
     itemsRequested: { type: [mongoose_1.default.Schema.Types.ObjectId], ref: 'Item', default: [] },
+    notifications: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: 'Notification' }],
     location: {
         type: { type: String, enum: ['Point'], default: 'Point' }, // Default to 'Point' for a valid GeoJSON
         coordinates: {

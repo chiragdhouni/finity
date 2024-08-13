@@ -34,6 +34,7 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             itemsLended: [],
             itemsBorrowed: [],
             itemsRequested: [],
+            notifications: [],
         });
         yield user.save();
         res.status(201).json({ user });

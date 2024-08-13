@@ -22,6 +22,7 @@ export const registerUser = async (req: Request, res: Response) => {
       itemsLended: [],
       itemsBorrowed: [],
       itemsRequested: [],
+      notifications: [],
     });
 
     await user.save();
@@ -77,15 +78,6 @@ export const tokenIsValid = async (req: Request, res: Response) => {
     res.status(500).json({ error: (e as Error).message });
   }
 };
-// Extend the Request interface globally to include user and token
-declare global {
-  namespace Express {
-    interface Request {
-      user?: string; // Assuming user ID is a string
-      token?: string;
-    }
-  }
-}
 
 
 

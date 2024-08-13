@@ -27,6 +27,7 @@ class LostItemService {
       status: status,
       dateLost: dateLost,
       contactInfo: contactInfo,
+      claims: [],
       owner: Owner(
         id: ownerId,
         name: ownerName,

@@ -7,7 +7,7 @@ interface ILostItem extends Document {
     status: string;
     dateLost: Date;
     contactInfo:string
-
+    claims: Types.ObjectId[];
     owner: {
         id: Types.ObjectId;
         name: string;
@@ -28,7 +28,8 @@ const LostItemSchema: Schema = new Schema({
     status: { type: String, required: true, enum: ['lost', 'found'] },
     dateLost: { type: Date, required: true },
     contactInfo: { type: String, required: true },
-
+    
+    claims: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Claim' }],
     owner: {
         id: { type: mongoose.Schema.Types.ObjectId, required: true },
         name: { type: String, required: true },

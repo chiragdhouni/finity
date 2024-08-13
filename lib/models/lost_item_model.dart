@@ -5,6 +5,7 @@ class LostItem {
   String status;
   DateTime dateLost;
   String contactInfo;
+  List<String> claims;
   Owner owner;
   Location location;
 
@@ -15,12 +16,12 @@ class LostItem {
     required this.status,
     required this.dateLost,
     required this.contactInfo,
+    required this.claims,
     required this.owner,
     required this.location,
   });
 
   factory LostItem.fromJson(Map<String, dynamic> json) {
-    // Provide default values if fields are null or missing
     return LostItem(
       id: json['_id'] ?? '',
       name: json['name'] ?? '',
@@ -28,13 +29,13 @@ class LostItem {
       status: json['status'] ?? '',
       dateLost: DateTime.tryParse(json['dateLost']) ?? DateTime.now(),
       contactInfo: json['contactInfo'] ?? '',
+      claims: List<String>.from(json['claims'] ?? []),
       owner: Owner.fromJson(json['owner']),
       location: Location.fromJson(json['location']),
     );
   }
 
   Map<String, dynamic> toJson() {
-    // Ensure id is not empty or null when sending to MongoDB
     return {
       '_id': id.isEmpty ? null : id,
       'name': name,
@@ -42,6 +43,7 @@ class LostItem {
       'status': status,
       'dateLost': dateLost.toIso8601String(),
       'contactInfo': contactInfo,
+      'claims': claims,
       'owner': owner.toJson(),
       'location': location.toJson(),
     };

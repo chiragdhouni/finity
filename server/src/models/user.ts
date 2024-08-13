@@ -10,6 +10,7 @@ interface IUser extends Document {
   itemsLended: Types.ObjectId[];
   itemsBorrowed: Types.ObjectId[];
   itemsRequested: Types.ObjectId[];
+  notifications: Types.ObjectId[];
   location?: {
     type: string;
     coordinates: [number, number];
@@ -27,7 +28,7 @@ const UserSchema: Schema = new Schema({
   itemsLended: { type: [mongoose.Schema.Types.ObjectId], ref: 'Item', default: [] },
   itemsBorrowed: { type: [mongoose.Schema.Types.ObjectId], ref: 'Item', default: [] },
   itemsRequested: { type: [mongoose.Schema.Types.ObjectId], ref: 'Item', default: [] },
-
+  notifications: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Notification' }],
   location: {
     type: { type: String, enum: ['Point'], default: 'Point' }, // Default to 'Point' for a valid GeoJSON
     coordinates: {
@@ -36,6 +37,14 @@ const UserSchema: Schema = new Schema({
     },
   },
 });
+declare global {
+  namespace Express {
+    interface Request {
+      user?: IUser & Document; // Adjust based on your IUser interface
+      token?: string;
+    }
+  }
+}
 
 // Create a 2dsphere index for geospatial queries if location is provided
 UserSchema.index({ location: '2dsphere' });

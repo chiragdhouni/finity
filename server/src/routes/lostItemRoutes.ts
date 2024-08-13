@@ -8,6 +8,7 @@ import {
     getNearbyLostItems,
     searchLostItem
 } from '../controllers/lostItemController';
+import { acceptClaim, rejectClaim, submitClaim } from '../controllers/claimController';
 
 const lostItemRouter = Router();
 
@@ -19,4 +20,8 @@ lostItemRouter.get('/:id', getLostItemById); // Place this after 'nearby'
 lostItemRouter.put('/update/:id', updateLostItem);
 lostItemRouter.delete('/delete/:id', deleteLostItem);
 
+//claims routes
+lostItemRouter.post('/claim/submit', submitClaim);
+lostItemRouter.post('/claim/accept', acceptClaim);
+lostItemRouter.post('/claim/reject', rejectClaim);
 export default lostItemRouter;
