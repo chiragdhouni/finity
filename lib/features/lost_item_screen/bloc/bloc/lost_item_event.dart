@@ -63,3 +63,15 @@ class searchLostItemEvent extends LostItemEvent {
 }
 
 class ClearSearchResultsEvent extends LostItemEvent {}
+
+class SubmitClaimEvent extends LostItemEvent {
+  final String lostItemId;
+  final String proofText;
+  final List<String> proofImages;
+
+  SubmitClaimEvent({
+    required this.lostItemId,
+    required this.proofText,
+    required this.proofImages,
+  });
+}

@@ -15,27 +15,29 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.auth = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const user_1 = __importDefault(require("../models/user")); // Adjust the import according to your project structure
-// Define a middleware function for authentication
 const auth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const token = req.header('x-auth-token');
         if (!token) {
+            console.log('No token provided');
             return res.status(401).json({ msg: 'No auth token, access denied' });
         }
-        const verified = jsonwebtoken_1.default.verify(token, 'passwordKey'); // Type assertion for JWT payload
+        const verified = jsonwebtoken_1.default.verify(token, 'passwordKey');
         if (!verified) {
+            console.log('Token verification failed');
             return res.status(401).json({ msg: 'Token verification failed, authorization denied.' });
         }
-        // Retrieve user from the database
         const user = yield user_1.default.findById(verified.id).exec();
         if (!user) {
+            console.log('User not found for ID:', verified.id);
             return res.status(401).json({ msg: 'User not found' });
         }
-        req.user = user; // Assign the full user object to req.user
-        req.token = token; // Optionally assign the token to req.token
-        next(); // Move to the next middleware
+        req.user = user;
+        req.token = token;
+        next();
     }
     catch (err) {
+        console.log('Middleware Error:', err.message);
         res.status(500).json({ error: err.message });
     }
 });

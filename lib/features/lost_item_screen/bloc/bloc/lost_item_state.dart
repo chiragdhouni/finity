@@ -31,3 +31,5 @@ class LostItemError extends LostItemState {
   final String message;
   LostItemError(this.message);
 }
+
+class SubmitClaimSuccess extends LostItemState {}

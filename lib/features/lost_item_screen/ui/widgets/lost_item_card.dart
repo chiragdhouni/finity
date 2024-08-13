@@ -1,3 +1,5 @@
+import 'package:finity/features/lost_item_screen/ui/widgets/claim_item_form.dart';
+
 import 'package:finity/models/lost_item_model.dart';
 import 'package:finity/models/user_model.dart';
 import 'package:finity/provider/user_provider.dart';
@@ -82,7 +84,11 @@ class _LostItemDetailState extends State<LostItemDetail> {
             Text(item.owner.email),
             Text(item.contactInfo),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                // Claim item
+                Navigator.pushNamed(context, ClaimItemForm.routeName,
+                    arguments: item);
+              },
               child: Text('Claim Item', style: TextStyle(color: Colors.white)),
             ),
             user.id == item.owner.id

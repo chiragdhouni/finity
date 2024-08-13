@@ -2,12 +2,16 @@ import { Request, Response } from 'express';
 import  {Claim}  from '../models/claim';
 import  LostItem  from '../models/lostItem';
 import  {Notification}  from '../models/notification';
+import { log } from 'console';
+import  User  from '../models/user';
 
 export const submitClaim = async (req: Request, res: Response) => {
   try {
     const { lostItemId, proofText, proofImages } = req.body;
+    
     if (!req.user) {
-        return res.status(401).json({ msg: 'Unauthorized: User not found' });
+        
+        return res.status(401).json({ msg: `uUnauthorized: User not found ${req.user!.id}` });
       }
   
     const userId = req.user.id;
@@ -30,6 +34,11 @@ export const submitClaim = async (req: Request, res: Response) => {
       userId: lostItem?.owner.id,
       message: `Someone has claimed the item: ${lostItem?.name}.`,
     });
+    
+    const owner = await User.findById(lostItem?.owner.id);
+    owner?.notifications.push(notification._id as any);
+    await owner?.save();
+
     await notification.save();
 
     res.status(201).json({ message: 'Claim submitted successfully', claim });

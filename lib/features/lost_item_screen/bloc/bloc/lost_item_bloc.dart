@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:finity/features/lost_item_screen/repos/claim_lost_item_repo.dart';
 import 'package:finity/features/lost_item_screen/repos/lost_item_repo.dart';
 import 'package:finity/models/lost_item_model.dart';
 
@@ -10,11 +11,16 @@ part 'lost_item_state.dart';
 
 class LostItemBloc extends Bloc<LostItemEvent, LostItemState> {
   final LostItemService lostItemService;
-  LostItemBloc(this.lostItemService) : super(LostItemInitial()) {
+  final ClaimLostItemRepo claimLostItemRepo;
+  LostItemBloc(this.lostItemService, this.claimLostItemRepo)
+      : super(LostItemInitial()) {
     on<CreateLostItemEvent>(_onCreateLostItem);
     // on<searchLostItemsByLocation>(_onSearchLostItemsByLocation);
     on<getNearByLostItemsEvent>(_onGetNearByLostItems);
     on<searchLostItemEvent>(_onSearchLostItems);
+
+    // claming lost item
+    on<SubmitClaimEvent>(_onSumbitClaimEvent);
   }
 
   FutureOr<void> _onCreateLostItem(
@@ -82,6 +88,21 @@ class LostItemBloc extends Bloc<LostItemEvent, LostItemState> {
           maxDistance: event.maxDistance);
       emit(NearByLostItemSuccess(
           lostItems)); // Changed state name to NearByLostItemSuccess
+    } catch (e) {
+      log(e.toString());
+      emit(LostItemError(e.toString()));
+    }
+  }
+
+  FutureOr<void> _onSumbitClaimEvent(
+      SubmitClaimEvent event, Emitter<LostItemState> emit) {
+    emit(LostItemLoading());
+    try {
+      claimLostItemRepo.submitClaim(
+          lostItemId: event.lostItemId,
+          proofText: event.proofText,
+          proofImages: event.proofImages);
+      emit(SubmitClaimSuccess());
     } catch (e) {
       log(e.toString());
       emit(LostItemError(e.toString()));

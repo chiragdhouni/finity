@@ -255,7 +255,7 @@ class AuthService {
             },
           );
 
-          if (userRes.statusCode == 201) {
+          if (userRes.statusCode == 201 || userRes.statusCode == 200) {
             var userProvider =
                 Provider.of<UserProvider>(context, listen: false);
             log('Fetched user data: ${userRes.body}');

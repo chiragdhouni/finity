@@ -9,19 +9,21 @@ import {
     searchLostItem
 } from '../controllers/lostItemController';
 import { acceptClaim, rejectClaim, submitClaim } from '../controllers/claimController';
+import { auth } from '../middlewares/auth';
 
 const lostItemRouter = Router();
 
-lostItemRouter.post('/add', createLostItem);
-lostItemRouter.get('/nearby', getNearbyLostItems); // Put this route before the ':id' route
+lostItemRouter.post('/add', auth, createLostItem);
+lostItemRouter.get('/nearby', getNearbyLostItems);
 lostItemRouter.get('/getAll', getAllLostItems);
 lostItemRouter.get('/search', searchLostItem);
-lostItemRouter.get('/:id', getLostItemById); // Place this after 'nearby'
-lostItemRouter.put('/update/:id', updateLostItem);
-lostItemRouter.delete('/delete/:id', deleteLostItem);
+lostItemRouter.get('/:id', getLostItemById);
+lostItemRouter.put('/update/:id', auth, updateLostItem);
+lostItemRouter.delete('/delete/:id', auth, deleteLostItem);
 
-//claims routes
-lostItemRouter.post('/claim/submit', submitClaim);
-lostItemRouter.post('/claim/accept', acceptClaim);
-lostItemRouter.post('/claim/reject', rejectClaim);
+// Claims routes with authentication
+lostItemRouter.post('/claim/submit', auth, submitClaim);
+lostItemRouter.post('/claim/accept', auth, acceptClaim);
+lostItemRouter.post('/claim/reject', auth, rejectClaim);
+
 export default lostItemRouter;

@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:finity/features/lost_item_screen/bloc/bloc/lost_item_bloc.dart';
 import 'package:finity/features/lost_item_screen/ui/screens/display_nearby_item_screen.dart';
-import 'package:finity/models/user_model.dart';
-import 'package:finity/provider/user_provider.dart';
+// import 'package:finity/models/user_model.dart';
+// import 'package:finity/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:finity/models/lost_item_model.dart';
+// import 'package:finity/models/lost_item_model.dart';
 import 'package:provider/provider.dart';
 
 class LostItemScreen extends StatefulWidget {

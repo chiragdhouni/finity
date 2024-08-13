@@ -5,6 +5,8 @@ import 'package:finity/features/home/bottom_nav_bar.dart';
 import 'package:finity/features/home/ui/pages/display_items_screen.dart';
 import 'package:finity/features/home/ui/pages/home_screen.dart';
 import 'package:finity/features/lost_item_screen/ui/screens/add_lost_item_screen.dart';
+import 'package:finity/features/lost_item_screen/ui/widgets/claim_item_form.dart';
+import 'package:finity/models/lost_item_model.dart';
 import 'package:flutter/material.dart';
 
 Route<dynamic> generateRoute(RouteSettings routeSettings) {
@@ -54,6 +56,13 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
       return MaterialPageRoute(
         settings: routeSettings,
         builder: (_) => AddLostItemScreen(),
+      );
+
+    case ClaimItemForm.routeName:
+      final LostItem item = routeSettings.arguments as LostItem;
+      return MaterialPageRoute(
+        settings: routeSettings,
+        builder: (_) => ClaimItemForm(item: item),
       );
     default:
       return MaterialPageRoute(

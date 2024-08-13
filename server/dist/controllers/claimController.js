@@ -16,11 +16,12 @@ exports.rejectClaim = exports.acceptClaim = exports.submitClaim = void 0;
 const claim_1 = require("../models/claim");
 const lostItem_1 = __importDefault(require("../models/lostItem"));
 const notification_1 = require("../models/notification");
+const user_1 = __importDefault(require("../models/user"));
 const submitClaim = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { lostItemId, proofText, proofImages } = req.body;
         if (!req.user) {
-            return res.status(401).json({ msg: 'Unauthorized: User not found' });
+            return res.status(401).json({ msg: `uUnauthorized: User not found ${req.user.id}` });
         }
         const userId = req.user.id;
         const claim = new claim_1.Claim({
@@ -38,6 +39,9 @@ const submitClaim = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             userId: lostItem === null || lostItem === void 0 ? void 0 : lostItem.owner.id,
             message: `Someone has claimed the item: ${lostItem === null || lostItem === void 0 ? void 0 : lostItem.name}.`,
         });
+        const owner = yield user_1.default.findById(lostItem === null || lostItem === void 0 ? void 0 : lostItem.owner.id);
+        owner === null || owner === void 0 ? void 0 : owner.notifications.push(notification._id);
+        yield (owner === null || owner === void 0 ? void 0 : owner.save());
         yield notification.save();
         res.status(201).json({ message: 'Claim submitted successfully', claim });
     }

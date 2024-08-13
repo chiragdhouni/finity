@@ -30,6 +30,8 @@ environment:
 dependencies:
   bloc: ^8.1.4
   carousel_slider: ^4.2.1
+  cloudinary: ^1.2.0
+  cloudinary_public: ^0.23.1
   cupertino_icons: ^1.0.6
   flutter:
     sdk: flutter
@@ -37,6 +39,7 @@ dependencies:
   geolocator: ^8.1.0
   google_maps_flutter: ^2.7.1
   http: null
+  image_picker: ^1.1.2
   provider: ^6.1.2
   shared_preferences: ^2.2.3
   uuid: null

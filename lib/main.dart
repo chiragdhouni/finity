@@ -12,6 +12,7 @@ import 'package:finity/features/home/bottom_nav_bar.dart';
 import 'package:finity/features/home/repos/event_repo.dart';
 import 'package:finity/features/home/repos/home_repo.dart';
 import 'package:finity/features/lost_item_screen/bloc/bloc/lost_item_bloc.dart';
+import 'package:finity/features/lost_item_screen/repos/claim_lost_item_repo.dart';
 import 'package:finity/features/lost_item_screen/repos/lost_item_repo.dart';
 
 import 'package:finity/provider/user_provider.dart';
@@ -41,7 +42,8 @@ void main() {
             create: (context) => AdBloc(EventRepo()),
           ),
           BlocProvider<LostItemBloc>(
-              create: (context) => LostItemBloc(LostItemService())),
+              create: (context) => LostItemBloc(
+                  LostItemService(), ClaimLostItemRepo(context: context))),
         ],
         child: MyApp(),
       ),
