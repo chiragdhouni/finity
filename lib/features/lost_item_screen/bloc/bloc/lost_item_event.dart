@@ -62,7 +62,33 @@ class searchLostItemEvent extends LostItemEvent {
   });
 }
 
+class deleteLostItemEvent extends LostItemEvent {
+  final String lostItemId;
+
+  deleteLostItemEvent({
+    required this.lostItemId,
+  });
+}
+
 class ClearSearchResultsEvent extends LostItemEvent {}
+
+class getLostItemByIdEvent extends LostItemEvent {
+  final String lostItemId;
+
+  getLostItemByIdEvent({
+    required this.lostItemId,
+  });
+}
+
+class updateLostItemEvent extends LostItemEvent {
+  final LostItem lostItem;
+
+  updateLostItemEvent({
+    required this.lostItem,
+  });
+}
+
+// claiming lost item
 
 class SubmitClaimEvent extends LostItemEvent {
   final String lostItemId;
@@ -73,5 +99,21 @@ class SubmitClaimEvent extends LostItemEvent {
     required this.lostItemId,
     required this.proofText,
     required this.proofImages,
+  });
+}
+
+class AcceptClaimEvent extends LostItemEvent {
+  final String claimId;
+
+  AcceptClaimEvent({
+    required this.claimId,
+  });
+}
+
+class RejectClaimEvent extends LostItemEvent {
+  final String claimId;
+
+  RejectClaimEvent({
+    required this.claimId,
   });
 }

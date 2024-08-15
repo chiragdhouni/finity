@@ -23,11 +23,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.initializeSocket = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
+// Assume `io` is your Socket.IO server instance
+let io;
 const UserSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true },
-    password: { type: String, required: true }, // Password field
+    password: { type: String, required: true },
     address: { type: String, required: true },
     events: { type: [mongoose_1.default.Schema.Types.ObjectId], ref: 'Event', default: [] },
     itemsListed: { type: [mongoose_1.default.Schema.Types.ObjectId], ref: 'Item', default: [] },
@@ -36,13 +39,30 @@ const UserSchema = new mongoose_1.Schema({
     itemsRequested: { type: [mongoose_1.default.Schema.Types.ObjectId], ref: 'Item', default: [] },
     notifications: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: 'Notification' }],
     location: {
-        type: { type: String, enum: ['Point'], default: 'Point' }, // Default to 'Point' for a valid GeoJSON
+        type: { type: String, enum: ['Point'], default: 'Point' },
         coordinates: {
-            type: [],
-            default: [0.0, 0.0], // Default to an empty array
+            type: [Number],
+            default: [0.0, 0.0],
         },
     },
 });
 // Create a 2dsphere index for geospatial queries if location is provided
 UserSchema.index({ location: '2dsphere' });
+UserSchema.post('save', function (doc) {
+    // Emit a Socket.IO event when the user document is updated
+    if (io) {
+        io.to(`user_${doc._id}`).emit('user_update', doc);
+    }
+});
+UserSchema.post('findOneAndUpdate', function (doc) {
+    // Emit a Socket.IO event when the user document is updated via findOneAndUpdate
+    if (io && doc) {
+        io.to(`user_${doc._id}`).emit('user_update', doc);
+    }
+});
+// Initialize your Socket.IO instance
+const initializeSocket = (socketIO) => {
+    io = socketIO;
+};
+exports.initializeSocket = initializeSocket;
 exports.default = mongoose_1.default.model('User', UserSchema);

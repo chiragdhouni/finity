@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ClaimLostItemRepo {
   final BuildContext context;
@@ -45,15 +46,20 @@ class ClaimLostItemRepo {
     }
   }
 
-  Future<void> acceptClaim(String claimId, String token) async {
-    final url = Uri.parse('http://your-backend-url/api/accept-claim');
-
+  Future<void> acceptClaim(String claimId) async {
+    final url = Uri.parse('${Config.serverURL}lostItems/claim/accept');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('x-auth-token');
+    if (token == null) {
+      token = '';
+      prefs.setString('x-auth-token', token);
+    }
     try {
       final response = await http.post(
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
+          'x-auth-token': token,
         },
         body: jsonEncode({
           'claimId': claimId,
@@ -70,15 +76,21 @@ class ClaimLostItemRepo {
     }
   }
 
-  Future<void> rejectClaim(String claimId, String token) async {
-    final url = Uri.parse('http://your-backend-url/api/reject-claim');
+  Future<void> rejectClaim(String claimId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('x-auth-token');
+    if (token == null) {
+      token = '';
+      prefs.setString('x-auth-token', token);
+    }
+    final url = Uri.parse('${Config.serverURL}lostItems/claim/reject');
 
     try {
       final response = await http.post(
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
+          'x-auth-token': token,
         },
         body: jsonEncode({
           'claimId': claimId,

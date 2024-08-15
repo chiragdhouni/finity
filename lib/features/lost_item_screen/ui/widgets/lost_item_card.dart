@@ -104,10 +104,6 @@ class _LostItemDetailState extends State<LostItemDetail> {
                         child: Text('Delete Item',
                             style: TextStyle(color: Colors.white)),
                       ),
-                      ElevatedButton(
-                          onPressed: () {},
-                          child: Text('Mark as Found',
-                              style: TextStyle(color: Colors.white)))
                     ],
                   )
                 : Container()

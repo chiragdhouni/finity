@@ -68,9 +68,17 @@ const acceptClaim = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         yield claim.save();
         const notification = new notification_1.Notification({
             userId: claim.userId,
-            message: `Your claim for the item: ${lostItem === null || lostItem === void 0 ? void 0 : lostItem.name} has been accepted.`,
+            message: `Your claim for the item: ${lostItem === null || lostItem === void 0 ? void 0 : lostItem.name} has been accepted. 
+        Please contact the owner to retrieve your item.
+        details : 
+        owner name : ${req.user.name}
+        owner email : ${req.user.email}
+        owner phone : ${lostItem === null || lostItem === void 0 ? void 0 : lostItem.contactInfo}
+        location : ${lostItem === null || lostItem === void 0 ? void 0 : lostItem.location.coordinates}
+        `,
         });
         yield notification.save();
+        lostItem.status = 'found';
         res.status(200).json({ message: 'Claim accepted successfully', claim });
     }
     catch (err) {

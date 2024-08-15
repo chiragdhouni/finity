@@ -27,7 +27,6 @@ const mongoose_1 = __importStar(require("mongoose"));
 const LostItemSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     description: { type: String, required: true },
-    // category: { type: String, required: true },
     status: { type: String, required: true, enum: ['lost', 'found'] },
     dateLost: { type: Date, required: true },
     contactInfo: { type: String, required: true },
@@ -42,6 +41,15 @@ const LostItemSchema = new mongoose_1.Schema({
         type: { type: String, enum: ['Point'], required: true },
         coordinates: { type: [Number], required: true },
     },
+    foundAt: { type: Date, expires: '2d' }, // TTL index to delete the document 2 days after foundAt
 });
 LostItemSchema.index({ location: '2dsphere' });
+// Middleware to set foundAt when status is changed to "found"
+LostItemSchema.pre('save', function (next) {
+    const lostItem = this;
+    if (lostItem.isModified('status') && lostItem.status === 'found') {
+        lostItem.foundAt = new Date();
+    }
+    next();
+});
 exports.default = mongoose_1.default.model('LostItem', LostItemSchema);

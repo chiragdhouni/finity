@@ -18,9 +18,14 @@ class LostItemBloc extends Bloc<LostItemEvent, LostItemState> {
     // on<searchLostItemsByLocation>(_onSearchLostItemsByLocation);
     on<getNearByLostItemsEvent>(_onGetNearByLostItems);
     on<searchLostItemEvent>(_onSearchLostItems);
+    on<deleteLostItemEvent>(_onDeleteLostItem);
+    on<getLostItemByIdEvent>(_onGetLostItemById);
+    on<updateLostItemEvent>(_onUpdateLostItem);
 
     // claming lost item
     on<SubmitClaimEvent>(_onSumbitClaimEvent);
+    on<AcceptClaimEvent>(_onAcceptClaimEvent);
+    on<RejectClaimEvent>(_onRejectClaimEvent);
   }
 
   FutureOr<void> _onCreateLostItem(
@@ -103,6 +108,70 @@ class LostItemBloc extends Bloc<LostItemEvent, LostItemState> {
           proofText: event.proofText,
           proofImages: event.proofImages);
       emit(SubmitClaimSuccess());
+    } catch (e) {
+      log(e.toString());
+      emit(LostItemError(e.toString()));
+    }
+  }
+
+  FutureOr<void> _onDeleteLostItem(
+      deleteLostItemEvent event, Emitter<LostItemState> emit) {
+    emit(LostItemLoading());
+    try {
+      lostItemService.deleteLostItem(event.lostItemId);
+      emit(LostItemDeleteSuccess());
+    } catch (e) {
+      log(e.toString());
+      emit(LostItemError(e.toString()));
+    }
+  }
+
+  FutureOr<void> _onGetLostItemById(
+      getLostItemByIdEvent event, Emitter<LostItemState> emit) async {
+    emit(LostItemLoading());
+    try {
+      LostItem lostItem =
+          await lostItemService.getLostItemById(event.lostItemId);
+      emit(LostItemSuccess(lostItem));
+    } catch (e) {
+      log(e.toString());
+      emit(LostItemError(e.toString()));
+    }
+  }
+
+  FutureOr<void> _onUpdateLostItem(
+      updateLostItemEvent event, Emitter<LostItemState> emit) {
+    emit(LostItemLoading());
+    try {
+      lostItemService.updateLostItem(
+        event.lostItem.id,
+        event.lostItem,
+      );
+      emit(LostItemSuccess(event.lostItem));
+    } catch (e) {
+      log(e.toString());
+      emit(LostItemError(e.toString()));
+    }
+  }
+
+  FutureOr<void> _onAcceptClaimEvent(
+      AcceptClaimEvent event, Emitter<LostItemState> emit) {
+    emit(LostItemLoading());
+    try {
+      claimLostItemRepo.acceptClaim(event.claimId);
+      emit(AcceptClaimSuccess());
+    } catch (e) {
+      log(e.toString());
+      emit(LostItemError(e.toString()));
+    }
+  }
+
+  FutureOr<void> _onRejectClaimEvent(
+      RejectClaimEvent event, Emitter<LostItemState> emit) {
+    emit(LostItemLoading());
+    try {
+      claimLostItemRepo.rejectClaim(event.claimId);
+      emit(RejectClaimSuccess());
     } catch (e) {
       log(e.toString());
       emit(LostItemError(e.toString()));

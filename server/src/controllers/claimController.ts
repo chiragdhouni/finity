@@ -64,16 +64,25 @@ export const acceptClaim = async (req: Request, res: Response) => {
       if (lostItem?.owner.id.toString() !== req.user.id.toString()) {
         return res.status(403).json({ error: 'You are not authorized to accept this claim' });
       }
+      
   
       claim.status = 'accepted';
       await claim.save();
   
       const notification = new Notification({
         userId: claim.userId,
-        message: `Your claim for the item: ${lostItem?.name} has been accepted.`,
+        message: `Your claim for the item: ${lostItem?.name} has been accepted. 
+        Please contact the owner to retrieve your item.
+        details : 
+        owner name : ${req.user.name}
+        owner email : ${req.user.email}
+        owner phone : ${lostItem?.contactInfo}
+        location : ${lostItem?.location.coordinates}
+        `,
       });
       await notification.save();
   
+      lostItem!.status = 'found';
       res.status(200).json({ message: 'Claim accepted successfully', claim });
     } catch (err) {
       res.status(500).json({ error: 'Error accepting claim', details: err });

@@ -33,3 +33,9 @@ class LostItemError extends LostItemState {
 }
 
 class SubmitClaimSuccess extends LostItemState {}
+
+class LostItemDeleteSuccess extends LostItemState {}
+
+class AcceptClaimSuccess extends LostItemState {}
+
+class RejectClaimSuccess extends LostItemState {}
