@@ -33,7 +33,7 @@ class _DisplayItemsScreenState extends State<DisplayItemsScreen> {
         const SizedBox(height: 30),
         BlocBuilder<ItemBloc, ItemState>(
           builder: (context, state) {
-            print("Current state: $state"); // Debugging print
+            // print("Current state: $state"); // Debugging print
 
             if (state is ItemLoading) {
               return const Center(child: CircularProgressIndicator());

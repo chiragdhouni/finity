@@ -3,6 +3,7 @@ import 'package:finity/features/auth/bloc/auth_bloc.dart';
 import 'package:finity/features/auth/repos/auth_repo.dart';
 import 'package:finity/features/home/bloc/item_bloc/bloc/item_bloc.dart';
 import 'package:finity/features/home/ui/pages/display_items_screen.dart';
+import 'package:finity/features/home/ui/pages/item_detail_screen.dart';
 import 'package:finity/features/home/ui/widgets/event_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,10 +11,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class App extends StatefulWidget {
   final AuthService authService;
 
-  App({required this.authService});
+  const App({super.key, required this.authService});
   static const routeName = '/appScreen';
 
   @override
+  // ignore: library_private_types_in_public_api
   _AppState createState() => _AppState();
 }
 
@@ -130,6 +132,10 @@ class _AppState extends State<App> {
                                   subtitle: Text(item.description),
                                   onTap: () {
                                     // Handle item click to show details
+                                    Navigator.of(context).pushNamed(
+                                      ItemDetailScreen.routeName,
+                                      arguments: item,
+                                    );
                                   },
                                 ),
                               );
@@ -143,7 +149,7 @@ class _AppState extends State<App> {
                         // Show items near you if not searching
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
+                          children: const [
                             Text('Items Near You'),
                             DisplayItemsScreen(),
                           ],

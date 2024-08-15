@@ -5,9 +5,11 @@ import 'package:finity/features/home/bottom_nav_bar.dart';
 import 'package:finity/features/home/ui/pages/display_items_screen.dart';
 import 'package:finity/features/home/ui/pages/event_detail_screen.dart';
 import 'package:finity/features/home/ui/pages/home_screen.dart';
+import 'package:finity/features/home/ui/pages/item_detail_screen.dart';
 import 'package:finity/features/lost_item_screen/ui/screens/add_lost_item_screen.dart';
 import 'package:finity/features/lost_item_screen/ui/widgets/claim_item_form.dart';
 import 'package:finity/models/event_model.dart';
+import 'package:finity/models/item_model.dart';
 import 'package:finity/models/lost_item_model.dart';
 import 'package:flutter/material.dart';
 
@@ -72,6 +74,13 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
       return MaterialPageRoute(
         settings: routeSettings,
         builder: (_) => EventDetailScreen(event: event),
+      );
+
+    case ItemDetailScreen.routeName:
+      final ItemModel item = routeSettings.arguments as ItemModel;
+      return MaterialPageRoute(
+        settings: routeSettings,
+        builder: (_) => ItemDetailScreen(item: item),
       );
 
     default:
