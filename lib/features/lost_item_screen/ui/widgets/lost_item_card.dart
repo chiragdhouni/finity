@@ -1,10 +1,12 @@
+import 'package:finity/features/lost_item_screen/bloc/bloc/lost_item_bloc.dart';
+import 'package:finity/features/lost_item_screen/ui/screens/edit_lost_item_screen.dart';
 import 'package:finity/features/lost_item_screen/ui/widgets/claim_item_form.dart';
-
 import 'package:finity/models/lost_item_model.dart';
 import 'package:finity/models/user_model.dart';
 import 'package:finity/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LostItemCard extends StatefulWidget {
   final LostItem item;
@@ -17,97 +19,86 @@ class LostItemCard extends StatefulWidget {
 class _LostItemCardState extends State<LostItemCard> {
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => LostItemDetail(
-                      item: widget.item,
-                    )));
-      },
-      child: Container(
-        margin: EdgeInsets.all(10),
-        decoration: BoxDecoration(
-            color: Colors.grey[800],
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.5),
-                spreadRadius: 1,
-                blurRadius: 2,
-                offset: Offset(0, 1), // changes position of shadow
-              ),
-            ]),
-        child: ListTile(
-            title: Text(widget.item.name),
-            subtitle: Text(
-              widget.item.description,
-              maxLines: 1, // Set the number of lines before fading
-              overflow: TextOverflow.fade, // Apply the fade effect
-              softWrap: false, // Prevent wrapping, so fading is noticeable
-              style: TextStyle(
-                color: Colors.white, // Customize the text style as needed
-              ),
-            )),
-      ),
-    );
-  }
-}
-
-class LostItemDetail extends StatefulWidget {
-  final LostItem item;
-  const LostItemDetail({super.key, required this.item});
-
-  @override
-  State<LostItemDetail> createState() => _LostItemDetailState();
-}
-
-class _LostItemDetailState extends State<LostItemDetail> {
-  @override
-  Widget build(BuildContext context) {
     UserModel user = Provider.of<UserProvider>(context).user;
     LostItem item = widget.item;
+    final lostItemBloc = context.read<LostItemBloc>();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.item.name),
       ),
-      body: Container(
-        child: Column(
-          children: [
-            Text(item.name),
-            Text(item.description),
-            Text(item.location.coordinates.first.toString()),
-            Text(item.location.coordinates.last.toString()),
-            Text(item.dateLost.toString()),
-            Text(item.owner.address),
-            Text(item.owner.email),
-            Text(item.contactInfo),
-            ElevatedButton(
-              onPressed: () {
-                // Claim item
-                Navigator.pushNamed(context, ClaimItemForm.routeName,
-                    arguments: item);
-              },
-              child: Text('Claim Item', style: TextStyle(color: Colors.white)),
-            ),
-            user.id == item.owner.id
-                ? Row(
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {},
-                        child: Text('Edit Item',
-                            style: TextStyle(color: Colors.white)),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {},
-                        child: Text('Delete Item',
-                            style: TextStyle(color: Colors.white)),
-                      ),
-                    ],
-                  )
-                : Container()
-          ],
+      body: BlocListener<LostItemBloc, LostItemState>(
+        listener: (context, state) {
+          if (state is LostItemDeleteSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Item deleted successfully')),
+            );
+            Navigator.pop(context); // Go back after deletion
+          } else if (state is LostItemError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Error: ${state.message}')),
+            );
+          }
+        },
+        child: Container(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Display item details...
+              Text('Description: ${item.description}',
+                  style: TextStyle(fontSize: 16)),
+              SizedBox(height: 8),
+              Text('Status: ${item.status}', style: TextStyle(fontSize: 16)),
+              SizedBox(height: 8),
+              Text('Contact Info: ${item.contactInfo}',
+                  style: TextStyle(fontSize: 16)),
+              SizedBox(height: 8),
+              Text('Date Lost: ${item.dateLost.toLocal()}',
+                  style: TextStyle(fontSize: 16)),
+              SizedBox(height: 8),
+              Text(
+                  'Location: (${item.location.coordinates.first}, ${item.location.coordinates.last})',
+                  style: TextStyle(fontSize: 16)),
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, ClaimItemForm.routeName,
+                      arguments: item);
+                },
+                child:
+                    Text('Claim Item', style: TextStyle(color: Colors.white)),
+              ),
+              user.id == item.owner.id
+                  ? Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    EditLostItemScreen(item: item),
+                              ),
+                            );
+                          },
+                          child: Text('Edit Item',
+                              style: TextStyle(color: Colors.white)),
+                        ),
+                        SizedBox(width: 8),
+                        ElevatedButton(
+                          onPressed: () {
+                            lostItemBloc
+                                .add(deleteLostItemEvent(lostItemId: item.id));
+                          },
+                          child: Text('Delete Item',
+                              style: TextStyle(color: Colors.white)),
+                        ),
+                      ],
+                    )
+                  : Container(),
+            ],
+          ),
         ),
       ),
     );

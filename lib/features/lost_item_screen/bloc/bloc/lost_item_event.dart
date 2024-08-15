@@ -117,3 +117,4 @@ class RejectClaimEvent extends LostItemEvent {
     required this.claimId,
   });
 }
+

@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 class LostItem {
   String id;
   String name;
@@ -48,6 +49,30 @@ class LostItem {
       'location': location.toJson(),
     };
   }
+
+  LostItem copyWith({
+    String? id,
+    String? name,
+    String? description,
+    String? status,
+    DateTime? dateLost,
+    String? contactInfo,
+    List<String>? claims,
+    Owner? owner,
+    Location? location,
+  }) {
+    return LostItem(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      status: status ?? this.status,
+      dateLost: dateLost ?? this.dateLost,
+      contactInfo: contactInfo ?? this.contactInfo,
+      claims: claims ?? this.claims,
+      owner: owner ?? this.owner,
+      location: location ?? this.location,
+    );
+  }
 }
 
 class Owner {
@@ -79,6 +104,20 @@ class Owner {
       'email': email,
       'address': address,
     };
+  }
+
+  Owner copyWith({
+    String? id,
+    String? name,
+    String? email,
+    String? address,
+  }) {
+    return Owner(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      address: address ?? this.address,
+    );
   }
 }
 

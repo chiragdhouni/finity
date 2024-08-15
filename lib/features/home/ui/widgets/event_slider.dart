@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:finity/features/home/bloc/event_bloc/bloc/ad_bloc.dart';
+import 'package:finity/features/home/ui/pages/event_detail_screen.dart';
 import 'package:finity/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -43,26 +44,34 @@ class _EventSliderState extends State<EventSlider> {
             items: state.events.map((event) {
               return Builder(
                 builder: (BuildContext context) {
-                  return Container(
-                    width: MediaQuery.of(context).size.width,
-                    margin: EdgeInsets.symmetric(horizontal: 5.0),
-                    decoration: BoxDecoration(
-                      color: Colors.amber,
-                      image: DecorationImage(
-                        image: NetworkImage(event.image),
-                        fit: BoxFit.cover,
+                  return InkWell(
+                    onTap: () {
+                      // Navigate to EventDetailScreen
+                      Navigator.of(context).pushNamed(
+                          EventDetailScreen.routeName,
+                          arguments: event);
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      margin: EdgeInsets.symmetric(horizontal: 5.0),
+                      decoration: BoxDecoration(
+                        color: Colors.amber,
+                        image: DecorationImage(
+                          image: NetworkImage(event.image),
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                    ),
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Container(
-                        color: Colors.black54,
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          event.title,
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            color: Colors.white,
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Container(
+                          color: Colors.black54,
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            event.title,
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),

@@ -39,3 +39,8 @@ class LostItemDeleteSuccess extends LostItemState {}
 class AcceptClaimSuccess extends LostItemState {}
 
 class RejectClaimSuccess extends LostItemState {}
+
+class LostItemUpdateSuccess extends LostItemState {
+  final LostItem lostItem;
+  LostItemUpdateSuccess(this.lostItem);
+}

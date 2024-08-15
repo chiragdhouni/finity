@@ -114,6 +114,21 @@ class LostItemBloc extends Bloc<LostItemEvent, LostItemState> {
     }
   }
 
+  FutureOr<void> _onUpdateLostItem(
+      updateLostItemEvent event, Emitter<LostItemState> emit) {
+    emit(LostItemLoading());
+    try {
+      lostItemService.updateLostItem(
+        event.lostItem.id,
+        event.lostItem,
+      );
+      emit(LostItemUpdateSuccess(event.lostItem));
+    } catch (e) {
+      log(e.toString());
+      emit(LostItemError(e.toString()));
+    }
+  }
+
   FutureOr<void> _onDeleteLostItem(
       deleteLostItemEvent event, Emitter<LostItemState> emit) {
     emit(LostItemLoading());
@@ -133,21 +148,6 @@ class LostItemBloc extends Bloc<LostItemEvent, LostItemState> {
       LostItem lostItem =
           await lostItemService.getLostItemById(event.lostItemId);
       emit(LostItemSuccess(lostItem));
-    } catch (e) {
-      log(e.toString());
-      emit(LostItemError(e.toString()));
-    }
-  }
-
-  FutureOr<void> _onUpdateLostItem(
-      updateLostItemEvent event, Emitter<LostItemState> emit) {
-    emit(LostItemLoading());
-    try {
-      lostItemService.updateLostItem(
-        event.lostItem.id,
-        event.lostItem,
-      );
-      emit(LostItemSuccess(event.lostItem));
     } catch (e) {
       log(e.toString());
       emit(LostItemError(e.toString()));
