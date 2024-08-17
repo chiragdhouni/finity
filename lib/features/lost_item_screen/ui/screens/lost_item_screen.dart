@@ -121,44 +121,44 @@ class _LostItemScreenState extends State<LostItemScreen> {
     );
   }
 
-//   Widget _buildNearbyItems() {
-//     return Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         Text('Items Near You', style: TextStyle(fontSize: 16)),
-//         BlocBuilder<LostItemBloc, LostItemState>(
-//           builder: (context, state) {
-//             if (state is LostItemLoading) {
-//               return Center(child: CircularProgressIndicator());
-//             } else if (state is NearByLostItemSuccess) {
-//               if (state.lostItems.isEmpty) {
-//                 return Center(child: Text('No items found'));
-//               }
-//               return ListView.builder(
-//                 shrinkWrap: true,
-//                 physics: NeverScrollableScrollPhysics(),
-//                 itemCount: state.lostItems.length,
-//                 itemBuilder: (context, index) {
-//                   final item = state.lostItems[index];
-//                   return Container(
-//                     color: Colors.red,
-//                     child: ListTile(
-//                       title: Text(item.name),
-//                       subtitle: Text(item.description),
-//                       onTap: () {
-//                         // Handle item click to show details
-//                       },
-//                     ),
-//                   );
-//                 },
-//               );
-//             } else if (state is LostItemError) {
-//               return Center(child: Text(state.message));
-//             }
-//             return Container();
-//           },
-//         ),
-//       ],
-//     );
-//   }
+  Widget _buildNearbyItems() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Items Near You', style: TextStyle(fontSize: 16)),
+        BlocBuilder<LostItemBloc, LostItemState>(
+          builder: (context, state) {
+            if (state is LostItemLoading) {
+              return Center(child: CircularProgressIndicator());
+            } else if (state is NearByLostItemSuccess) {
+              if (state.lostItems.isEmpty) {
+                return Center(child: Text('No items found'));
+              }
+              return ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: state.lostItems.length,
+                itemBuilder: (context, index) {
+                  final item = state.lostItems[index];
+                  return Container(
+                    color: Colors.red,
+                    child: ListTile(
+                      title: Text(item.name),
+                      subtitle: Text(item.description),
+                      onTap: () {
+                        // Handle item click to show details
+                      },
+                    ),
+                  );
+                },
+              );
+            } else if (state is LostItemError) {
+              return Center(child: Text(state.message));
+            }
+            return Container();
+          },
+        ),
+      ],
+    );
+  }
 }

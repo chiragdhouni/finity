@@ -50,7 +50,16 @@ class _NearByItemScreenState extends State<NearByItemScreen> {
                 itemCount: state.lostItems.length,
                 itemBuilder: (context, index) {
                   final item = state.lostItems[index];
-                  return LostItemCard(item: item);
+                  return Container(
+                    color: Colors.red,
+                    child: ListTile(
+                      title: Text(item.name),
+                      subtitle: Text(item.description),
+                      onTap: () {
+                        // Handle item click to show details
+                      },
+                    ),
+                  );
                 },
               );
             } else if (state is LostItemError) {

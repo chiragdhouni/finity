@@ -29,7 +29,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   bloc: ^8.1.4
-  carousel_slider: ^4.2.1
+  carousel_slider:
   cloudinary: ^1.2.0
   cloudinary_public: ^0.23.1
   cupertino_icons: ^1.0.6
