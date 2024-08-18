@@ -4,6 +4,7 @@ import 'package:finity/features/auth/repos/auth_repo.dart';
 import 'package:finity/features/home/bloc/item_bloc/bloc/item_bloc.dart';
 import 'package:finity/features/home/ui/pages/display_items_screen.dart';
 import 'package:finity/features/home/ui/pages/item_detail_screen.dart';
+import 'package:finity/features/home/ui/widgets/card.dart';
 import 'package:finity/features/home/ui/widgets/event_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -97,6 +98,8 @@ class _AppState extends State<App> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  ResponsiveCardLayout(),
+                  const SizedBox(height: 15),
                   EventSlider(),
                   const SizedBox(height: 15),
                   TextField(

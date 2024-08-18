@@ -34,3 +34,11 @@ class ItemSearchError extends ItemState {
 
   ItemSearchError(this.error);
 }
+
+class ItemBorrowSuccess extends ItemState {}
+
+class ItemBorrowError extends ItemState {
+  final String error;
+
+  ItemBorrowError(this.error);
+}

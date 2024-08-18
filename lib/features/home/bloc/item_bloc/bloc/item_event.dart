@@ -36,3 +36,13 @@ class SearchItemsEvent extends ItemEvent {
 
   SearchItemsEvent(this.query);
 }
+
+class ItemBorrowEvent extends ItemEvent {
+  final String itemId;
+  final String borrowerId;
+
+  ItemBorrowEvent({
+    required this.itemId,
+    required this.borrowerId,
+  });
+}

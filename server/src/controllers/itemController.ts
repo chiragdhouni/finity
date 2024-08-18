@@ -44,7 +44,7 @@ export const addItem = async (req: Request, res: Response) => {
 
 // Request to borrow an item
 export const requestToBorrowItem = async (req: Request, res: Response) => {
-  const { itemId, borrowerId, dueDate } = req.body;
+  const { itemId, borrowerId } = req.body;
   try {
     const item = await Item.findById(itemId);
     if (!item) {
@@ -63,7 +63,7 @@ export const requestToBorrowItem = async (req: Request, res: Response) => {
       message: 'Borrow request submitted',
       item,
       borrower,
-      proposedDueDate: dueDate
+
     });
   } catch (error) {
     console.error(`Error requesting to borrow item: ${(error as Error).message}`);

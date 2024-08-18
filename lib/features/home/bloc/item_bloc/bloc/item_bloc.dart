@@ -14,6 +14,7 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
     on<AddItemEvent>(_onAddItemEvent);
     on<FetchNearbyItemsEvent>(_onFetchNearbyItemsEvent);
     on<SearchItemsEvent>(_onSearchItemsEvent);
+    on<ItemBorrowEvent>(_onItemBorrowEvent);
   }
 
   FutureOr<void> _onAddItemEvent(
@@ -62,6 +63,18 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
       }
     } catch (e) {
       emit(ItemSearchError(e.toString()));
+    }
+  }
+
+  FutureOr<void> _onItemBorrowEvent(
+      ItemBorrowEvent event, Emitter<ItemState> emit) {
+    // Implement the logic to borrow an item
+    emit(ItemLoading());
+    try {
+      homeRepo.requestToBorrowItem(event.itemId, event.borrowerId);
+      emit(ItemBorrowSuccess());
+    } catch (e) {
+      emit(ItemBorrowError(e.toString()));
     }
   }
 }

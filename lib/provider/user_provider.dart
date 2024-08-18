@@ -1,11 +1,9 @@
 import 'dart:convert';
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-
-import 'package:finity/features/home/services/location_service.dart';
 import 'package:finity/models/user_model.dart';
+import 'package:finity/features/home/services/location_service.dart';
 
 class UserProvider extends ChangeNotifier {
   UserModel _user = UserModel(

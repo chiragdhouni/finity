@@ -53,7 +53,7 @@ const addItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.addItem = addItem;
 // Request to borrow an item
 const requestToBorrowItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { itemId, borrowerId, dueDate } = req.body;
+    const { itemId, borrowerId } = req.body;
     try {
         const item = yield item_1.default.findById(itemId);
         if (!item) {
@@ -72,7 +72,6 @@ const requestToBorrowItem = (req, res) => __awaiter(void 0, void 0, void 0, func
             message: 'Borrow request submitted',
             item,
             borrower,
-            proposedDueDate: dueDate
         });
     }
     catch (error) {

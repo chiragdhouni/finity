@@ -1,10 +1,12 @@
 import 'package:finity/features/home/bloc/item_bloc/bloc/item_bloc.dart';
+import 'package:finity/features/home/ui/pages/item_detail_screen.dart';
 import 'package:finity/models/item_model.dart';
 import 'package:finity/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
+// items near you
 class DisplayItemsScreen extends StatefulWidget {
   const DisplayItemsScreen({super.key});
   static const routeName = '/displayItemsScreen';
@@ -92,7 +94,13 @@ class _DisplayItemsScreenState extends State<DisplayItemsScreen> {
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(color: Colors.white60),
               ),
-              onTap: () {},
+              onTap: () {
+                // Navigate to item details screen
+                Navigator.of(context).pushNamed(
+                  ItemDetailScreen.routeName,
+                  arguments: item,
+                );
+              },
             ),
           ),
         );

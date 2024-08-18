@@ -121,4 +121,35 @@ class HomeRepo {
       return [];
     }
   }
+
+  Future<void> requestToBorrowItem(
+    String itemId,
+    String borrowerId,
+  ) async {
+    final url = Uri.parse(
+        '${Config.serverURL}items/request'); // Replace with your actual API endpoint
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'itemId': itemId,
+          'borrowerId': borrowerId,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        log('Borrow request submitted: ${responseData['message']}');
+        log('Item: ${responseData['item']}');
+        log('Borrower: ${responseData['borrower']}');
+        log('Proposed Due Date: ${responseData['proposedDueDate']}');
+      } else {
+        log('Failed to submit borrow request: ${response.reasonPhrase}');
+      }
+    } catch (error) {
+      log('Error requesting to borrow item: $error');
+    }
+  }
 }

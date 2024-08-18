@@ -54,20 +54,21 @@ class ResponsiveCardLayout extends StatelessWidget {
                 ),
               ),
               SizedBox(width: 8.0), // Space between the two cards
-              Expanded(
-                child: InkWell(
-                  onTap: () {
-                    Navigator.of(context)
-                        .pushNamed(DisplayItemsScreen.routeName);
-                  },
-                  child: Card(
-                    color: Colors.blue,
-                    child: Center(
-                      child: Text('Borrow'),
-                    ),
-                  ),
-                ),
-              ),
+              // Expanded(
+              //   child: InkWell(
+              //     onTap: () {
+              //       // Navigator.of(context)
+              //       //     .pushNamed(DisplayItemsScreen.routeName);
+
+              //     },
+              //     child: Card(
+              //       color: Colors.blue,
+              //       child: Center(
+              //         child: Text('Borrow'),
+              //       ),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),
@@ -122,6 +123,15 @@ class _AddItemDialogState extends State<AddItemDialog>
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Item added successfully')),
           );
+
+          // Trigger re-fetching of items after successfully adding an item
+          final userProvider =
+              Provider.of<UserProvider>(context, listen: false);
+          context.read<ItemBloc>().add(FetchNearbyItemsEvent(
+                latitude: userProvider.user.location[0],
+                longitude: userProvider.user.location[1],
+                maxDistance: 8000,
+              ));
         } else if (state is ItemError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Error: ${state.error}')),
