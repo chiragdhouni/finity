@@ -106,7 +106,7 @@ exports.deleteEvent = deleteEvent;
 // Get events near a location, sorted by distance
 const getEventsNearLocation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { longitude, latitude, maxDistance } = req.query;
+        const { latitude, longitude, maxDistance } = req.query;
         if (!longitude || !latitude) {
             return res.status(400).json({ message: 'Longitude and latitude are required' });
         }
@@ -115,15 +115,15 @@ const getEventsNearLocation = (req, res) => __awaiter(void 0, void 0, void 0, fu
                 $geoNear: {
                     near: {
                         type: 'Point',
-                        coordinates: [parseFloat(longitude), parseFloat(latitude),]
+                        coordinates: [parseFloat(longitude), parseFloat(latitude)],
                     },
                     distanceField: 'dist.calculated', // Field to add to the output documents containing the distance
-                    maxDistance: parseFloat(maxDistance), // Default to 10 km
+                    maxDistance: parseFloat(maxDistance), // Max distance in meters
                     spherical: true,
                 }
             },
             {
-                $sort: { distance: 1 } // Sort by distance, ascending order
+                $sort: { 'dist.calculated': 1 } // Sort by distance, ascending order
             }
         ]);
         res.status(200).json(events);

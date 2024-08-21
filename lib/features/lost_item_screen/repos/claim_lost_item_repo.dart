@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:finity/core/config/config.dart';
 import 'package:finity/provider/user_provider.dart';
@@ -21,7 +20,7 @@ class ClaimLostItemRepo {
     final url = Uri.parse('${Config.serverURL}lostItems/claim/submit');
     final String token =
         Provider.of<UserProvider>(context, listen: false).user.token!;
-    log('Token: $token');
+    // log('Token: $token');
     try {
       final response = await http.post(
         url,
@@ -37,12 +36,12 @@ class ClaimLostItemRepo {
       );
 
       if (response.statusCode == 201) {
-        log('Claim submitted successfully');
+        // log('Claim submitted successfully');
       } else {
-        log('Error submitting claim: ${response.body} ${response.statusCode}');
+        // log('Error submitting claim: ${response.body} ${response.statusCode}');
       }
     } catch (e) {
-      log('Error submitting claim: $e');
+      // log('Error submitting claim: $e');
     }
   }
 
@@ -67,12 +66,12 @@ class ClaimLostItemRepo {
       );
 
       if (response.statusCode == 200) {
-        log('Claim accepted successfully');
+        // log('Claim accepted successfully');
       } else {
-        log('Error accepting claim: ${response.body}');
+        // log('Error accepting claim: ${response.body}');
       }
     } catch (e) {
-      log('An error occurred while accepting the claim: $e');
+      // log('An error occurred while accepting the claim: $e');
     }
   }
 
@@ -98,12 +97,12 @@ class ClaimLostItemRepo {
       );
 
       if (response.statusCode == 200) {
-        log('Claim rejected successfully');
+        // log('Claim rejected successfully');
       } else {
-        log('Error rejecting claim: ${response.body}');
+        // log('Error rejecting claim: ${response.body}');
       }
     } catch (e) {
-      log('An error occurred while rejecting the claim: $e');
+      // log('An error occurred while rejecting the claim: $e');
     }
   }
 }

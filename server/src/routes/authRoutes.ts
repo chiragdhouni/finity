@@ -3,7 +3,7 @@ import { registerUser, loginUser ,tokenIsValid, updateUserLocation} from '../con
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import {auth} from '../middlewares/auth';
 import User from '../models/user';
-import { getUserNotifications } from '../controllers/notification_controller';
+
 const authRouter = Router();
 
 authRouter.post('/register', registerUser);
@@ -11,7 +11,6 @@ authRouter.post('/login', loginUser);
 authRouter.get('/tokenIsValid',tokenIsValid);
 authRouter.patch('/:userId/location', updateUserLocation);
 
-authRouter.get('/notifications', getUserNotifications);
 
 authRouter.get("/user", auth, async (req: Request, res: Response) => {
   try {

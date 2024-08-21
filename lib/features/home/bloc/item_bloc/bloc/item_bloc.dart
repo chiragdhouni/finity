@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:finity/models/item_model.dart';
 import 'package:finity/features/home/repos/home_repo.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/material.dart';
 
 part 'item_event.dart';
 part 'item_state.dart';

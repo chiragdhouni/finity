@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, no_leading_underscores_for_local_identifiers
+
 import 'dart:developer';
 import 'dart:io';
 import 'package:cloudinary_public/cloudinary_public.dart';
@@ -41,11 +43,9 @@ class _ClaimItemFormState extends State<ClaimItemForm> {
 
   void _pickImages() async {
     final ImagePicker _picker = ImagePicker();
-    final List<XFile>? images = await _picker.pickMultiImage();
+    final List<XFile> images = await _picker.pickMultiImage();
     setState(() {
-      if (images != null) {
-        _proofImages = images;
-      }
+      _proofImages = images;
     });
   }
 

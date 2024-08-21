@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 class AddLostItemScreen extends StatefulWidget {
   static const routeName = '/addLostItemScreen';
 
+  const AddLostItemScreen({super.key});
+
   @override
   State<AddLostItemScreen> createState() => _AddLostItemScreenState();
 }

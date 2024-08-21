@@ -80,7 +80,10 @@ export const acceptClaim = async (req: Request, res: Response) => {
         location : ${lostItem?.location.coordinates}
         `,
       });
+      
       await notification.save();
+      const claimPerson = await User.findById(claim.userId);
+      claimPerson?.notifications.push(notification._id as any);
   
       lostItem!.status = 'found';
       res.status(200).json({ message: 'Claim accepted successfully', claim });
@@ -115,7 +118,8 @@ export const acceptClaim = async (req: Request, res: Response) => {
         message: `Your claim for the item: ${lostItem?.name} has been rejected.`,
       });
       await notification.save();
-  
+      const claimPerson = await User.findById(claim.userId);
+      claimPerson?.notifications.push(notification._id as any);
       res.status(200).json({ message: 'Claim rejected successfully', claim });
     } catch (err) {
       res.status(500).json({ error: 'Error rejecting claim', details: err });

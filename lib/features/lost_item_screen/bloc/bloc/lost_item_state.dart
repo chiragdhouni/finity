@@ -1,4 +1,6 @@
 // lost_item_state.dart
+// ignore_for_file: camel_case_types
+
 part of 'lost_item_bloc.dart';
 
 abstract class LostItemState {}

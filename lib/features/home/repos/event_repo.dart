@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:finity/core/config/config.dart';
 import 'package:finity/models/event_model.dart';
@@ -41,7 +40,7 @@ class EventRepo {
         },
       );
 
-      log('Response: ${response.body} ${response.statusCode}');
+      // log('Response: ${response.body} ${response.statusCode}');
 
       // Check if the response is successful
       if (response.statusCode == 200) {
@@ -53,15 +52,15 @@ class EventRepo {
           return EventModel.fromJson(json);
         }).toList();
 
-        log('Events near location: $events');
+        // log('Events near location: $events');
         return events;
       } else {
         throw Exception('Failed to fetch events: ${response.reasonPhrase}');
       }
     } catch (error) {
       // Handle any errors that occur during the fetch
-      log('Error fetching events near location: $error');
-      throw error;
+      // log('Error fetching events near location: $error');
+      rethrow;
     }
   }
 }

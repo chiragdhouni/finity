@@ -15,8 +15,6 @@ class NearByItemScreen extends StatefulWidget {
 class _NearByItemScreenState extends State<NearByItemScreen> {
   @override
   void initState() {
-    // TODO: implement initState
-
     double latitude =
         Provider.of<UserProvider>(context, listen: false).user.location[0];
     double longitude =

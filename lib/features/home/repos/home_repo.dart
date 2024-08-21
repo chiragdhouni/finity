@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'dart:convert';
 import 'dart:developer';
 
@@ -37,7 +39,7 @@ class HomeRepo {
       // Encode the JSON map to a JSON string
       String body = jsonEncode(itemJson);
 
-      log('body is : ${body}');
+      log('body is : $body');
 
       http.Response res = await http.post(
         Uri.parse('${Config.serverURL}items/add'),
@@ -89,7 +91,7 @@ class HomeRepo {
         List<ItemModel> data = (json.decode(response.body) as List)
             .map((e) => ItemModel.fromMap(e))
             .toList();
-        log('Nearby Items: ${data}');
+        log('Nearby Items: $data');
         // Handle the data (e.g., update state or use in the UI)
         return data;
       } else {
@@ -141,15 +143,15 @@ class HomeRepo {
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
-        log('Borrow request submitted: ${responseData['message']}');
-        log('Item: ${responseData['item']}');
-        log('Borrower: ${responseData['borrower']}');
-        log('Proposed Due Date: ${responseData['proposedDueDate']}');
+        // log('Borrow request submitted: ${responseData['message']}');
+        // log('Item: ${responseData['item']}');
+        // log('Borrower: ${responseData['borrower']}');
+        // log('Proposed Due Date: ${responseData['proposedDueDate']}');
       } else {
-        log('Failed to submit borrow request: ${response.reasonPhrase}');
+        // log('Failed to submit borrow request: ${response.reasonPhrase}');
       }
     } catch (error) {
-      log('Error requesting to borrow item: $error');
+      // log('Error requesting to borrow item: $error');
     }
   }
 }

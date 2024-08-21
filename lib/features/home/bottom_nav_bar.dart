@@ -1,10 +1,13 @@
 // import 'dart:developer';
 
+// ignore_for_file: annotate_overrides
+
 import 'package:finity/features/auth/repos/auth_repo.dart';
 import 'package:finity/features/home/services/location_service.dart';
 import 'package:finity/features/home/ui/pages/home_screen.dart';
 import 'package:finity/features/home/ui/pages/profile_screen.dart';
 import 'package:finity/features/lost_item_screen/ui/screens/lost_item_screen.dart';
+import 'package:finity/features/notification/ui/screens/notification_screen.dart';
 import 'package:finity/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -26,11 +29,11 @@ class _BottomNavBarState extends State<BottomNavBar> {
     // ItemSearchPage(),
     Text('Search by category'),
     LostItemScreen(),
+    NotificationScreen(),
     ProfileScreen()
   ];
 
   void initState() {
-    // TODO: implement initState
     super.initState();
     _updateUserLocationIfNeeded();
   }
@@ -75,6 +78,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
+            label: 'Notifications',
           ),
         ],
         selectedItemColor: Colors.blue,

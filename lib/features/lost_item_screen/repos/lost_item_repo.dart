@@ -40,7 +40,7 @@ class LostItemService {
         coordinates: [longitude, latitude],
       ),
     );
-    log(json.encode(lostItem.toJson()));
+    // log(json.encode(lostItem.toJson()));
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('x-auth-token');
@@ -163,7 +163,7 @@ class LostItemService {
       token = '';
       prefs.setString('x-auth-token', token);
     }
-    log('token $token');
+    // log('token $token');
     // log('${Config.serverURL}lostItems/nearby?longitude=$longitude&latitude=$latitude&maxDistance=$maxDistance');
     final response = await http.get(
       Uri.parse(
@@ -171,8 +171,8 @@ class LostItemService {
       headers: {'Content-Type': 'application/json', 'x-auth-token': token},
     );
 
-    log(response.body);
-    log(response.statusCode.toString());
+    // log(response.body);
+    // log(response.statusCode.toString());
     if (response.statusCode == 200) {
       Iterable l = json.decode(response.body);
       return List<LostItem>.from(l.map((model) => LostItem.fromJson(model)));

@@ -95,7 +95,7 @@ export const deleteEvent = async (req: Request, res: Response) => {
 // Get events near a location, sorted by distance
 export const getEventsNearLocation = async (req: Request, res: Response) => {
     try {
-        const { longitude, latitude, maxDistance } = req.query;
+        const { latitude,longitude , maxDistance } = req.query;
 
         if (!longitude || !latitude) {
             return res.status(400).json({ message: 'Longitude and latitude are required' });
@@ -106,15 +106,15 @@ export const getEventsNearLocation = async (req: Request, res: Response) => {
                 $geoNear: {
                     near: {
                         type: 'Point',
-                        coordinates: [parseFloat(longitude as string), parseFloat(latitude as string),]
+                        coordinates: [parseFloat(longitude as string), parseFloat(latitude as string)],
                     },
                     distanceField: 'dist.calculated', // Field to add to the output documents containing the distance
-                    maxDistance: parseFloat(maxDistance as string) , // Default to 10 km
+                    maxDistance: parseFloat(maxDistance as string), // Max distance in meters
                     spherical: true,
                 }
             },
             {
-                $sort: { distance: 1 } // Sort by distance, ascending order
+                $sort: { 'dist.calculated': 1 } // Sort by distance, ascending order
             }
         ]);
 

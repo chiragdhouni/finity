@@ -47,7 +47,7 @@ class LostItemBloc extends Bloc<LostItemEvent, LostItemState> {
 
       emit(lostItemCreated(lostItem));
     } catch (e) {
-      log(e.toString());
+      // log(e.toString());
       emit(LostItemError(e.toString()));
     }
   }
@@ -124,7 +124,7 @@ class LostItemBloc extends Bloc<LostItemEvent, LostItemState> {
       );
       emit(LostItemUpdateSuccess(event.lostItem));
     } catch (e) {
-      log(e.toString());
+      // log(e.toString());
       emit(LostItemError(e.toString()));
     }
   }
@@ -136,7 +136,7 @@ class LostItemBloc extends Bloc<LostItemEvent, LostItemState> {
       lostItemService.deleteLostItem(event.lostItemId);
       emit(LostItemDeleteSuccess());
     } catch (e) {
-      log(e.toString());
+      // log(e.toString());
       emit(LostItemError(e.toString()));
     }
   }
@@ -149,7 +149,7 @@ class LostItemBloc extends Bloc<LostItemEvent, LostItemState> {
           await lostItemService.getLostItemById(event.lostItemId);
       emit(LostItemSuccess(lostItem));
     } catch (e) {
-      log(e.toString());
+      // log(e.toString());
       emit(LostItemError(e.toString()));
     }
   }
@@ -161,7 +161,7 @@ class LostItemBloc extends Bloc<LostItemEvent, LostItemState> {
       claimLostItemRepo.acceptClaim(event.claimId);
       emit(AcceptClaimSuccess());
     } catch (e) {
-      log(e.toString());
+      // log(e.toString());
       emit(LostItemError(e.toString()));
     }
   }
@@ -173,7 +173,7 @@ class LostItemBloc extends Bloc<LostItemEvent, LostItemState> {
       claimLostItemRepo.rejectClaim(event.claimId);
       emit(RejectClaimSuccess());
     } catch (e) {
-      log(e.toString());
+      // log(e.toString());
       emit(LostItemError(e.toString()));
     }
   }

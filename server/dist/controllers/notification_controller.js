@@ -9,21 +9,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserNotifications = void 0;
+exports.getNotificationsForIds = void 0;
 const notification_1 = require("../models/notification");
-const getUserNotifications = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getNotificationsForIds = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        if (!req.user) {
-            return res.status(401).json({ msg: 'Unauthorized: User not found' });
-        }
-        const userId = req.user.id;
-        const notifications = yield notification_1.Notification.find({ userId })
+        const notificationIds = req.body.notificationIds; // Ensure you're passing 'notificationIds' in the request body
+        const notifications = yield notification_1.Notification.find({ _id: { $in: notificationIds } })
             .sort({ createdAt: -1 })
             .exec();
-        res.status(200).json(notifications);
+        return res.status(200).json(notifications);
     }
     catch (err) {
-        res.status(500).json({ error: 'Error fetching notifications', details: err });
+        console.error('Error fetching notifications:', err);
+        return res.status(500).json({ error: 'Error fetching notifications' });
     }
 });
-exports.getUserNotifications = getUserNotifications;
+exports.getNotificationsForIds = getNotificationsForIds;

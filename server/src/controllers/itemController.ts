@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import Item from '../models/item';
 import User from '../models/user';
 import { ObjectId } from 'mongodb';
+import { Notification } from '../models/notification';
 
 // Adding an item to be listed for lending
 
@@ -45,29 +46,51 @@ export const addItem = async (req: Request, res: Response) => {
 // Request to borrow an item
 export const requestToBorrowItem = async (req: Request, res: Response) => {
   const { itemId, borrowerId } = req.body;
+
   try {
+    // Find the item by ID
     const item = await Item.findById(itemId);
     if (!item) {
       return res.status(404).send('Item not found');
     }
+
+    // Check if the item is available for borrowing
     if (item.status !== 'available') {
       return res.status(400).send('Item is not available for borrowing');
     }
+
+    // Find the borrower by ID
     const borrower = await User.findById(borrowerId);
     if (!borrower) {
       return res.status(404).send('Borrower not found');
     }
+
+    // Add the item to the borrower's requested items
     borrower.itemsRequested.push(itemId);
     await borrower.save();
+
+    // Find the owner of the item
+    const owner = await User.findById(item.owner.id);
+  
+    const notification = new Notification({
+      type: 'borrowRequest',
+      userId : borrower._id,
+      message: `Someone has requested to borrow your item: ${item.name}.`});
+      await notification.save();
+      
+      owner?.notifications.push(notification._id as ObjectId);
+      owner?.save();
+    
+ 
+    // Send success response
     res.status(200).send({
       message: 'Borrow request submitted',
       item,
       borrower,
-
     });
   } catch (error) {
     console.error(`Error requesting to borrow item: ${(error as Error).message}`);
-    res.status(400).send(error);
+    res.status(500).send('Internal server error');
   }
 };
 

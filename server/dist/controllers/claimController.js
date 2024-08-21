@@ -78,6 +78,8 @@ const acceptClaim = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         `,
         });
         yield notification.save();
+        const claimPerson = yield user_1.default.findById(claim.userId);
+        claimPerson === null || claimPerson === void 0 ? void 0 : claimPerson.notifications.push(notification._id);
         lostItem.status = 'found';
         res.status(200).json({ message: 'Claim accepted successfully', claim });
     }
@@ -107,6 +109,8 @@ const rejectClaim = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             message: `Your claim for the item: ${lostItem === null || lostItem === void 0 ? void 0 : lostItem.name} has been rejected.`,
         });
         yield notification.save();
+        const claimPerson = yield user_1.default.findById(claim.userId);
+        claimPerson === null || claimPerson === void 0 ? void 0 : claimPerson.notifications.push(notification._id);
         res.status(200).json({ message: 'Claim rejected successfully', claim });
     }
     catch (err) {

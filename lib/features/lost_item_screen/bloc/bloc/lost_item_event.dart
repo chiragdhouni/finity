@@ -1,3 +1,5 @@
+// ignore_for_file: camel_case_types
+
 part of 'lost_item_bloc.dart';
 
 sealed class LostItemEvent {}
@@ -117,4 +119,3 @@ class RejectClaimEvent extends LostItemEvent {
     required this.claimId,
   });
 }
-

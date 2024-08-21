@@ -28,6 +28,7 @@ const mongoose_1 = __importStar(require("mongoose"));
 const NotificationSchema = new mongoose_1.Schema({
     userId: { type: mongoose_1.default.Schema.Types.ObjectId, ref: 'User', required: true },
     message: { type: String, required: true },
+    type: { type: String, required: true },
     read: { type: Boolean, default: false },
 }, {
     timestamps: true,

@@ -52,23 +52,23 @@ declare global {
 // Create a 2dsphere index for geospatial queries if location is provided
 UserSchema.index({ location: '2dsphere' });
 
-UserSchema.post('save', function (doc) {
-  // Emit a Socket.IO event when the user document is updated
-  if (io) {
-    io.to(`user_${doc._id}`).emit('user_update', doc);
-  }
-});
+// UserSchema.post('save', function (doc) {
+//   // Emit a Socket.IO event when the user document is updated
+//   if (io) {
+//     io.to(`user_${doc._id}`).emit('user_update', doc);
+//   }
+// });
 
-UserSchema.post('findOneAndUpdate', function (doc) {
-  // Emit a Socket.IO event when the user document is updated via findOneAndUpdate
-  if (io && doc) {
-    io.to(`user_${doc._id}`).emit('user_update', doc);
-  }
-});
+// UserSchema.post('findOneAndUpdate', function (doc) {
+//   // Emit a Socket.IO event when the user document is updated via findOneAndUpdate
+//   if (io && doc) {
+//     io.to(`user_${doc._id}`).emit('user_update', doc);
+//   }
+// });
 
-// Initialize your Socket.IO instance
-export const initializeSocket = (socketIO: Server) => {
-  io = socketIO;
-};
+// // Initialize your Socket.IO instance
+// export const initializeSocket = (socketIO: Server) => {
+//   io = socketIO;
+// };
 
 export default mongoose.model<IUser>('User', UserSchema);

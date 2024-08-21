@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.searchItems = exports.returnItem = exports.getNearbyItems = exports.lendItem = exports.requestToBorrowItem = exports.addItem = void 0;
 const item_1 = __importDefault(require("../models/item"));
 const user_1 = __importDefault(require("../models/user"));
+const notification_1 = require("../models/notification");
 // Adding an item to be listed for lending
 const addItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, description, category, ownerId, dueDate } = req.body;
@@ -55,19 +56,34 @@ exports.addItem = addItem;
 const requestToBorrowItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { itemId, borrowerId } = req.body;
     try {
+        // Find the item by ID
         const item = yield item_1.default.findById(itemId);
         if (!item) {
             return res.status(404).send('Item not found');
         }
+        // Check if the item is available for borrowing
         if (item.status !== 'available') {
             return res.status(400).send('Item is not available for borrowing');
         }
+        // Find the borrower by ID
         const borrower = yield user_1.default.findById(borrowerId);
         if (!borrower) {
             return res.status(404).send('Borrower not found');
         }
+        // Add the item to the borrower's requested items
         borrower.itemsRequested.push(itemId);
         yield borrower.save();
+        // Find the owner of the item
+        const owner = yield user_1.default.findById(item.owner.id);
+        const notification = new notification_1.Notification({
+            type: 'borrowRequest',
+            userId: borrower._id,
+            message: `Someone has requested to borrow your item: ${item.name}.`
+        });
+        yield notification.save();
+        owner === null || owner === void 0 ? void 0 : owner.notifications.push(notification._id);
+        owner === null || owner === void 0 ? void 0 : owner.save();
+        // Send success response
         res.status(200).send({
             message: 'Borrow request submitted',
             item,
@@ -76,7 +92,7 @@ const requestToBorrowItem = (req, res) => __awaiter(void 0, void 0, void 0, func
     }
     catch (error) {
         console.error(`Error requesting to borrow item: ${error.message}`);
-        res.status(400).send(error);
+        res.status(500).send('Internal server error');
     }
 });
 exports.requestToBorrowItem = requestToBorrowItem;

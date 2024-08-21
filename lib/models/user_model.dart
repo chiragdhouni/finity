@@ -71,6 +71,7 @@ class UserModel {
       itemsRequested: List<String>.from(map['itemsRequested'] ?? []),
     );
   }
+
   String toJson() => json.encode(toMap());
   factory UserModel.fromJson(Map<String, dynamic> json) {
     // var userInfo = json['user'];

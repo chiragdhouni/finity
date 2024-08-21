@@ -1,5 +1,5 @@
 import 'package:finity/features/home/bloc/item_bloc/bloc/item_bloc.dart';
-import 'package:finity/features/home/ui/pages/display_items_screen.dart';
+
 import 'package:finity/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -79,7 +79,10 @@ class ResponsiveCardLayout extends StatelessWidget {
 }
 
 class AddItemDialog extends StatefulWidget {
+  const AddItemDialog({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _AddItemDialogState createState() => _AddItemDialogState();
 }
 

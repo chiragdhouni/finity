@@ -12,13 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const authController_1 = require("../controllers/authController");
 const auth_1 = require("../middlewares/auth");
-const notification_controller_1 = require("../controllers/notification_controller");
 const authRouter = (0, express_1.Router)();
 authRouter.post('/register', authController_1.registerUser);
 authRouter.post('/login', authController_1.loginUser);
 authRouter.get('/tokenIsValid', authController_1.tokenIsValid);
 authRouter.patch('/:userId/location', authController_1.updateUserLocation);
-authRouter.get('/notifications', notification_controller_1.getUserNotifications);
 authRouter.get("/user", auth_1.auth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Since req.user now contains the full user object
