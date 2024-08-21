@@ -6,7 +6,7 @@ import 'package:finity/features/home/bloc/event_bloc/bloc/ad_bloc.dart';
 import 'package:finity/features/home/bloc/item_bloc/bloc/item_bloc.dart';
 import 'package:finity/features/home/bottom_nav_bar.dart';
 import 'package:finity/features/home/repos/event_repo.dart';
-import 'package:finity/features/home/repos/home_repo.dart';
+import 'package:finity/features/home/repos/item_repo.dart';
 import 'package:finity/features/lost_item_screen/bloc/bloc/lost_item_bloc.dart';
 import 'package:finity/features/lost_item_screen/repos/claim_lost_item_repo.dart';
 import 'package:finity/features/lost_item_screen/repos/lost_item_repo.dart';
@@ -32,7 +32,7 @@ void main() {
             create: (context) => AuthBloc(AuthService()),
           ),
           BlocProvider<ItemBloc>(
-            create: (context) => ItemBloc(HomeRepo()),
+            create: (context) => ItemBloc(ItemRepo()),
           ),
           BlocProvider<AdBloc>(
             create: (context) => AdBloc(EventRepo()),

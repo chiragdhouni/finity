@@ -2,16 +2,15 @@ import { Request, Response } from 'express';
 import Item from '../models/item';
 import User from '../models/user';
 import { ObjectId } from 'mongodb';
-import { Notification } from '../models/notification';
 
 // Adding an item to be listed for lending
-
 export const addItem = async (req: Request, res: Response) => {
   const { name, description, category, ownerId, dueDate } = req.body;
   try {
-    if(!name || !description || !category || !ownerId) { 
+    if (!name || !description || !category || !ownerId) {
       return res.status(400).send('Missing required fields');
     }
+
     const owner = await User.findById(ownerId);
     if (!owner) {
       return res.status(404).send('Owner not found');
@@ -25,7 +24,7 @@ export const addItem = async (req: Request, res: Response) => {
         id: owner._id,
         name: owner.name,
         email: owner.email,
-        address: owner.address
+        address: owner.address,
       },
       status: 'available',
       location: owner.location,
@@ -35,6 +34,7 @@ export const addItem = async (req: Request, res: Response) => {
     await item.save();
     owner.itemsListed.push(item._id as ObjectId);
     await owner.save();
+
     res.status(201).send(item);
   } catch (error) {
     console.error(`Error adding item: ${(error as Error).message}`);
@@ -42,47 +42,49 @@ export const addItem = async (req: Request, res: Response) => {
   }
 };
 
-
 // Request to borrow an item
 export const requestToBorrowItem = async (req: Request, res: Response) => {
   const { itemId, borrowerId } = req.body;
 
   try {
-    // Find the item by ID
     const item = await Item.findById(itemId);
     if (!item) {
       return res.status(404).send('Item not found');
     }
 
-    // Check if the item is available for borrowing
     if (item.status !== 'available') {
       return res.status(400).send('Item is not available for borrowing');
     }
 
-    // Find the borrower by ID
     const borrower = await User.findById(borrowerId);
     if (!borrower) {
       return res.status(404).send('Borrower not found');
     }
 
-    // Add the item to the borrower's requested items
     borrower.itemsRequested.push(itemId);
     await borrower.save();
 
-    // Find the owner of the item
     const owner = await User.findById(item.owner.id);
-  
-    const notification = new Notification({
-      type: 'borrowRequest',
-      userId : borrower._id,
-      message: `Someone has requested to borrow your item: ${item.name}.`});
-      await notification.save();
-      
-      owner?.notifications.push(notification._id as ObjectId);
-      owner?.save();
-    
- 
-    // Send success response
+    if (owner) {
+      const notification = {
+        userId: req.user?._id as any,
+        itemId: item._id,
+        type: 'borrowRequest',
+        message: `Someone has requested to borrow your item: ${item.name}.`,
+        read: false,
+      };
+
+      owner.notifications.push({
+        userId: notification.userId,
+        itemId: notification.itemId as ObjectId,
+        type: notification.type,
+        message: notification.message,
+        read: notification.read,
+        createdAt : new Date(),
+      });
+      await owner.save();
+    }
+
     res.status(200).send({
       message: 'Borrow request submitted',
       item,
@@ -94,6 +96,7 @@ export const requestToBorrowItem = async (req: Request, res: Response) => {
   }
 };
 
+// Lend an item
 export const lendItem = async (req: Request, res: Response) => {
   const { itemId, borrowerId, dueDate } = req.body;
   try {
@@ -122,13 +125,39 @@ export const lendItem = async (req: Request, res: Response) => {
     const owner = await User.findById(item.owner.id);
     if (owner) {
       owner.itemsLended.push(itemId as ObjectId);
+
+      // Mark the old notification as read and remove it from owner's notifications
+      const oldNotification = owner.notifications.find(
+        (n) => n.userId.toString() === (borrower._id  as any).toString() && n.type === 'borrowRequest'
+      );
+      if (oldNotification) {
+        oldNotification.read = true;
+       
+      }
+
+      // owner.notifications.push({
+      //   userId: req.user?._id as any,  
+      //   itemId: item._id  as any,
+      //   type: 'borrowRequestAccepted',
+      //   message: `Your borrow request for ${item.name} has been accepted.`,
+      //   read: false,
+      // });
+
       await owner.save();
     }
 
     borrower.itemsBorrowed.push(itemId as ObjectId);
     borrower.itemsRequested = borrower.itemsRequested.filter(
-      (requestedItemId) => requestedItemId !== itemId
+      (requestedItemId) => requestedItemId.toString() !== itemId.toString()
     );
+    borrower.notifications.push({
+      userId: item.owner.id  as any,
+      itemId: item._id  as any,
+      type: 'borrowRequestAccepted',
+      message: `Your borrow request for ${item.name} has been accepted.`,
+      read: false,
+      createdAt : new Date(),
+    });
     await borrower.save();
 
     res.status(200).send(item);
@@ -138,6 +167,7 @@ export const lendItem = async (req: Request, res: Response) => {
   }
 };
 
+// Get nearby items
 export const getNearbyItems = async (req: Request, res: Response) => {
   const { latitude, longitude, maxDistance } = req.query;
 
@@ -150,7 +180,7 @@ export const getNearbyItems = async (req: Request, res: Response) => {
             coordinates: [parseFloat(longitude as string), parseFloat(latitude as string)],
           },
           distanceField: 'dist.calculated',
-          maxDistance: parseFloat(maxDistance as string ), // Maximum distance in meters
+          maxDistance: parseFloat(maxDistance as string), // Maximum distance in meters
           spherical: true,
         },
       },
@@ -165,7 +195,6 @@ export const getNearbyItems = async (req: Request, res: Response) => {
           dueDate: 1,
           location: 1,
           address: 1,
-          // distance: '$dist.calculated',
         },
       },
     ]);
@@ -192,27 +221,36 @@ export const returnItem = async (req: Request, res: Response) => {
     if (!borrower) {
       return res.status(404).send('Borrower not found');
     }
-      // Remove item from borrower's itemsBorrowed list
-      borrower.itemsBorrowed = borrower.itemsBorrowed.filter(
-        (borrowedItemId) => borrowedItemId !== itemId
+
+    borrower.itemsBorrowed = borrower.itemsBorrowed.filter(
+      (borrowedItemId) => borrowedItemId.toString() !== itemId.toString()
+    );
+    await borrower.save();
+
+    const owner = await User.findById(item.owner.id);
+    if (owner) {
+      owner.itemsLended = owner.itemsLended.filter(
+        (lendedItemId) => lendedItemId.toString() !== itemId.toString()
       );
-      await borrower.save();
-  
-      // Remove item from owner's itemsLended list
-      const owner = await User.findById(item.owner.id);
-      if (owner) {
-        owner.itemsLended = owner.itemsLended.filter(
-          (lendedItemId) => lendedItemId !== itemId
-        );
-        await owner.save();
-      }
+
+      // Add a notification to the owner that the item was returned
+      owner.notifications.push({
+        userId: borrower._id  as any,
+        itemId: item._id  as any,
+        type: 'itemReturned',
+        message: `The item ${item.name} has been returned.`,
+        read: false,
+        createdAt : new Date(),
+      });
+
+      await owner.save();
+    }
+
     // Reset item fields
     item.status = 'available';
     item.dueDate = null;
     item.borrower = null;
     await item.save();
-
-  
 
     res.status(200).send(item);
   } catch (error) {
@@ -221,15 +259,60 @@ export const returnItem = async (req: Request, res: Response) => {
   }
 };
 
-
-
+// Search for items
 export const searchItems = async (req: Request, res: Response) => {
   const { query } = req.query;
   try {
-    const items = await Item.find({name: { $regex: query as string, $options: 'i' }});
+    const items = await Item.find({ name: { $regex: query as string, $options: 'i' } });
     res.status(200).json(items);
   } catch (error) {
     console.error(`Error searching items: ${(error as Error).message}`);
     res.status(400).send(error);
   }
-}
+};
+
+// Reject borrow request
+export const rejectBorrowRequest = async (req: Request, res: Response) => {
+  const { itemId, borrowerId } = req.body;
+  try {
+    const item = await Item.findById(itemId);
+    if (!item) {
+      return res.status(404).send('Item not found');
+    }
+    const borrower = await User.findById(borrowerId);
+    if (!borrower) {
+      return res.status(404).send('Borrower not found');
+    }
+
+    borrower.itemsRequested = borrower.itemsRequested.filter(
+      (requestedItemId) => requestedItemId.toString() !== itemId.toString()
+    );
+    borrower.notifications.push({
+      userId: item.owner.id,
+      itemId: item._id  as any,
+      type: 'borrowRequestRejected',
+      message: `Your borrow request for ${item.name} has been rejected.`,
+      read: false,
+      createdAt : new Date(),
+    });
+    await borrower.save();
+
+    const owner = await User.findById(item.owner.id);
+    if (owner) {
+      owner.notifications.push({
+        userId: borrower._id as any,
+        itemId: item._id  as any,
+        type: 'borrowRequestRejected',
+        message: `You have rejected the borrow request for ${item.name}.`,
+        read: false,
+        createdAt : new Date(),
+      });
+      await owner.save();
+    }
+
+    res.status(200).send('Borrow request rejected');
+  } catch (error) {
+    console.error(`Error rejecting borrow request: ${(error as Error).message}`);
+    res.status(400).send(error);
+  }
+};

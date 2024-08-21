@@ -6,8 +6,9 @@ import 'dart:developer';
 import 'package:finity/core/config/config.dart';
 import 'package:finity/models/item_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
-class HomeRepo {
+class ItemRepo {
   //add item to lend others
   Future<void> addItem(String userId, String itemName, String description,
       String itemCategory, DateTime dueDate) async {
@@ -40,12 +41,20 @@ class HomeRepo {
       String body = jsonEncode(itemJson);
 
       log('body is : $body');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('x-auth-token');
+      // Set a default token if not found
+      if (token == null) {
+        token = '';
+        prefs.setString('x-auth-token', token);
+      }
 
       http.Response res = await http.post(
         Uri.parse('${Config.serverURL}items/add'),
         body: body,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
+          'x-auth-token': token,
         },
       );
       log(res.body);
@@ -70,8 +79,16 @@ class HomeRepo {
     // );
 
     try {
-      log('latitude: $latitude, longitude: $longitude, maxDistance: $maxDistance');
-      log(latitude.runtimeType.toString());
+      // log('latitude: $latitude, longitude: $longitude, maxDistance: $maxDistance');
+      // log(latitude.runtimeType.toString());
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('x-auth-token');
+      // Set a default token if not found
+      if (token == null) {
+        token = '';
+        prefs.setString('x-auth-token', token);
+      }
+
       final response = await http.get(
         Uri.parse(apiUrl).replace(
           queryParameters: {
@@ -82,31 +99,46 @@ class HomeRepo {
         ),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
+          'X-Auth-Token': token,
         },
       );
 
-      log('Response: ${response.body}  ${response.statusCode}');
+      // log('Response: ${response.body}  ${response.statusCode}');
 
       if (response.statusCode == 200) {
         List<ItemModel> data = (json.decode(response.body) as List)
             .map((e) => ItemModel.fromMap(e))
             .toList();
-        log('Nearby Items: $data');
+        // log('Nearby Items: $data');
         // Handle the data (e.g., update state or use in the UI)
         return data;
       } else {
         throw Exception('Failed to load nearby items');
       }
     } catch (error) {
-      log('Error fetching nearby items: $error');
+      // log('Error fetching nearby items: $error');
     }
     return null;
   }
 
   Future<List<ItemModel>> searchItems(String query) async {
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('x-auth-token');
+      // Set a default token if not found
+      if (token == null) {
+        token = '';
+        prefs.setString('x-auth-token', token);
+      }
+
       final response = await http.get(
-        Uri.parse('${Config.serverURL}items/search?query=$query'),
+        Uri.parse(
+          '${Config.serverURL}items/search?query=$query',
+        ),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'X-Auth-Token': token,
+        },
       );
 
       if (response.statusCode == 200) {
@@ -119,7 +151,7 @@ class HomeRepo {
         throw Exception('Failed to load items');
       }
     } catch (error) {
-      log('Error searching items: $error');
+      // log('Error searching items: $error');
       return [];
     }
   }
@@ -128,13 +160,21 @@ class HomeRepo {
     String itemId,
     String borrowerId,
   ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('x-auth-token');
+    // Set a default token if not found
+    if (token == null) {
+      token = '';
+      prefs.setString('x-auth-token', token);
+    }
+
     final url = Uri.parse(
         '${Config.serverURL}items/request'); // Replace with your actual API endpoint
 
     try {
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Content-Type': 'application/json', 'X-Auth-Token': token},
         body: jsonEncode({
           'itemId': itemId,
           'borrowerId': borrowerId,

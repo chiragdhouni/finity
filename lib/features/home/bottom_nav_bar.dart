@@ -53,7 +53,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
       double longitude = position.longitude;
 
       // Update user location
-      await userProvider.updateLocation(latitude, longitude);
+      await userProvider.updateLocation(longitude, latitude);
       //location updated
     }
   }

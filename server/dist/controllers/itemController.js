@@ -12,10 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.searchItems = exports.returnItem = exports.getNearbyItems = exports.lendItem = exports.requestToBorrowItem = exports.addItem = void 0;
+exports.rejectBorrowRequest = exports.searchItems = exports.returnItem = exports.getNearbyItems = exports.lendItem = exports.requestToBorrowItem = exports.addItem = void 0;
 const item_1 = __importDefault(require("../models/item"));
 const user_1 = __importDefault(require("../models/user"));
-const notification_1 = require("../models/notification");
 // Adding an item to be listed for lending
 const addItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, description, category, ownerId, dueDate } = req.body;
@@ -35,7 +34,7 @@ const addItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 id: owner._id,
                 name: owner.name,
                 email: owner.email,
-                address: owner.address
+                address: owner.address,
             },
             status: 'available',
             location: owner.location,
@@ -54,36 +53,41 @@ const addItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.addItem = addItem;
 // Request to borrow an item
 const requestToBorrowItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     const { itemId, borrowerId } = req.body;
     try {
-        // Find the item by ID
         const item = yield item_1.default.findById(itemId);
         if (!item) {
             return res.status(404).send('Item not found');
         }
-        // Check if the item is available for borrowing
         if (item.status !== 'available') {
             return res.status(400).send('Item is not available for borrowing');
         }
-        // Find the borrower by ID
         const borrower = yield user_1.default.findById(borrowerId);
         if (!borrower) {
             return res.status(404).send('Borrower not found');
         }
-        // Add the item to the borrower's requested items
         borrower.itemsRequested.push(itemId);
         yield borrower.save();
-        // Find the owner of the item
         const owner = yield user_1.default.findById(item.owner.id);
-        const notification = new notification_1.Notification({
-            type: 'borrowRequest',
-            userId: borrower._id,
-            message: `Someone has requested to borrow your item: ${item.name}.`
-        });
-        yield notification.save();
-        owner === null || owner === void 0 ? void 0 : owner.notifications.push(notification._id);
-        owner === null || owner === void 0 ? void 0 : owner.save();
-        // Send success response
+        if (owner) {
+            const notification = {
+                userId: (_a = req.user) === null || _a === void 0 ? void 0 : _a._id,
+                itemId: item._id,
+                type: 'borrowRequest',
+                message: `Someone has requested to borrow your item: ${item.name}.`,
+                read: false,
+            };
+            owner.notifications.push({
+                userId: notification.userId,
+                itemId: notification.itemId,
+                type: notification.type,
+                message: notification.message,
+                read: notification.read,
+                createdAt: new Date(),
+            });
+            yield owner.save();
+        }
         res.status(200).send({
             message: 'Borrow request submitted',
             item,
@@ -96,6 +100,7 @@ const requestToBorrowItem = (req, res) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.requestToBorrowItem = requestToBorrowItem;
+// Lend an item
 const lendItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { itemId, borrowerId, dueDate } = req.body;
     try {
@@ -122,10 +127,30 @@ const lendItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const owner = yield user_1.default.findById(item.owner.id);
         if (owner) {
             owner.itemsLended.push(itemId);
+            // Mark the old notification as read and remove it from owner's notifications
+            const oldNotification = owner.notifications.find((n) => n.userId.toString() === borrower._id.toString() && n.type === 'borrowRequest');
+            if (oldNotification) {
+                oldNotification.read = true;
+            }
+            // owner.notifications.push({
+            //   userId: req.user?._id as any,  
+            //   itemId: item._id  as any,
+            //   type: 'borrowRequestAccepted',
+            //   message: `Your borrow request for ${item.name} has been accepted.`,
+            //   read: false,
+            // });
             yield owner.save();
         }
         borrower.itemsBorrowed.push(itemId);
-        borrower.itemsRequested = borrower.itemsRequested.filter((requestedItemId) => requestedItemId !== itemId);
+        borrower.itemsRequested = borrower.itemsRequested.filter((requestedItemId) => requestedItemId.toString() !== itemId.toString());
+        borrower.notifications.push({
+            userId: item.owner.id,
+            itemId: item._id,
+            type: 'borrowRequestAccepted',
+            message: `Your borrow request for ${item.name} has been accepted.`,
+            read: false,
+            createdAt: new Date(),
+        });
         yield borrower.save();
         res.status(200).send(item);
     }
@@ -135,6 +160,7 @@ const lendItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.lendItem = lendItem;
+// Get nearby items
 const getNearbyItems = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { latitude, longitude, maxDistance } = req.query;
     try {
@@ -161,7 +187,6 @@ const getNearbyItems = (req, res) => __awaiter(void 0, void 0, void 0, function*
                     dueDate: 1,
                     location: 1,
                     address: 1,
-                    // distance: '$dist.calculated',
                 },
             },
         ]);
@@ -188,13 +213,20 @@ const returnItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         if (!borrower) {
             return res.status(404).send('Borrower not found');
         }
-        // Remove item from borrower's itemsBorrowed list
-        borrower.itemsBorrowed = borrower.itemsBorrowed.filter((borrowedItemId) => borrowedItemId !== itemId);
+        borrower.itemsBorrowed = borrower.itemsBorrowed.filter((borrowedItemId) => borrowedItemId.toString() !== itemId.toString());
         yield borrower.save();
-        // Remove item from owner's itemsLended list
         const owner = yield user_1.default.findById(item.owner.id);
         if (owner) {
-            owner.itemsLended = owner.itemsLended.filter((lendedItemId) => lendedItemId !== itemId);
+            owner.itemsLended = owner.itemsLended.filter((lendedItemId) => lendedItemId.toString() !== itemId.toString());
+            // Add a notification to the owner that the item was returned
+            owner.notifications.push({
+                userId: borrower._id,
+                itemId: item._id,
+                type: 'itemReturned',
+                message: `The item ${item.name} has been returned.`,
+                read: false,
+                createdAt: new Date(),
+            });
             yield owner.save();
         }
         // Reset item fields
@@ -210,6 +242,7 @@ const returnItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.returnItem = returnItem;
+// Search for items
 const searchItems = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { query } = req.query;
     try {
@@ -222,3 +255,45 @@ const searchItems = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.searchItems = searchItems;
+// Reject borrow request
+const rejectBorrowRequest = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { itemId, borrowerId } = req.body;
+    try {
+        const item = yield item_1.default.findById(itemId);
+        if (!item) {
+            return res.status(404).send('Item not found');
+        }
+        const borrower = yield user_1.default.findById(borrowerId);
+        if (!borrower) {
+            return res.status(404).send('Borrower not found');
+        }
+        borrower.itemsRequested = borrower.itemsRequested.filter((requestedItemId) => requestedItemId.toString() !== itemId.toString());
+        borrower.notifications.push({
+            userId: item.owner.id,
+            itemId: item._id,
+            type: 'borrowRequestRejected',
+            message: `Your borrow request for ${item.name} has been rejected.`,
+            read: false,
+            createdAt: new Date(),
+        });
+        yield borrower.save();
+        const owner = yield user_1.default.findById(item.owner.id);
+        if (owner) {
+            owner.notifications.push({
+                userId: borrower._id,
+                itemId: item._id,
+                type: 'borrowRequestRejected',
+                message: `You have rejected the borrow request for ${item.name}.`,
+                read: false,
+                createdAt: new Date(),
+            });
+            yield owner.save();
+        }
+        res.status(200).send('Borrow request rejected');
+    }
+    catch (error) {
+        console.error(`Error rejecting borrow request: ${error.message}`);
+        res.status(400).send(error);
+    }
+});
+exports.rejectBorrowRequest = rejectBorrowRequest;

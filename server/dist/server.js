@@ -12,7 +12,7 @@ const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
 const itemRoutes_1 = __importDefault(require("./routes/itemRoutes"));
 const eventRoutes_1 = __importDefault(require("./routes/eventRoutes"));
 const lostItemRoutes_1 = __importDefault(require("./routes/lostItemRoutes"));
-const notificationRoutes_1 = __importDefault(require("./routes/notificationRoutes"));
+// import notificationRoutes from './routes/notificationRoutes';
 const app = (0, express_1.default)();
 const httpServer = (0, http_1.createServer)(app); // Create an HTTP server using the Express app
 const io = new socket_io_1.Server(httpServer, {
@@ -30,7 +30,7 @@ app.use('/api/auth', authRoutes_1.default);
 app.use('/api/items', itemRoutes_1.default);
 app.use('/api/events', eventRoutes_1.default);
 app.use('/api/lostItems', lostItemRoutes_1.default);
-app.use('/api/notification', notificationRoutes_1.default);
+// app.use('/api/notification',notificationRoutes);
 app.get('/', (req, res) => {
     res.send('Hello World');
 });

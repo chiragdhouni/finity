@@ -15,13 +15,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.rejectClaim = exports.acceptClaim = exports.submitClaim = void 0;
 const claim_1 = require("../models/claim");
 const lostItem_1 = __importDefault(require("../models/lostItem"));
-const notification_1 = require("../models/notification");
 const user_1 = __importDefault(require("../models/user"));
 const submitClaim = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { lostItemId, proofText, proofImages } = req.body;
         if (!req.user) {
-            return res.status(401).json({ msg: `uUnauthorized: User not found ${req.user.id}` });
+            return res.status(401).json({ msg: `Unauthorized: User not found` });
         }
         const userId = req.user.id;
         const claim = new claim_1.Claim({
@@ -35,14 +34,16 @@ const submitClaim = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             $push: { claims: claim._id },
         });
         const lostItem = yield lostItem_1.default.findById(lostItemId).populate('owner.id');
-        const notification = new notification_1.Notification({
-            userId: lostItem === null || lostItem === void 0 ? void 0 : lostItem.owner.id,
-            message: `Someone has claimed the item: ${lostItem === null || lostItem === void 0 ? void 0 : lostItem.name}.`,
-        });
         const owner = yield user_1.default.findById(lostItem === null || lostItem === void 0 ? void 0 : lostItem.owner.id);
-        owner === null || owner === void 0 ? void 0 : owner.notifications.push(notification._id);
+        owner === null || owner === void 0 ? void 0 : owner.notifications.push({
+            userId: req.user._id,
+            itemId: lostItem === null || lostItem === void 0 ? void 0 : lostItem._id,
+            message: `You have a new claim for the item: ${lostItem === null || lostItem === void 0 ? void 0 : lostItem.name} from ${req.user.name}`,
+            type: 'claimRequest',
+            read: false,
+            createdAt: new Date(),
+        });
         yield (owner === null || owner === void 0 ? void 0 : owner.save());
-        yield notification.save();
         res.status(201).json({ message: 'Claim submitted successfully', claim });
     }
     catch (err) {
@@ -57,30 +58,27 @@ const acceptClaim = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         if (!claim) {
             return res.status(404).json({ error: 'Claim not found' });
         }
-        const lostItem = yield lostItem_1.default.findById(claim.lostItemId);
         if (!req.user) {
             return res.status(401).json({ msg: 'Unauthorized: User not found' });
         }
+        const lostItem = yield lostItem_1.default.findById(claim.lostItemId);
         if ((lostItem === null || lostItem === void 0 ? void 0 : lostItem.owner.id.toString()) !== req.user.id.toString()) {
             return res.status(403).json({ error: 'You are not authorized to accept this claim' });
         }
         claim.status = 'accepted';
         yield claim.save();
-        const notification = new notification_1.Notification({
-            userId: claim.userId,
-            message: `Your claim for the item: ${lostItem === null || lostItem === void 0 ? void 0 : lostItem.name} has been accepted. 
-        Please contact the owner to retrieve your item.
-        details : 
-        owner name : ${req.user.name}
-        owner email : ${req.user.email}
-        owner phone : ${lostItem === null || lostItem === void 0 ? void 0 : lostItem.contactInfo}
-        location : ${lostItem === null || lostItem === void 0 ? void 0 : lostItem.location.coordinates}
-        `,
-        });
-        yield notification.save();
         const claimPerson = yield user_1.default.findById(claim.userId);
-        claimPerson === null || claimPerson === void 0 ? void 0 : claimPerson.notifications.push(notification._id);
+        claimPerson === null || claimPerson === void 0 ? void 0 : claimPerson.notifications.push({
+            userId: req.user._id,
+            itemId: lostItem === null || lostItem === void 0 ? void 0 : lostItem._id,
+            message: `Your claim for the item: ${lostItem === null || lostItem === void 0 ? void 0 : lostItem.name} has been accepted.`,
+            type: 'claimRequestAccepted',
+            read: false,
+            createdAt: new Date(),
+        });
+        yield (claimPerson === null || claimPerson === void 0 ? void 0 : claimPerson.save());
         lostItem.status = 'found';
+        yield lostItem.save();
         res.status(200).json({ message: 'Claim accepted successfully', claim });
     }
     catch (err) {
@@ -104,13 +102,16 @@ const rejectClaim = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         }
         claim.status = 'rejected';
         yield claim.save();
-        const notification = new notification_1.Notification({
-            userId: claim.userId,
-            message: `Your claim for the item: ${lostItem === null || lostItem === void 0 ? void 0 : lostItem.name} has been rejected.`,
-        });
-        yield notification.save();
         const claimPerson = yield user_1.default.findById(claim.userId);
-        claimPerson === null || claimPerson === void 0 ? void 0 : claimPerson.notifications.push(notification._id);
+        claimPerson === null || claimPerson === void 0 ? void 0 : claimPerson.notifications.push({
+            userId: req.user._id,
+            itemId: lostItem === null || lostItem === void 0 ? void 0 : lostItem._id,
+            message: `Your claim for the item: ${lostItem === null || lostItem === void 0 ? void 0 : lostItem.name} has been rejected.`,
+            type: 'claimRequestRejected',
+            read: false,
+            createdAt: new Date(),
+        });
+        yield (claimPerson === null || claimPerson === void 0 ? void 0 : claimPerson.save());
         res.status(200).json({ message: 'Claim rejected successfully', claim });
     }
     catch (err) {

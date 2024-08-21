@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:finity/core/config/config.dart';
 import 'package:finity/models/user_model.dart';
@@ -25,6 +26,7 @@ class AuthService {
       password: password,
       token: "",
       address: address,
+      notifications: [],
       events: [],
       location: [], // Ensure location is initialized as a list
       itemsListed: [],
@@ -34,11 +36,20 @@ class AuthService {
     );
 
     try {
+      // SharedPreferences prefs = await SharedPreferences.getInstance();
+      // String? token = prefs.getString('x-auth-token');
+      // // Set a default token if not found
+      // if (token == null) {
+      //   token = '';
+      //   prefs.setString('x-auth-token', token);
+      // }
+
       http.Response res = await http.post(
         Uri.parse('${Config.serverURL}auth/register'),
         body: user.toJson(),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
+          // 'x-auth-token': token,
         },
       );
       // log('Sign up response: ${res.body}');
@@ -60,6 +71,14 @@ class AuthService {
     // log('Attempting to sign in with email: $email');
 
     try {
+      // SharedPreferences prefs = await SharedPreferences.getInstance();
+      // String? token = prefs.getString('x-auth-token');
+      // // Set a default token if not found
+      // if (token == null) {
+      //   token = '';
+      //   prefs.setString('x-auth-token', token);
+      // }
+
       http.Response res = await http.post(
         Uri.parse('${Config.serverURL}auth/login'),
         body: jsonEncode({
@@ -73,18 +92,21 @@ class AuthService {
 
       if (res.statusCode == 201) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
+
         Provider.of<UserProvider>(context, listen: false).setUser(res.body);
 
         // Store the token from the response
         await prefs.setString('x-auth-token', jsonDecode(res.body)['token']);
+        print('token stored: ${jsonDecode(res.body)['token']}');
         // log('Token stored: ${jsonDecode(res.body)['token']}');
         return "login successful";
       }
-
-      return "login failed";
+      log('Sign in failed with status: ${res.statusCode}');
+      log('Sign in failed with status: ${res.body}');
+      return "error from server";
     } catch (e) {
-      // log('Sign in error: $e');
-      return "login failed";
+      log('Sign in error: $e');
+      return e.toString();
     }
   }
 

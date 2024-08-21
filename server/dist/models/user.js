@@ -26,6 +26,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 // Assume `io` is your Socket.IO server instance
 let io;
+const NotificationSchema = new mongoose_1.Schema({
+    userId: { type: mongoose_1.default.Schema.Types.ObjectId, required: true },
+    itemId: { type: mongoose_1.default.Schema.Types.ObjectId },
+    type: { type: String, required: true },
+    message: { type: String, required: true },
+    read: { type: Boolean, default: false },
+    createdAt: { type: Date, default: Date.now }, // Add this line
+});
 const UserSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true },
@@ -36,7 +44,7 @@ const UserSchema = new mongoose_1.Schema({
     itemsLended: { type: [mongoose_1.default.Schema.Types.ObjectId], ref: 'Item', default: [] },
     itemsBorrowed: { type: [mongoose_1.default.Schema.Types.ObjectId], ref: 'Item', default: [] },
     itemsRequested: { type: [mongoose_1.default.Schema.Types.ObjectId], ref: 'Item', default: [] },
-    notifications: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: 'Notification' }],
+    notifications: [NotificationSchema], // Embedded schema
     location: {
         type: { type: String, enum: ['Point'], default: 'Point' },
         coordinates: {

@@ -9,7 +9,7 @@ import itemRoutes from './routes/itemRoutes';
 import eventRoutes from './routes/eventRoutes';
 import lostItemRoutes from './routes/lostItemRoutes';
 import User from './models/user'; // Import the User model and initializeSocket function
-import notificationRoutes from './routes/notificationRoutes';
+// import notificationRoutes from './routes/notificationRoutes';
 
 const app = express();
 const httpServer = createServer(app); // Create an HTTP server using the Express app
@@ -32,7 +32,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/items', itemRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/lostItems', lostItemRoutes);
-app.use('/api/notification',notificationRoutes);
+// app.use('/api/notification',notificationRoutes);
 
 app.get('/', (req, res) => {
   res.send('Hello World');

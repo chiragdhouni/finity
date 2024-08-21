@@ -70,14 +70,26 @@ class UserProvider extends ChangeNotifier {
 
   void setUser(String userJson) {
     log('Setting user from JSON: $userJson');
-    final userMap = jsonDecode(userJson);
-    _user = UserModel.fromJson(userMap);
-    log('User set with ID=${_user.id}, Name=${_user.name}');
-    notifyListeners();
+    try {
+      // Attempt to decode the JSON
+      final userMap = jsonDecode(userJson);
+      log('Decoded JSON: $userMap');
 
-    // Start listening to the specific user's updates
-    // log('Emitting listen_to_user for user ID=${_user.id}');
-    // _socket.emit('listen_to_user', _user.id);
+      // Further log the structure of the userMap
+      if (userMap is Map<String, dynamic>) {
+        log('Decoded userMap is a valid Map<String, dynamic>');
+      } else {
+        log('Error: Decoded userMap is not a Map<String, dynamic>');
+        return;
+      }
+
+      // Now, create the UserModel from the userMap
+      _user = UserModel.fromMap(userMap['user']);
+      log('User set with ID=${_user.id}, Name=${_user.name}');
+      notifyListeners();
+    } catch (e) {
+      log('Error decoding or setting user: $e');
+    }
   }
 
   void setUserFromModel(UserModel user) {
@@ -93,7 +105,7 @@ class UserProvider extends ChangeNotifier {
   Future<void> updateLocation(double latitude, double longitude) async {
     log('Updating location for user ${_user.id} to [lat=$latitude, long=$longitude]');
     _user.location = [latitude, longitude];
-    await LocationService.updateUserLocation(_user.id, latitude, longitude);
+    await LocationService.updateUserLocation(_user.id, longitude, latitude);
     notifyListeners();
   }
 

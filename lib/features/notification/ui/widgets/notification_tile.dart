@@ -1,4 +1,4 @@
-import 'package:finity/models/notification_model.dart';
+import 'package:finity/models/user_model.dart';
 import 'package:flutter/material.dart';
 
 class NotificationTile extends StatelessWidget {
@@ -15,7 +15,9 @@ class NotificationTile extends StatelessWidget {
           ? Icons.check_circle
           : Icons.radio_button_unchecked),
       onTap: () {
-        // Handle notification tap (e.g., mark as read)
+        // Navigate to the notification detail screen
+        Navigator.of(context)
+            .pushNamed('/notification-detail', arguments: notification);
       },
     );
   }

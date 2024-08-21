@@ -8,8 +8,8 @@ class UserModel {
   String password;
   String address;
   List<String> events;
-  List<String> notifications;
-  List<double> location; // Updated to List<num>
+  List<NotificationModel> notifications; // Updated to use NotificationModel
+  List<double> location; // Updated to List<double>
   List<String> itemsLended;
   List<String> itemsBorrowed;
   List<String> itemsListed;
@@ -23,7 +23,7 @@ class UserModel {
     required this.password,
     required this.address,
     required this.events,
-    this.notifications = const [],
+    this.notifications = const [], // Default to empty list
     this.location = const [0.0, 0.0], // Default to [0.0, 0.0]
     required this.itemsListed,
     required this.itemsLended,
@@ -33,15 +33,18 @@ class UserModel {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'id': id,
+      '_id': id,
       'name': name,
       'email': email,
       'token': token,
       'password': password,
       'address': address,
-      'location': location,
+      'location': {
+        'type': 'Point',
+        'coordinates': location,
+      },
       'events': events,
-      'notifications': notifications,
+      'notifications': notifications.map((n) => n.toMap()).toList(),
       'itemsListed': itemsListed,
       'itemsLended': itemsLended,
       'itemsBorrowed': itemsBorrowed,
@@ -57,6 +60,10 @@ class UserModel {
       token: map['token'] as String?,
       password: map['password'] as String? ?? '',
       address: map['address'] as String? ?? '',
+      // location: map['location'] != null
+      //     ? List<double>.from((map['location']['coordinates'] as List<dynamic>)
+      //         .map((coord) => coord.toDouble()))
+      //     : [0.0, 0.0],
       location: map['location'] != null
           ? [
               (map['location']['coordinates'][0]).toDouble(),
@@ -64,7 +71,9 @@ class UserModel {
             ]
           : [0.0, 0.0],
       events: List<String>.from(map['events'] ?? []),
-      notifications: List<String>.from(map['notifications'] ?? []),
+      notifications: (map['notifications'] as List<dynamic>? ?? [])
+          .map((n) => NotificationModel.fromMap(n as Map<String, dynamic>))
+          .toList(),
       itemsListed: List<String>.from(map['itemsListed'] ?? []),
       itemsLended: List<String>.from(map['itemsLended'] ?? []),
       itemsBorrowed: List<String>.from(map['itemsBorrowed'] ?? []),
@@ -73,24 +82,51 @@ class UserModel {
   }
 
   String toJson() => json.encode(toMap());
-  factory UserModel.fromJson(Map<String, dynamic> json) {
-    // var userInfo = json['user'];
-    return UserModel(
-      id: json['user']['_id'] as String,
-      name: json['user']['name'] as String,
-      email: json['user']['email'] as String,
-      token: json['token'] as String,
-      address: json['user']['address'] as String,
-      password: json['user']['password'] as String,
-      location: List<double>.from(
-          (json['user']['location']['coordinates'] as List)
-              .map((x) => (x as num).toDouble())),
-      events: List<String>.from(json['user']['events']),
-      notifications: List<String>.from(json['user']['notifications']),
-      itemsListed: List<String>.from(json['user']['itemsListed']),
-      itemsLended: List<String>.from(json['user']['itemsLended']),
-      itemsBorrowed: List<String>.from(json['user']['itemsBorrowed']),
-      itemsRequested: List<String>.from(json['user']['itemsRequested']),
+
+  factory UserModel.fromJson(String jsonString) {
+    final Map<String, dynamic> json = jsonDecode(jsonString);
+    return UserModel.fromMap(json);
+  }
+}
+
+class NotificationModel {
+  String userId;
+  String? itemId;
+  String type;
+  String message;
+  bool read;
+  DateTime createdAt;
+
+  NotificationModel({
+    required this.userId,
+    this.itemId,
+    required this.type,
+    required this.message,
+    this.read = false,
+    required this.createdAt,
+  });
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'userId': userId,
+      'itemId': itemId,
+      'type': type,
+      'message': message,
+      'read': read,
+      'createdAt': createdAt.toIso8601String(),
+    };
+  }
+
+  factory NotificationModel.fromMap(Map<String, dynamic> map) {
+    return NotificationModel(
+      userId: map['userId'] as String? ?? '',
+      itemId: map['itemId'] as String?,
+      type: map['type'] as String? ?? '',
+      message: map['message'] as String? ?? '',
+      read: map['read'] as bool? ?? false,
+      createdAt: map['createdAt'] != null
+          ? DateTime.parse(map['createdAt'] as String)
+          : DateTime.now(), // Fallback to current date if null
     );
   }
 }

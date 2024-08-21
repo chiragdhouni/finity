@@ -8,14 +8,15 @@ import {
   searchItems,
  
 } from '../controllers/itemController';
+import { auth } from '../middlewares/auth';
 
 const itemRouter = Router();
 
-itemRouter.post('/add', addItem);
-itemRouter.post('/request', requestToBorrowItem);
-itemRouter.put('/lend', lendItem);
-itemRouter.put('/return', returnItem);
-itemRouter.get('/nearby', getNearbyItems);
-itemRouter.get('/search',searchItems);
+itemRouter.post('/add', auth,addItem);
+itemRouter.post('/request',auth, requestToBorrowItem);
+itemRouter.put('/lend', auth, lendItem);
+itemRouter.put('/return', auth, returnItem);
+itemRouter.get('/nearby', auth, getNearbyItems);
+itemRouter.get('/search', auth,searchItems);
 
 export default itemRouter;

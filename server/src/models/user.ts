@@ -14,12 +14,33 @@ interface IUser extends Document {
   itemsLended: Types.ObjectId[];
   itemsBorrowed: Types.ObjectId[];
   itemsRequested: Types.ObjectId[];
-  notifications: Types.ObjectId[];
+  notifications: INotification[]; // Changed this line
   location?: {
     type: string;
     coordinates: [number, number];
   };
 }
+
+interface INotification {
+  userId: mongoose.Types.ObjectId; // from whom the notification is
+  itemId?: mongoose.Types.ObjectId; // item related to the notification
+  type: string;
+  message: string;
+
+  read: boolean;
+  createdAt: Date;
+  
+}
+
+const NotificationSchema: Schema<INotification> = new Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, required: true },
+  itemId: { type: mongoose.Schema.Types.ObjectId },
+  type: { type: String, required: true },
+  message: { type: String, required: true },
+  read: { type: Boolean, default: false },
+  createdAt: { type: Date, default: Date.now }, // Add this line
+}, 
+);
 
 const UserSchema: Schema<IUser> = new Schema({
   name: { type: String, required: true },
@@ -31,7 +52,7 @@ const UserSchema: Schema<IUser> = new Schema({
   itemsLended: { type: [mongoose.Schema.Types.ObjectId], ref: 'Item', default: [] },
   itemsBorrowed: { type: [mongoose.Schema.Types.ObjectId], ref: 'Item', default: [] },
   itemsRequested: { type: [mongoose.Schema.Types.ObjectId], ref: 'Item', default: [] },
-  notifications: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Notification' }],
+  notifications: [NotificationSchema], // Embedded schema
   location: {
     type: { type: String, enum: ['Point'], default: 'Point' },
     coordinates: {
@@ -40,6 +61,10 @@ const UserSchema: Schema<IUser> = new Schema({
     },
   },
 });
+
+// Create a 2dsphere index for geospatial queries if location is provided
+UserSchema.index({ location: '2dsphere' });
+
 declare global {
   namespace Express {
     interface Request {
@@ -48,9 +73,6 @@ declare global {
     }
   }
 }
-
-// Create a 2dsphere index for geospatial queries if location is provided
-UserSchema.index({ location: '2dsphere' });
 
 // UserSchema.post('save', function (doc) {
 //   // Emit a Socket.IO event when the user document is updated

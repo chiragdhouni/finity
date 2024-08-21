@@ -3,15 +3,25 @@ import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:finity/core/config/config.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LocationService {
   static Future<void> updateUserLocation(
       String userId, double latitude, double longitude) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('x-auth-token');
+    // Set a default token if not found
+    if (token == null) {
+      token = '';
+      prefs.setString('x-auth-token', token);
+    }
+
     final url = Uri.parse('${Config.serverURL}auth/$userId/location');
     final response = await http.patch(
       url,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
+        'x-auth-token': token,
       },
       body: jsonEncode(<String, dynamic>{
         'latitude': latitude,
