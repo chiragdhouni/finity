@@ -1,16 +1,13 @@
 # finity
+- Community Item Sharing and Service Providing App
+Finity is a community-driven app that facilitates item sharing and service providing within local neighborhoods. Users can lend, rent, or request items, and offer or request services, all through a user-friendly platform. The app is built using Flutter for the frontend, Node.js/Express.js for the backend, and MongoDB as the database. It also integrates Mapbox for real-time location tracking.
 
-A new Flutter project.
 
-## Getting Started
+#Features
+ - Item Sharing: Users can list items they want to lend or rent. Items can be categorized and filtered by location, availability, and cost.
+ - Service Providing: Users can offer or request services within their community.
+ - Real-Time Location Tracking: View the real-time location of service providers or items available for pickup.
+ - Notification System: Users receive notifications for item requests, acceptance, rejections, and service requests.
+ - User Profile Management: Users can manage their profiles, including location, listed items, borrowed items, and requested items.
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+ - 
