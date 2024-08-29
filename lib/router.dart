@@ -1,4 +1,4 @@
-import 'package:finity/features/auth/repos/auth_repo.dart';
+import 'package:finity/services/auth_service.dart';
 import 'package:finity/features/auth/ui/pages/login_page.dart';
 import 'package:finity/features/auth/ui/pages/signup_page.dart';
 import 'package:finity/features/home/bottom_nav_bar.dart';

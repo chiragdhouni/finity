@@ -2,7 +2,7 @@ import 'dart:async';
 // import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:finity/features/auth/repos/auth_repo.dart';
+import 'package:finity/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
 part 'auth_event.dart';

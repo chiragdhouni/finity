@@ -1,4 +1,4 @@
-import 'package:finity/features/home/bloc/item_bloc/bloc/item_bloc.dart';
+import 'package:finity/blocs/item/item_bloc.dart';
 
 import 'package:finity/provider/user_provider.dart';
 import 'package:flutter/material.dart';

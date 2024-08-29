@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-// import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:finity/models/user_model.dart';
-import 'package:finity/features/home/services/location_service.dart';
+import 'package:finity/services/location_service.dart';
 
 class UserProvider extends ChangeNotifier {
   UserModel _user = UserModel(
@@ -23,50 +23,50 @@ class UserProvider extends ChangeNotifier {
     itemsRequested: [],
   );
 
-  // late IO.Socket _socket;
+  late IO.Socket _socket;
 
-  // UserProvider() {
-  //   _initializeSocket();
-  // }
+  UserProvider() {
+    _initializeSocket();
+  }
 
   UserModel get user => _user;
 
-  // void _initializeSocket() {
-  //   log('Initializing socket connection...');
-  //   _socket = IO.io("http://192.168.29.160:3001", <String, dynamic>{
-  //     'transports': ['websocket'],
-  //     'autoConnect': true,
-  //   });
+  void _initializeSocket() {
+    log('Initializing socket connection...');
+    _socket = IO.io("http://192.168.29.160:3001", <String, dynamic>{
+      'transports': ['websocket'],
+      'autoConnect': true,
+    });
 
-  //   _socket.on('connect', (_) {
-  //     log('Connected to socket server');
-  //     _listenForUserUpdates();
-  //   });
+    _socket.on('connect', (_) {
+      log('Connected to socket server');
+      _listenForUserUpdates();
+    });
 
-  //   _socket.on('disconnect', (_) {
-  //     log('Disconnected from socket server');
-  //   });
+    _socket.on('disconnect', (_) {
+      log('Disconnected from socket server');
+    });
 
-  //   _socket.on('connect_error', (error) {
-  //     log('Connection error: $error');
-  //   });
+    _socket.on('connect_error', (error) {
+      log('Connection error: $error');
+    });
 
-  //   _socket.on('error', (error) {
-  //     log('Socket error: $error');
-  //   });
-  // }
+    _socket.on('error', (error) {
+      log('Socket error: $error');
+    });
+  }
 
-  // void _listenForUserUpdates() {
-  //   log('Setting up listener for user updates...');
-  //   _socket.on('user_update_${_user.id}', (data) {
-  //     log('Received update for user ${_user.id}: $data');
-  //     final updatedUserMap = jsonDecode(data);
-  //     _user = UserModel.fromJson(updatedUserMap);
+  void _listenForUserUpdates() {
+    log('Setting up listener for user updates...');
+    _socket.on('user_update_${_user.id}', (data) {
+      log('Received update for user ${_user.id}: $data');
+      final updatedUserMap = jsonDecode(data);
+      _user = UserModel.fromJson(updatedUserMap);
 
-  //     log('User updated: ID=${_user.id}, Name=${_user.name}');
-  //     notifyListeners();
-  //   });
-  // }
+      log('User updated: ID=${_user.id}, Name=${_user.name}');
+      notifyListeners();
+    });
+  }
 
   void setUser(String userJson) {
     log('Setting user from JSON: $userJson');

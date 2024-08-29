@@ -1,6 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:finity/features/lost_item_screen/bloc/bloc/lost_item_bloc.dart';
+import 'package:finity/blocs/lost_item/lost_item_bloc.dart';
 import 'package:finity/models/lost_item_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

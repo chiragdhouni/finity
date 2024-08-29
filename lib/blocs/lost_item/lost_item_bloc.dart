@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:finity/features/lost_item_screen/repos/claim_lost_item_repo.dart';
-import 'package:finity/features/lost_item_screen/repos/lost_item_repo.dart';
+import 'package:finity/services/claim_lost_item_service.dart';
+import 'package:finity/services/lost_item_service.dart';
 import 'package:finity/models/lost_item_model.dart';
 
 part 'lost_item_event.dart';

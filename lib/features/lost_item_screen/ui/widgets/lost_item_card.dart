@@ -1,4 +1,4 @@
-import 'package:finity/features/lost_item_screen/bloc/bloc/lost_item_bloc.dart';
+import 'package:finity/blocs/lost_item/lost_item_bloc.dart';
 import 'package:finity/features/lost_item_screen/ui/screens/edit_lost_item_screen.dart';
 import 'package:finity/features/lost_item_screen/ui/widgets/claim_item_form.dart';
 import 'package:finity/models/lost_item_model.dart';

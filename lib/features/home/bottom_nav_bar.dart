@@ -2,8 +2,8 @@
 
 // ignore_for_file: annotate_overrides
 
-import 'package:finity/features/auth/repos/auth_repo.dart';
-import 'package:finity/features/home/services/location_service.dart';
+import 'package:finity/services/auth_service.dart';
+import 'package:finity/services/location_service.dart';
 import 'package:finity/features/home/ui/pages/home_screen.dart';
 import 'package:finity/features/home/ui/pages/profile_screen.dart';
 import 'package:finity/features/lost_item_screen/ui/screens/lost_item_screen.dart';

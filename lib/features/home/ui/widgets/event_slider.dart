@@ -1,5 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:finity/features/home/bloc/event_bloc/bloc/ad_bloc.dart';
+import 'package:finity/blocs/event/ad_bloc.dart';
 import 'package:finity/features/home/ui/pages/event_detail_screen.dart';
 import 'package:finity/provider/user_provider.dart';
 import 'package:flutter/material.dart';

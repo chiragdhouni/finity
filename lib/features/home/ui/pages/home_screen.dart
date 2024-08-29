@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:finity/features/auth/bloc/auth_bloc.dart';
-import 'package:finity/features/auth/repos/auth_repo.dart';
-import 'package:finity/features/home/bloc/item_bloc/bloc/item_bloc.dart';
+import 'package:finity/blocs/auth/auth_bloc.dart';
+import 'package:finity/services/auth_service.dart';
+import 'package:finity/blocs/item/item_bloc.dart';
 import 'package:finity/features/home/ui/pages/display_items_screen.dart';
 import 'package:finity/features/home/ui/pages/item_detail_screen.dart';
 import 'package:finity/features/home/ui/widgets/card.dart';

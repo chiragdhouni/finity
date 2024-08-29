@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:finity/models/item_model.dart';
-import 'package:finity/features/home/repos/item_repo.dart';
+import 'package:finity/services/item_service.dart';
 import 'package:flutter/material.dart';
 
 part 'item_event.dart';

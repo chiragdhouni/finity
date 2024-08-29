@@ -1,7 +1,7 @@
 // ignore_for_file: unused_element, library_private_types_in_public_api
 
 import 'dart:async';
-import 'package:finity/features/lost_item_screen/bloc/bloc/lost_item_bloc.dart';
+import 'package:finity/blocs/lost_item/lost_item_bloc.dart';
 import 'package:finity/features/lost_item_screen/ui/screens/display_nearby_item_screen.dart';
 // import 'package:finity/models/user_model.dart';
 // import 'package:finity/provider/user_provider.dart';

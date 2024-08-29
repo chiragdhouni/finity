@@ -134,7 +134,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:finity/design/widgets/custom_field.dart';
-import 'package:finity/features/auth/bloc/auth_bloc.dart';
+import 'package:finity/blocs/auth/auth_bloc.dart';
 import 'package:finity/features/auth/ui/pages/login_page.dart';
 import 'package:finity/features/auth/ui/widgets/gradient_button.dart';
 
