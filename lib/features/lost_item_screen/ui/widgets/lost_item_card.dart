@@ -1,11 +1,9 @@
 import 'package:finity/blocs/lost_item/lost_item_bloc.dart';
+import 'package:finity/blocs/user/user_bloc.dart'; // Import UserBloc
 import 'package:finity/features/lost_item_screen/ui/screens/edit_lost_item_screen.dart';
 import 'package:finity/features/lost_item_screen/ui/widgets/claim_item_form.dart';
 import 'package:finity/models/lost_item_model.dart';
-import 'package:finity/models/user_model.dart';
-import 'package:finity/provider/user_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LostItemCard extends StatefulWidget {
@@ -19,13 +17,14 @@ class LostItemCard extends StatefulWidget {
 class _LostItemCardState extends State<LostItemCard> {
   @override
   Widget build(BuildContext context) {
-    UserModel user = Provider.of<UserProvider>(context).user;
     LostItem item = widget.item;
     final lostItemBloc = context.read<LostItemBloc>();
+    final userBloc = context.read<UserBloc>();
+    final userState = userBloc.state;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.item.name),
+        title: Text(item.name),
       ),
       body: BlocListener<LostItemBloc, LostItemState>(
         listener: (context, state) {
@@ -69,34 +68,35 @@ class _LostItemCardState extends State<LostItemCard> {
                 child:
                     Text('Claim Item', style: TextStyle(color: Colors.white)),
               ),
-              user.id == item.owner.id
-                  ? Row(
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    EditLostItemScreen(item: item),
-                              ),
-                            );
-                          },
-                          child: Text('Edit Item',
-                              style: TextStyle(color: Colors.white)),
-                        ),
-                        SizedBox(width: 8),
-                        ElevatedButton(
-                          onPressed: () {
-                            lostItemBloc
-                                .add(deleteLostItemEvent(lostItemId: item.id));
-                          },
-                          child: Text('Delete Item',
-                              style: TextStyle(color: Colors.white)),
-                        ),
-                      ],
-                    )
-                  : Container(),
+              if (userState is UserLoaded && userState.user.id == item.owner.id)
+                Row(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                EditLostItemScreen(item: item),
+                          ),
+                        );
+                      },
+                      child: Text('Edit Item',
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                    SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: () {
+                        lostItemBloc
+                            .add(deleteLostItemEvent(lostItemId: item.id));
+                      },
+                      child: Text('Delete Item',
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                  ],
+                )
+              else
+                Container(),
             ],
           ),
         ),

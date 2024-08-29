@@ -1,8 +1,7 @@
-import 'package:finity/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:finity/blocs/lost_item/lost_item_bloc.dart';
-import 'package:provider/provider.dart';
+import 'package:finity/blocs/user/user_bloc.dart'; // Import UserBloc
 
 class AddLostItemScreen extends StatefulWidget {
   static const routeName = '/addLostItemScreen';
@@ -30,15 +29,21 @@ class _AddLostItemScreenState extends State<AddLostItemScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Accessing the UserProvider after the widget tree is built
-    final user = Provider.of<UserProvider>(context, listen: false).user;
-    _ownerIdController.text = user.id;
-    _ownerNameController.text = user.name;
-    _ownerEmailController.text = user.email;
-    _ownerAddressController.text = user.address;
-    _latitudeController.text = user.location[1].toString();
-    _longitudeController.text = user.location[0].toString();
-    _dateLostController.text = DateTime.now().toString().split(' ')[0];
+    // Accessing the UserBloc after the widget tree is built
+    final userBloc = context.read<UserBloc>();
+
+    userBloc.stream.listen((state) {
+      if (state is UserLoaded) {
+        final user = state.user;
+        _ownerIdController.text = user.id;
+        _ownerNameController.text = user.name;
+        _ownerEmailController.text = user.email;
+        _ownerAddressController.text = user.address;
+        _latitudeController.text = user.location[1].toString();
+        _longitudeController.text = user.location[0].toString();
+        _dateLostController.text = DateTime.now().toString().split(' ')[0];
+      }
+    });
   }
 
   @override

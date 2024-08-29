@@ -1,9 +1,7 @@
-import 'package:finity/blocs/lost_item/lost_item_bloc.dart';
-
-import 'package:finity/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
+import 'package:finity/blocs/lost_item/lost_item_bloc.dart';
+import 'package:finity/blocs/user/user_bloc.dart'; // Import UserBloc
 
 class NearByItemScreen extends StatefulWidget {
   const NearByItemScreen({super.key});
@@ -14,18 +12,25 @@ class NearByItemScreen extends StatefulWidget {
 
 class _NearByItemScreenState extends State<NearByItemScreen> {
   @override
-  void initState() {
-    double latitude =
-        Provider.of<UserProvider>(context, listen: false).user.location[0];
-    double longitude =
-        Provider.of<UserProvider>(context, listen: false).user.location[1];
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Access the UserBloc to get user location
+    final userBloc = context.read<UserBloc>();
+    final userState = userBloc.state;
 
-    BlocProvider.of<LostItemBloc>(context).add(
-      getNearByLostItemsEvent(
-          latitude: latitude, longitude: longitude, maxDistance: 10000.0),
-    );
+    if (userState is UserLoaded) {
+      double latitude = userState.user.location[0];
+      double longitude = userState.user.location[1];
 
-    super.initState();
+      // Fetch nearby lost items
+      BlocProvider.of<LostItemBloc>(context).add(
+        getNearByLostItemsEvent(
+          latitude: latitude,
+          longitude: longitude,
+          maxDistance: 10000.0,
+        ),
+      );
+    }
   }
 
   @override

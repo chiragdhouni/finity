@@ -1,3 +1,4 @@
+import 'package:finity/blocs/user/user_bloc.dart';
 import 'package:finity/services/auth_service.dart';
 import 'package:finity/features/auth/ui/pages/login_page.dart';
 import 'package:finity/features/auth/ui/pages/signup_page.dart';
@@ -44,7 +45,7 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
       return MaterialPageRoute(
         settings: routeSettings,
         builder: (_) => App(
-          authService: AuthService(),
+          authService: AuthService(userBloc: UserBloc()),
         ),
       );
     // case ItemSearchPage.routeName:

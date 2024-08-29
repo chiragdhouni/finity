@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:finity/blocs/auth/auth_bloc.dart';
+import 'package:finity/blocs/user/user_bloc.dart';
 import 'package:finity/services/auth_service.dart';
 import 'package:finity/blocs/item/item_bloc.dart';
 import 'package:finity/features/home/ui/pages/display_items_screen.dart';
@@ -49,7 +50,10 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AuthBloc(widget.authService),
+      create: (context) => AuthBloc(
+        AuthService(userBloc: BlocProvider.of<UserBloc>(context)),
+        BlocProvider.of<UserBloc>(context),
+      ),
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthInitial) {

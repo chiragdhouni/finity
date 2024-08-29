@@ -1,19 +1,20 @@
 import 'dart:convert';
 
 class UserModel {
-  String id;
-  String name;
-  String email;
-  String? token; // Made optional
-  String password;
-  String address;
-  List<String> events;
-  List<NotificationModel> notifications; // Updated to use NotificationModel
-  List<double> location; // Updated to List<double>
-  List<String> itemsLended;
-  List<String> itemsBorrowed;
-  List<String> itemsListed;
-  List<String> itemsRequested;
+  final String id;
+  final String name;
+  final String email;
+  final String? token; // Made optional
+  final String password;
+  final String address;
+  final List<String> events;
+  final List<NotificationModel>
+      notifications; // Updated to use NotificationModel
+  late final List<double> location; // Updated to List<double>
+  final List<String> itemsLended;
+  final List<String> itemsBorrowed;
+  final List<String> itemsListed;
+  final List<String> itemsRequested;
 
   UserModel({
     required this.id,
@@ -23,13 +24,14 @@ class UserModel {
     required this.password,
     required this.address,
     required this.events,
-    this.notifications = const [], // Default to empty list
-    this.location = const [0.0, 0.0], // Default to [0.0, 0.0]
+    List<NotificationModel>? notifications, // Optional with default value
+    List<double>? location, // Optional with default value
     required this.itemsListed,
     required this.itemsLended,
     required this.itemsBorrowed,
     required this.itemsRequested,
-  });
+  })  : notifications = notifications ?? const [],
+        location = location ?? const [0.0, 0.0];
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -60,14 +62,10 @@ class UserModel {
       token: map['token'] as String?,
       password: map['password'] as String? ?? '',
       address: map['address'] as String? ?? '',
-      // location: map['location'] != null
-      //     ? List<double>.from((map['location']['coordinates'] as List<dynamic>)
-      //         .map((coord) => coord.toDouble()))
-      //     : [0.0, 0.0],
       location: map['location'] != null
           ? [
-              (map['location']['coordinates'][0]).toDouble(),
-              (map['location']['coordinates'][1]).toDouble(),
+              (map['location']['coordinates'][0] as num).toDouble(),
+              (map['location']['coordinates'][1] as num).toDouble(),
             ]
           : [0.0, 0.0],
       events: List<String>.from(map['events'] ?? []),
@@ -90,12 +88,12 @@ class UserModel {
 }
 
 class NotificationModel {
-  String userId;
-  String? itemId;
-  String type;
-  String message;
-  bool read;
-  DateTime createdAt;
+  final String userId;
+  final String? itemId;
+  final String type;
+  final String message;
+  final bool read;
+  final DateTime createdAt;
 
   NotificationModel({
     required this.userId,

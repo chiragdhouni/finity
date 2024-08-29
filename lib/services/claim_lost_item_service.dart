@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 import 'package:finity/core/config/config.dart';
-import 'package:finity/provider/user_provider.dart';
+
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ClaimLostItemRepo {
@@ -18,8 +18,13 @@ class ClaimLostItemRepo {
     required List<String> proofImages,
   }) async {
     final url = Uri.parse('${Config.serverURL}lostItems/claim/submit');
-    final String token =
-        Provider.of<UserProvider>(context, listen: false).user.token!;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('x-auth-token');
+    // Set a default token if not found
+    if (token == null) {
+      token = '';
+      prefs.setString('x-auth-token', token);
+    }
     // log('Token: $token');
     try {
       final response = await http.post(

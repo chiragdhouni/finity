@@ -1,10 +1,11 @@
+import 'dart:developer';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:finity/blocs/event/ad_bloc.dart';
+import 'package:finity/blocs/user/user_bloc.dart'; // Import UserBloc
 import 'package:finity/features/home/ui/pages/event_detail_screen.dart';
-import 'package:finity/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 
 class EventSlider extends StatefulWidget {
   const EventSlider({super.key});
@@ -15,15 +16,34 @@ class EventSlider extends StatefulWidget {
 
 class _EventSliderState extends State<EventSlider> {
   @override
+  @override
   void initState() {
     super.initState();
-    // Trigger the event to fetch nearby ads/events
-    final adBloc = context.read<AdBloc>();
-    List<double> loc =
-        Provider.of<UserProvider>(context, listen: false).user.location;
 
+    final adBloc = context.read<AdBloc>();
+    final userBloc = context.read<UserBloc>();
+
+    // Check if the UserBloc is already loaded with a user.
+    final currentState = userBloc.state;
+    if (currentState is UserLoaded) {
+      _fetchNearbyAds(adBloc, currentState);
+    }
+
+    // Listen to changes in UserBloc to fetch nearby ads/events
+    userBloc.stream.listen((state) {
+      if (state is UserLoaded) {
+        _fetchNearbyAds(adBloc, state);
+      }
+    });
+  }
+
+  void _fetchNearbyAds(AdBloc adBloc, UserLoaded state) {
+    final location = state.user.location;
     adBloc.add(FetchNearByAdEvent(
-        longitude: loc[0], latitude: loc[1], maxDistance: 10000));
+      longitude: location[0],
+      latitude: location[1],
+      maxDistance: 10000,
+    ));
   }
 
   @override
@@ -82,6 +102,7 @@ class _EventSliderState extends State<EventSlider> {
             }).toList(),
           );
         } else {
+          log('Unknown state: $state');
           return Container(
             height: 90,
             width: 90,

@@ -1,12 +1,10 @@
 import 'package:finity/blocs/item/item_bloc.dart';
+import 'package:finity/blocs/user/user_bloc.dart'; // Import UserBloc
 import 'package:finity/features/home/ui/pages/item_detail_screen.dart';
 import 'package:finity/models/item_model.dart';
-import 'package:finity/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 
-// items near you
 class DisplayItemsScreen extends StatefulWidget {
   const DisplayItemsScreen({super.key});
   static const routeName = '/displayItemsScreen';
@@ -19,38 +17,52 @@ class _DisplayItemsScreenState extends State<DisplayItemsScreen> {
   @override
   void initState() {
     super.initState();
-    double latitude =
-        Provider.of<UserProvider>(context, listen: false).user.location[0];
-    double longitude =
-        Provider.of<UserProvider>(context, listen: false).user.location[1];
+    _fetchNearbyItems();
+  }
 
-    context.read<ItemBloc>().add(FetchNearbyItemsEvent(
-        latitude: latitude, longitude: longitude, maxDistance: 8000));
+  void _fetchNearbyItems() {
+    // Fetching user's current location from UserBloc
+    UserState userState = context.read<UserBloc>().state;
+
+    if (userState is UserLoaded) {
+      double latitude = userState.user.location[0];
+      double longitude = userState.user.location[1];
+
+      // Dispatching FetchNearbyItemsEvent to ItemBloc
+      context.read<ItemBloc>().add(FetchNearbyItemsEvent(
+          latitude: latitude, longitude: longitude, maxDistance: 8000));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 30),
-        BlocBuilder<ItemBloc, ItemState>(
-          builder: (context, state) {
-            // print("Current state: $state"); // Debugging print
-
-            if (state is ItemLoading) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (state is ItemFetched) {
-              if (state.data == null || state.data!.isEmpty) {
-                return const Center(child: Text('No items found'));
+    return BlocListener<UserBloc, UserState>(
+      listener: (context, state) {
+        if (state is UserLoaded) {
+          // Fetch nearby items again if the user's location changes
+          _fetchNearbyItems();
+        }
+      },
+      child: Column(
+        children: [
+          const SizedBox(height: 30),
+          BlocBuilder<ItemBloc, ItemState>(
+            builder: (context, state) {
+              if (state is ItemLoading) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (state is ItemFetched) {
+                if (state.data == null || state.data!.isEmpty) {
+                  return const Center(child: Text('No items found'));
+                }
+                return _buildItemList(state.data!);
+              } else if (state is ItemError) {
+                return Center(child: Text(state.error));
               }
-              return _buildItemList(state.data!);
-            } else if (state is ItemError) {
-              return Center(child: Text(state.error));
-            }
-            return const Center(child: Text('Unknown state'));
-          },
-        ),
-      ],
+              return const Center(child: Text('Unknown state'));
+            },
+          ),
+        ],
+      ),
     );
   }
 

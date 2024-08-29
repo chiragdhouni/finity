@@ -1,9 +1,8 @@
 import 'package:finity/blocs/item/item_bloc.dart';
+import 'package:finity/blocs/user/user_bloc.dart';
 import 'package:finity/models/item_model.dart';
-import 'package:finity/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 
 class ItemDetailScreen extends StatefulWidget {
   static const routeName = '/itemDetailScreen';
@@ -18,7 +17,9 @@ class ItemDetailScreen extends StatefulWidget {
 class _ItemDetailScreenState extends State<ItemDetailScreen> {
   @override
   Widget build(BuildContext context) {
-    String userId = Provider.of<UserProvider>(context, listen: false).user.id;
+    // Accessing userId from a bloc (you could use a UserBloc if applicable)
+    final String userId =
+        (context.read<UserBloc>().state as UserLoaded).user.id;
 
     return Scaffold(
       appBar: AppBar(

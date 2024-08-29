@@ -23,6 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.initializeSocket = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 // Assume `io` is your Socket.IO server instance
 let io;
@@ -55,20 +56,21 @@ const UserSchema = new mongoose_1.Schema({
 });
 // Create a 2dsphere index for geospatial queries if location is provided
 UserSchema.index({ location: '2dsphere' });
-// UserSchema.post('save', function (doc) {
-//   // Emit a Socket.IO event when the user document is updated
-//   if (io) {
-//     io.to(`user_${doc._id}`).emit('user_update', doc);
-//   }
-// });
-// UserSchema.post('findOneAndUpdate', function (doc) {
-//   // Emit a Socket.IO event when the user document is updated via findOneAndUpdate
-//   if (io && doc) {
-//     io.to(`user_${doc._id}`).emit('user_update', doc);
-//   }
-// });
-// // Initialize your Socket.IO instance
-// export const initializeSocket = (socketIO: Server) => {
-//   io = socketIO;
-// };
+UserSchema.post('save', function (doc) {
+    if (io) {
+        io.to(`${doc._id}_room`).emit('user_update', doc);
+        console.log(`User ${doc._id} has been updated. from save`);
+    }
+});
+UserSchema.post('findOneAndUpdate', function (doc) {
+    if (io && doc) {
+        io.to(`${doc._id}_room`).emit(`user_update_${doc._id}`, doc);
+        console.log(`User ${doc._id} has been updated. from findOneAndUpdate`);
+    }
+});
+// Initialize your Socket.IO instance
+const initializeSocket = (socketIO) => {
+    io = socketIO;
+};
+exports.initializeSocket = initializeSocket;
 exports.default = mongoose_1.default.model('User', UserSchema);

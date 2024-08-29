@@ -2,29 +2,32 @@
 
 // ignore_for_file: annotate_overrides
 
+import 'package:finity/blocs/user/user_bloc.dart';
 import 'package:finity/services/auth_service.dart';
 import 'package:finity/services/location_service.dart';
 import 'package:finity/features/home/ui/pages/home_screen.dart';
 import 'package:finity/features/home/ui/pages/profile_screen.dart';
 import 'package:finity/features/lost_item_screen/ui/screens/lost_item_screen.dart';
 import 'package:finity/features/notification/ui/screens/notification_screen.dart';
-import 'package:finity/provider/user_provider.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:provider/provider.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
   static const routeName = '/bottomNavBar';
+
   @override
   State<BottomNavBar> createState() => _BottomNavBarState();
 }
 
 class _BottomNavBarState extends State<BottomNavBar> {
   int _selectedIndex = 0;
+  final AuthService authService = AuthService(userBloc: UserBloc());
   final List<Widget> _widgetOptions = <Widget>[
     App(
-      authService: AuthService(),
+      authService: AuthService(userBloc: UserBloc()),
     ),
     // ItemSearchPage(),
     Text('Search by category'),
@@ -33,28 +36,35 @@ class _BottomNavBarState extends State<BottomNavBar> {
     ProfileScreen()
   ];
 
+  @override
   void initState() {
     super.initState();
     _updateUserLocationIfNeeded();
   }
 
   Future<void> _updateUserLocationIfNeeded() async {
-    UserProvider userProvider =
-        Provider.of<UserProvider>(context, listen: false);
+    // Commented out Provider code
+    // UserProvider userProvider =
+    //     Provider.of<UserProvider>(context, listen: false);
 
-    // Check if location is empty or contains invalid coordinates
-    if (userProvider.user.location[0] == 0.0 ||
-        userProvider.user.location[1] == 0.0 ||
-        userProvider.user.location[0] == 0 ||
-        userProvider.user.location[1] == 0) {
-      Position position = await LocationService.getCurrentLocation();
-      // log('Position: $position.latitude, $position.longitude');
-      double latitude = position.latitude;
-      double longitude = position.longitude;
+    // Use the UserBloc to get the current user state
+    UserState state = context.read<UserBloc>().state;
 
-      // Update user location
-      await userProvider.updateLocation(longitude, latitude);
-      //location updated
+    if (state is UserLoaded) {
+      // Check if location is empty or contains invalid coordinates
+      if (state.user.location.isEmpty ||
+          state.user.location[0] == 0.0 ||
+          state.user.location[1] == 0.0 ||
+          state.user.location[0] == 0 ||
+          state.user.location[1] == 0) {
+        Position position = await LocationService.getCurrentLocation();
+        double latitude = position.latitude;
+        double longitude = position.longitude;
+
+        // Dispatch UpdateLocation event to update the user's location
+        context.read<UserBloc>().add(UpdateLocation(latitude, longitude));
+        // Location updated
+      }
     }
   }
 
@@ -69,11 +79,11 @@ class _BottomNavBarState extends State<BottomNavBar> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.category),
-            label: 'seach by category',
+            label: 'Search by category',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.luggage),
-            label: 'lost and found',
+            label: 'Lost and found',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
@@ -87,13 +97,26 @@ class _BottomNavBarState extends State<BottomNavBar> {
         selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.white,
         currentIndex: _selectedIndex,
-        onTap: (int index) {
+        onTap: (int index) async {
+          // await authService.getUserData(context);
           setState(() {
             _selectedIndex = index;
           });
         },
       ),
-      body: _widgetOptions.elementAt(_selectedIndex),
+      // Wrapping the body in BlocListener to listen for UserState changes
+      body: BlocListener<UserBloc, UserState>(
+        listener: (context, state) {
+          // Handle additional state changes if necessary
+          if (state is UserError) {
+            // Show an error message if there's an error in the user state
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Error: ${state.error}')),
+            );
+          }
+        },
+        child: _widgetOptions.elementAt(_selectedIndex),
+      ),
     );
   }
 }

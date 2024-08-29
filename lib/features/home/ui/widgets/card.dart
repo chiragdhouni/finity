@@ -1,34 +1,13 @@
 import 'package:finity/blocs/item/item_bloc.dart';
-
-import 'package:finity/provider/user_provider.dart';
+import 'package:finity/blocs/user/user_bloc.dart'; // Import UserBloc
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
-// Import your BLoC files here
-
-void showAddItemDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AddItemDialog();
-    },
-  );
-}
 
 class ResponsiveCardLayout extends StatelessWidget {
   const ResponsiveCardLayout({super.key});
 
   @override
   Widget build(BuildContext context) {
-    void showAddItemDialog(BuildContext context) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AddItemDialog();
-        },
-      );
-    }
-
     // Get the total height of the screen
     final double screenHeight = MediaQuery.of(context).size.height;
 
@@ -78,11 +57,19 @@ class ResponsiveCardLayout extends StatelessWidget {
   }
 }
 
+void showAddItemDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AddItemDialog();
+    },
+  );
+}
+
 class AddItemDialog extends StatefulWidget {
   const AddItemDialog({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _AddItemDialogState createState() => _AddItemDialogState();
 }
 
@@ -128,13 +115,14 @@ class _AddItemDialogState extends State<AddItemDialog>
           );
 
           // Trigger re-fetching of items after successfully adding an item
-          final userProvider =
-              Provider.of<UserProvider>(context, listen: false);
-          context.read<ItemBloc>().add(FetchNearbyItemsEvent(
-                latitude: userProvider.user.location[0],
-                longitude: userProvider.user.location[1],
-                maxDistance: 8000,
-              ));
+          final userState = BlocProvider.of<UserBloc>(context).state;
+          if (userState is UserLoaded) {
+            context.read<ItemBloc>().add(FetchNearbyItemsEvent(
+                  latitude: userState.user.location[0],
+                  longitude: userState.user.location[1],
+                  maxDistance: 8000,
+                ));
+          }
         } else if (state is ItemError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Error: ${state.error}')),
@@ -247,10 +235,10 @@ class _AddItemDialogState extends State<AddItemDialog>
                           _formKey.currentState!.save();
                           BlocProvider.of<ItemBloc>(context).add(
                             AddItemEvent(
-                              userId: Provider.of<UserProvider>(context,
-                                      listen: false)
+                              userId: (BlocProvider.of<UserBloc>(context).state
+                                      as UserLoaded)
                                   .user
-                                  .id, // Replace with actual userId
+                                  .id, // Use UserBloc to get userId
                               itemName: _name,
                               description: _description,
                               itemCategory: _category,

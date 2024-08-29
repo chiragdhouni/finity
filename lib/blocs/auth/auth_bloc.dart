@@ -2,6 +2,7 @@ import 'dart:async';
 // import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:finity/blocs/user/user_bloc.dart';
 import 'package:finity/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
@@ -10,7 +11,9 @@ part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthService authService;
-  AuthBloc(this.authService) : super(AuthInitial()) {
+  final UserBloc userBloc;
+
+  AuthBloc(this.authService, this.userBloc) : super(AuthInitial()) {
     on<AuthSignUpEvent>(_onSignUpRequested);
     on<AuthLoginEvent>(_onSignInRequested);
     on<AuthLogoutEvent>(_onLogoutRequested);
