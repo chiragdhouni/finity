@@ -1,4 +1,5 @@
 import 'package:finity/blocs/user/user_bloc.dart';
+import 'package:finity/features/profile/ui/widgets/Item_card.dart';
 import 'package:finity/services/auth_service.dart';
 import 'package:finity/features/auth/ui/pages/login_page.dart';
 import 'package:finity/features/auth/ui/pages/signup_page.dart';
@@ -95,6 +96,16 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
         builder: (_) => NotificationDetailScreen(notification: notification),
       );
 
+    case ItemCard.routeName:
+      final Map<String, dynamic> args =
+          routeSettings.arguments as Map<String, dynamic>;
+      return MaterialPageRoute(
+        settings: routeSettings,
+        builder: (_) => ItemCard(
+          type: args['type'],
+          itemsids: args['itemsids'],
+        ),
+      );
     default:
       return MaterialPageRoute(
         settings: routeSettings,

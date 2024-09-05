@@ -46,3 +46,9 @@ class ItemBorrowEvent extends ItemEvent {
     required this.borrowerId,
   });
 }
+
+class getItemByIdsEvent extends ItemEvent {
+  final List<String> itemIds;
+
+  getItemByIdsEvent(this.itemIds);
+}

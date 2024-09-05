@@ -10,4 +10,5 @@ itemRouter.put('/lend', auth_1.auth, itemController_1.lendItem);
 itemRouter.put('/return', auth_1.auth, itemController_1.returnItem);
 itemRouter.get('/nearby', auth_1.auth, itemController_1.getNearbyItems);
 itemRouter.get('/search', auth_1.auth, itemController_1.searchItems);
+itemRouter.post('/getItemByIds', auth_1.auth, itemController_1.getItemByIds);
 exports.default = itemRouter;

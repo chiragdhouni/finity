@@ -194,4 +194,52 @@ class ItemRepo {
       // log('Error requesting to borrow item: $error');
     }
   }
+
+  Future<List<ItemModel>> getItemByIds(List<String> itemIds) async {
+    // Fetch token from shared preferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('x-auth-token');
+
+    // Set a default token if not found
+    if (token == null) {
+      token = '';
+      prefs.setString('x-auth-token', token);
+    }
+
+    // Define the API endpoint URL
+    final url = Uri.parse('${Config.serverURL}items/getItemByIds');
+
+    try {
+      // Make the POST request to the API with itemIds
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Auth-Token': token,
+        },
+        body: jsonEncode({
+          'itemIds': itemIds, // Sending the itemIds in the request body
+        }),
+      );
+
+      // Check if the response is successful (status code 200)
+      if (response.statusCode != 200) {
+        throw Exception('Failed to get items by ids: ${response.body}');
+      }
+
+      // Parse the response body as JSON
+      final List<dynamic> responseData = jsonDecode(response.body);
+
+      // Map the JSON data to a list of ItemModel objects
+      List<ItemModel> items =
+          responseData.map((json) => ItemModel.fromMap(json)).toList();
+
+      // Return the list of items
+      return items;
+    } catch (error) {
+      // Log the error and throw it for further handling
+      log('Error getting items by ids: $error');
+      throw error; // Ensure the function always returns or throws
+    }
+  }
 }

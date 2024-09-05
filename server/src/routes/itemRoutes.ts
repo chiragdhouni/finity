@@ -6,6 +6,7 @@ import {
   returnItem,
   getNearbyItems,
   searchItems,
+  getItemByIds,
  
 } from '../controllers/itemController';
 import { auth } from '../middlewares/auth';
@@ -18,5 +19,5 @@ itemRouter.put('/lend', auth, lendItem);
 itemRouter.put('/return', auth, returnItem);
 itemRouter.get('/nearby', auth, getNearbyItems);
 itemRouter.get('/search', auth,searchItems);
-
+itemRouter.post('/getItemByIds', auth,getItemByIds);
 export default itemRouter;

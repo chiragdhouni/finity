@@ -42,3 +42,9 @@ class ItemBorrowError extends ItemState {
 
   ItemBorrowError(this.error);
 }
+
+class ItemByIdsFetched extends ItemState {
+  final List<ItemModel> items;
+
+  ItemByIdsFetched(this.items);
+}

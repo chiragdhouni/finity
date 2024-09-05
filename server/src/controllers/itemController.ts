@@ -316,3 +316,16 @@ export const rejectBorrowRequest = async (req: Request, res: Response) => {
     res.status(400).send(error);
   }
 };
+
+
+export const getItemByIds = async (req: Request, res: Response) => {
+
+  const { itemIds } = req.body;
+  try {
+    const items = await Item.find({ _id: { $in: itemIds } });
+    res.status(200).json(items);
+  } catch (error) {
+    console.error(`Error getting items by ids: ${(error as Error).message}`);
+    res.status(400).send(error);
+  }
+};

@@ -13,6 +13,7 @@ const itemRoutes_1 = __importDefault(require("./routes/itemRoutes"));
 const eventRoutes_1 = __importDefault(require("./routes/eventRoutes"));
 const lostItemRoutes_1 = __importDefault(require("./routes/lostItemRoutes"));
 const user_1 = require("./models/user");
+const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
 // import notificationRoutes from './routes/notificationRoutes';
 const app = (0, express_1.default)();
 const httpServer = (0, http_1.createServer)(app);
@@ -33,6 +34,7 @@ app.use('/api/auth', authRoutes_1.default);
 app.use('/api/items', itemRoutes_1.default);
 app.use('/api/events', eventRoutes_1.default);
 app.use('/api/lostItems', lostItemRoutes_1.default);
+app.use('/api/user', userRoutes_1.default);
 // app.use('/api/notification', notificationRoutes);
 app.get('/', (req, res) => {
     res.send('Hello World');

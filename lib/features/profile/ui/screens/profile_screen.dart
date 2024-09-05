@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:finity/blocs/user/user_bloc.dart'; // Import UserBloc
+import 'package:finity/features/profile/ui/enum/ItemType.dart';
+import 'package:finity/features/profile/ui/widgets/Item_card.dart';
 import 'package:finity/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,62 +49,73 @@ class _ProfileScreenState extends State<ProfileScreen> {
           final List<String> itemListed = userData.itemsListed;
           final List<String> events = userData.events;
 
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text('Profile'),
-              backgroundColor: Colors.blueGrey,
-              centerTitle: true,
-            ),
-            body: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 20),
-                    CircleAvatar(
-                      radius: 60,
-                      backgroundImage: const NetworkImage(
-                        "https://images.unsplash.com/photo-1664193314424-7f823ccaa301?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          return SafeArea(
+            child: Scaffold(
+              appBar: AppBar(
+                title: const Text('Profile'),
+                backgroundColor: Colors.transparent,
+                centerTitle: true,
+              ),
+              body: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          const SizedBox(height: 20),
+                          CircleAvatar(
+                            radius: 60,
+                            backgroundImage: const NetworkImage(
+                              "https://images.unsplash.com/photo-1664193314424-7f823ccaa301?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  userData.name,
+                                  style: const TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  userData.email,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  userData.address,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ])
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      userData.name,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      userData.email,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      userData.address,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    _buildInfoCard('Items Lended', itemLended),
-                    const SizedBox(height: 20),
-                    _buildInfoCard('Items Borrowed', itemBorrowed),
-                    const SizedBox(height: 20),
-                    _buildInfoCard('Items Requested', itemRequested),
-                    const SizedBox(height: 20),
-                    _buildInfoCard(
-                        'Items Listed (${itemListed.length})', itemListed),
-                    const SizedBox(height: 20),
-                    _buildInfoCard('Events', events),
-                  ],
+                      const SizedBox(height: 20),
+                      _buildInfoCard(ItemType.Lended, itemLended),
+                      const SizedBox(height: 20),
+                      _buildInfoCard(ItemType.Borrowed, itemBorrowed),
+                      const SizedBox(height: 20),
+                      _buildInfoCard(ItemType.Requested, itemRequested),
+                      const SizedBox(height: 20),
+                      _buildInfoCard(ItemType.Listed, itemListed),
+                      // const SizedBox(height: 20),
+                      // _buildInfoCard('Events', events),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -116,48 +129,46 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildInfoCard(String title, List<String> items) {
+  Widget _buildInfoCard(ItemType type, List<String> items) {
+    String text = 'Item ';
+    switch (type) {
+      case ItemType.Lended:
+        text += 'Lended';
+        break;
+      case ItemType.Borrowed:
+        text += 'Borrowed';
+        break;
+      case ItemType.Requested:
+        text += 'Requested';
+        break;
+      case ItemType.Listed:
+        text += 'Listed';
+        break;
+    }
     return Card(
       color: Colors.white,
       elevation: 5,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
+      child: InkWell(
+        onTap: () {
+          Navigator.of(context).pushNamed(ItemCard.routeName, arguments: {
+            'type': type,
+            'itemsids': items,
+          });
+        },
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(8),
+          child: Text(
+            text,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
             ),
-            const SizedBox(height: 10),
-            items.isNotEmpty
-                ? SizedBox(
-                    height: 100,
-                    child: ListView.builder(
-                      itemCount: items.length,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          title: Text(
-                            items[index],
-                            style: const TextStyle(color: Colors.black),
-                          ),
-                        );
-                      },
-                    ),
-                  )
-                : const Text(
-                    'No items to display',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-          ],
+          ),
         ),
       ),
     );

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.rejectBorrowRequest = exports.searchItems = exports.returnItem = exports.getNearbyItems = exports.lendItem = exports.requestToBorrowItem = exports.addItem = void 0;
+exports.getItemByIds = exports.rejectBorrowRequest = exports.searchItems = exports.returnItem = exports.getNearbyItems = exports.lendItem = exports.requestToBorrowItem = exports.addItem = void 0;
 const item_1 = __importDefault(require("../models/item"));
 const user_1 = __importDefault(require("../models/user"));
 // Adding an item to be listed for lending
@@ -297,3 +297,15 @@ const rejectBorrowRequest = (req, res) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.rejectBorrowRequest = rejectBorrowRequest;
+const getItemByIds = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { itemIds } = req.body;
+    try {
+        const items = yield item_1.default.find({ _id: { $in: itemIds } });
+        res.status(200).json(items);
+    }
+    catch (error) {
+        console.error(`Error getting items by ids: ${error.message}`);
+        res.status(400).send(error);
+    }
+});
+exports.getItemByIds = getItemByIds;
