@@ -113,8 +113,15 @@ class _AddItemDialogState extends State<AddItemDialog>
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Item added successfully')),
           );
-
+          // // Refetch user data
+          // final userBloc = context.read<UserBloc>();
+          // if (userBloc.state is UserLoaded) {}
+          // final currentState = userBloc.state;
+          // if (currentState is UserLoaded) {
+          //   userBloc.add(LoadUserEvent());
+          // }
           // Trigger re-fetching of items after successfully adding an item
+
           final userState = BlocProvider.of<UserBloc>(context).state;
           if (userState is UserLoaded) {
             context.read<ItemBloc>().add(FetchNearbyItemsEvent(

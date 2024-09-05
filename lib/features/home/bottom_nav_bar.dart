@@ -6,7 +6,7 @@ import 'package:finity/blocs/user/user_bloc.dart';
 import 'package:finity/services/auth_service.dart';
 import 'package:finity/services/location_service.dart';
 import 'package:finity/features/home/ui/pages/home_screen.dart';
-import 'package:finity/features/home/ui/pages/profile_screen.dart';
+import 'package:finity/features/profile/ui/screens/profile_screen.dart';
 import 'package:finity/features/lost_item_screen/ui/screens/lost_item_screen.dart';
 import 'package:finity/features/notification/ui/screens/notification_screen.dart';
 

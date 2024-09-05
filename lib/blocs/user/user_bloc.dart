@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:finity/models/user_model.dart';
 import 'package:finity/services/location_service.dart';
+import 'package:finity/services/user_service.dart';
 import 'package:meta/meta.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
@@ -11,6 +12,7 @@ part 'user_event.dart';
 part 'user_state.dart';
 
 class UserBloc extends Bloc<UserEvent, UserState> {
+  final UserService _userService = UserService();
   late IO.Socket _socket;
   UserModel _user = UserModel(
     id: '',
@@ -34,6 +36,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     on<SetUserFromModel>(_onSetUserFromModel);
     on<UpdateLocation>(_onUpdateLocation);
     on<LogoutUser>(_onLogoutUser);
+    // on<LoadUserEvent>(_onLoadUser);
+    // add(InitializeSocket());
   }
 
   void _onInitializeSocket(InitializeSocket event, Emitter<UserState> emit) {
@@ -70,14 +74,19 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   void _listenForUserUpdates() {
     log('Setting up listener for user updates...');
     _socket.on('user_update', (data) {
-      log('Received update for user ${_user.id}: $data');
-      final updatedUserMap = jsonDecode(data);
-      _user = UserModel.fromJson(updatedUserMap);
-      emit(UserLoaded(_user));
-      log("User updated: ID=${_user.id}, Name=${_user.name}, ${_user.itemsListed.length} items listed");
+      try {
+        log('Received update for user ${_user.id}: $data');
+        final updatedUserMap = data as Map<String, dynamic>;
+        _user = UserModel.fromMap(updatedUserMap);
+        // emit(UserLoaded(_user));
+        log("User updated: ID=${_user.id}, Name=${_user.name}, ${_user.itemsListed.length} items listed");
 
-      log('User updated: ID=${_user.id}, Name=${_user.name}');
-      add(SetUserFromModel(_user));
+        log('User updated: ID=${_user.id}, Name=${_user.name}');
+
+        add(SetUserFromModel(_user));
+      } catch (e) {
+        log('Error decoding or setting user: $e');
+      }
     });
   }
 
@@ -105,7 +114,9 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   void _onSetUserFromModel(SetUserFromModel event, Emitter<UserState> emit) {
     log('Setting user from model: ID=${event.user.id}, Name=${event.user.name}');
     _user = event.user;
+
     emit(UserLoaded(_user));
+    log(event.user.itemsListed.length.toString());
   }
 
   Future<void> _onUpdateLocation(
@@ -137,4 +148,14 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     emit(UserInitial());
     log('User reset after logout');
   }
+
+  // void _onLoadUser(LoadUserEvent event, Emitter<UserState> emit) async {
+  //   try {
+  //     emit(UserLoading());
+  //     final user = await _userService.getUserById();
+  //     emit(UserLoaded(user));
+  //   } catch (e) {
+  //     emit(UserError(e.toString()));
+  //   }
+  // }
 }

@@ -16,7 +16,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    log('Profile screen initialized');
+    // log('Profile screen initialized');
+    // Refetch user data
+
+    // final currentState = userBloc.state;
+    // if (currentState is UserLoaded) {
+    //   userBloc.add(LoadUserEvent());
+    // }
   }
 
   @override
@@ -28,6 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         }
       },
       builder: (context, state) {
+        log(state.toString());
         if (state is UserLoading) {
           return const Center(child: CircularProgressIndicator());
         } else if (state is UserLoaded) {

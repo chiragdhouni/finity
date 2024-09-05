@@ -40,7 +40,7 @@ class ItemRepo {
       // Encode the JSON map to a JSON string
       String body = jsonEncode(itemJson);
 
-      log('body is : $body');
+      // log('body is : $body');
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('x-auth-token');
       // Set a default token if not found
@@ -57,7 +57,7 @@ class ItemRepo {
           'x-auth-token': token,
         },
       );
-      log(res.body);
+      // log(res.body);
       if (res.statusCode != 201) {
         log(res.statusCode.toString());
         throw Exception(res.body);
