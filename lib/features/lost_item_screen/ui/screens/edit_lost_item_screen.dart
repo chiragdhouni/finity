@@ -1,5 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api
 
+import 'dart:developer';
+
 import 'package:finity/blocs/lost_item/lost_item_bloc.dart';
 import 'package:finity/models/lost_item_model.dart';
 import 'package:flutter/material.dart';
@@ -51,20 +53,34 @@ class _EditLostItemScreenState extends State<EditLostItemScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final lostItemBloc = context.read<LostItemBloc>();
+  void dispose() {
+    // Dispose of the controllers to free up resources
+    _nameController.dispose();
+    _descriptionController.dispose();
+    _statusController.dispose();
+    _contactInfoController.dispose();
+    _ownerNameController.dispose();
+    _ownerEmailController.dispose();
+    _ownerAddressController.dispose();
+    _latitudeController.dispose();
+    _longitudeController.dispose();
+    super.dispose();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Lost Item'),
+        title: const Text('Edit Lost Item'),
       ),
       body: BlocConsumer<LostItemBloc, LostItemState>(
         listener: (context, state) {
           if (state is LostItemUpdateSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Item updated successfully!')),
+              const SnackBar(content: Text('Item updated successfully!')),
             );
-            Navigator.pop(context);
+            Navigator.pop(context); // Go back to the previous screen
+            log("Item updated successfully");
           } else if (state is LostItemError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Error: ${state.message}')),
@@ -73,13 +89,13 @@ class _EditLostItemScreenState extends State<EditLostItemScreen> {
         },
         builder: (context, state) {
           if (state is LostItemLoading) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           return Form(
             key: _formKey,
             child: SingleChildScrollView(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
                   // Form fields
@@ -93,11 +109,11 @@ class _EditLostItemScreenState extends State<EditLostItemScreen> {
                   _buildTextField(_latitudeController, 'Latitude', true),
                   _buildTextField(_longitudeController, 'Longitude', true),
                   _buildDatePicker(),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        LostItem updatedItem = widget.item.copyWith(
+                        final updatedItem = widget.item.copyWith(
                           name: _nameController.text,
                           description: _descriptionController.text,
                           status: _statusController.text,
@@ -116,11 +132,13 @@ class _EditLostItemScreenState extends State<EditLostItemScreen> {
                           ),
                           dateLost: _dateLost!,
                         );
-                        lostItemBloc
+
+                        context
+                            .read<LostItemBloc>()
                             .add(updateLostItemEvent(lostItem: updatedItem));
                       }
                     },
-                    child: Text('Save Changes'),
+                    child: const Text('Save Changes'),
                   ),
                 ],
               ),
@@ -150,14 +168,14 @@ class _EditLostItemScreenState extends State<EditLostItemScreen> {
     return ListTile(
       title: Text(_dateLost == null
           ? 'Select Date Lost'
-          : 'Date Lost: ${_dateLost!.toLocal()}'),
-      trailing: Icon(Icons.calendar_today),
+          : 'Date Lost: ${_dateLost!.toLocal()}'.split(' ')[0]),
+      trailing: const Icon(Icons.calendar_today),
       onTap: _selectDateLost,
     );
   }
 
   Future<void> _selectDateLost() async {
-    final DateTime? picked = await showDatePicker(
+    final picked = await showDatePicker(
       context: context,
       initialDate: _dateLost ?? DateTime.now(),
       firstDate: DateTime(2000),

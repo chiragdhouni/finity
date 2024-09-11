@@ -1,5 +1,7 @@
 import 'package:finity/blocs/user/user_bloc.dart';
+import 'package:finity/features/lost_item_screen/ui/widgets/lost_item_card.dart';
 import 'package:finity/features/profile/ui/widgets/Item_card.dart';
+import 'package:finity/features/profile/ui/widgets/item_detail.dart';
 import 'package:finity/services/auth_service.dart';
 import 'package:finity/features/auth/ui/pages/login_page.dart';
 import 'package:finity/features/auth/ui/pages/signup_page.dart';
@@ -95,7 +97,12 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
         settings: routeSettings,
         builder: (_) => NotificationDetailScreen(notification: notification),
       );
-
+    case ItemDetail.routeName:
+      final ItemModel item = routeSettings.arguments as ItemModel;
+      return MaterialPageRoute(
+        settings: routeSettings,
+        builder: (_) => ItemDetail(item: item),
+      );
     case ItemCard.routeName:
       final Map<String, dynamic> args =
           routeSettings.arguments as Map<String, dynamic>;
@@ -106,6 +113,13 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
           itemsids: args['itemsids'],
         ),
       );
+    case LostItemDetailScreen.routeName:
+      final LostItem item = routeSettings.arguments as LostItem;
+      return MaterialPageRoute(
+        settings: routeSettings,
+        builder: (_) => LostItemDetailScreen(item: item),
+      );
+
     default:
       return MaterialPageRoute(
         settings: routeSettings,

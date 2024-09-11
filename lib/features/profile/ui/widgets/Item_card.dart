@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:finity/blocs/item/item_bloc.dart';
+import 'package:finity/features/profile/ui/widgets/item_detail.dart';
 import 'package:flutter/material.dart';
 
 import 'package:finity/features/profile/ui/enum/ItemType.dart';
@@ -30,9 +31,24 @@ class _ItemCardState extends State<ItemCard> {
 
   @override
   Widget build(BuildContext context) {
+    String title = "Item ";
+    switch (widget.type) {
+      case ItemType.Borrowed:
+        title += "Borrowed";
+        break;
+      case ItemType.Lended:
+        title += "Lended";
+        break;
+      case ItemType.Requested:
+        title += "Requested";
+        break;
+      case ItemType.Listed:
+        title += "Listed";
+        break;
+    }
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.type.toString()),
+        title: Text(title),
         centerTitle: true,
       ),
       body: BlocBuilder<ItemBloc, ItemState>(
@@ -45,10 +61,35 @@ class _ItemCardState extends State<ItemCard> {
               itemCount: state.items.length, // Use the actual items count
               itemBuilder: (context, index) {
                 final item = state.items[index]; // Access each ItemModel
-                return Card(
-                  child: ListTile(
-                    title: Text(item.name), // Assuming ItemModel has 'name'
-                    subtitle: Text('ID: ${item.id}'),
+                return Container(
+                  child: InkWell(
+                    onTap: () => Navigator.pushNamed(
+                      context,
+                      ItemDetail.routeName,
+                      arguments: item,
+                    ),
+                    child: Column(
+                      children: [
+                        Card(
+                          child: Column(
+                            children: [
+                              ListTile(
+                                title: Text(item.name),
+                                subtitle: Text(
+                                  item.description,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              ListTile(
+                                title: Text('Category: ${item.category}'),
+                                subtitle: Text('Status: ${item.status}'),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Divider(),
+                      ],
+                    ),
                   ),
                 );
               },

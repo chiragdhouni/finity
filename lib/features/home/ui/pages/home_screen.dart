@@ -17,7 +17,6 @@ class App extends StatefulWidget {
   static const routeName = '/appScreen';
 
   @override
-  // ignore: library_private_types_in_public_api
   _AppState createState() => _AppState();
 }
 
@@ -57,22 +56,14 @@ class _AppState extends State<App> {
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthInitial) {
-            setState(() {
-              Navigator.of(context).pushReplacementNamed('/loginScreen');
-            });
-          }
-          if (state is AuthErrorState) {
+            Navigator.of(context).pushReplacementNamed('/loginScreen');
+          } else if (state is AuthErrorState) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-              ),
+              SnackBar(content: Text(state.message)),
             );
-          }
-          if (state is AuthLoading) {
+          } else if (state is AuthLoading) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Loading...'),
-              ),
+              const SnackBar(content: Text('Loading...')),
             );
           }
         },
@@ -84,10 +75,7 @@ class _AppState extends State<App> {
             ),
             actions: [
               IconButton(
-                icon: const Icon(
-                  Icons.logout,
-                  color: Colors.white,
-                ),
+                icon: const Icon(Icons.logout, color: Colors.white),
                 onPressed: () {
                   context
                       .read<AuthBloc>()
@@ -102,74 +90,87 @@ class _AppState extends State<App> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  ResponsiveCardLayout(),
+                  const ResponsiveCardLayout(),
                   const SizedBox(height: 15),
-                  EventSlider(),
+                  const EventSlider(),
                   const SizedBox(height: 15),
-                  TextField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      hintText: 'Enter item name...',
-                      prefixIcon: Icon(Icons.search),
-                    ),
-                    onChanged: _onSearchChanged,
-                  ),
+                  _buildSearchField(),
                   const SizedBox(height: 10),
-                  BlocBuilder<ItemBloc, ItemState>(
-                    builder: (context, state) {
-                      if (_isSearching) {
-                        if (state is ItemSearchLoading) {
-                          return Center(child: CircularProgressIndicator());
-                        } else if (state is ItemSearchSuccess) {
-                          if (state.searchResults.isEmpty) {
-                            return Center(child: Text('No items found'));
-                          }
-                          return ListView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: state.searchResults.length,
-                            itemBuilder: (context, index) {
-                              final item = state.searchResults[index];
-                              return Container(
-                                color: index % 2 == 0
-                                    ? Colors.grey[200]
-                                    : Colors.grey[300],
-                                child: ListTile(
-                                  title: Text(item.name),
-                                  subtitle: Text(item.description),
-                                  onTap: () {
-                                    // Handle item click to show details
-                                    Navigator.of(context).pushNamed(
-                                      ItemDetailScreen.routeName,
-                                      arguments: item,
-                                    );
-                                  },
-                                ),
-                              );
-                            },
-                          );
-                        } else if (state is ItemSearchError) {
-                          return Center(child: Text(state.error));
-                        }
-                        return Container(); // Return an empty container for initial state
-                      } else {
-                        // Show items near you if not searching
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text('Items Near You'),
-                            DisplayItemsScreen(),
-                          ],
-                        );
-                      }
-                    },
-                  ),
+                  _buildSearchResults(),
                 ],
               ),
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildSearchField() {
+    return TextField(
+      controller: _searchController,
+      decoration: const InputDecoration(
+        hintText: 'Enter item name...',
+        prefixIcon: Icon(Icons.search),
+        border: OutlineInputBorder(),
+      ),
+      onChanged: _onSearchChanged,
+    );
+  }
+
+  Widget _buildSearchResults() {
+    return BlocBuilder<ItemBloc, ItemState>(
+      builder: (context, state) {
+        if (_isSearching) {
+          if (state is ItemSearchLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is ItemSearchSuccess) {
+            if (state.searchResults.isEmpty) {
+              return const Center(child: Text('No items found'));
+            }
+            return _buildItemList(state);
+          } else if (state is ItemSearchError) {
+            return Center(child: Text(state.error));
+          }
+        } else {
+          return _buildItemsNearYou();
+        }
+        return Container();
+      },
+    );
+  }
+
+  Widget _buildItemList(ItemSearchSuccess state) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: state.searchResults.length,
+      itemBuilder: (context, index) {
+        final item = state.searchResults[index];
+        return Container(
+          color: index % 2 == 0 ? Colors.grey[200] : Colors.grey[300],
+          child: ListTile(
+            title: Text(item.name),
+            subtitle: Text(item.description),
+            onTap: () {
+              Navigator.of(context).pushNamed(
+                ItemDetailScreen.routeName,
+                arguments: item,
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildItemsNearYou() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: const [
+        Text('Items Near You', style: TextStyle(fontSize: 18)),
+        DisplayItemsScreen(),
+      ],
     );
   }
 }

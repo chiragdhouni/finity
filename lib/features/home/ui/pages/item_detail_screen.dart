@@ -16,6 +16,12 @@ class ItemDetailScreen extends StatefulWidget {
 
 class _ItemDetailScreenState extends State<ItemDetailScreen> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // Accessing userId from a bloc (you could use a UserBloc if applicable)
     final String userId =
@@ -45,16 +51,28 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
           if (state is ItemLoading) {
             return const Center(child: CircularProgressIndicator());
           } else {
-            return Center(
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.item
-                        .toMap()
-                        .map((key, value) => MapEntry(key, '$value\n'))
-                        .toString(),
-                    textAlign: TextAlign.center,
+                    'Name: ${widget.item.name}',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Description: ${widget.item.description}',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Due Date: ${widget.item.dueDate.toLocal()}',
+                    style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(

@@ -1,3 +1,4 @@
+import 'package:finity/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:finity/blocs/lost_item/lost_item_bloc.dart';
@@ -25,12 +26,19 @@ class _AddLostItemScreenState extends State<AddLostItemScreen> {
   final TextEditingController _ownerAddressController = TextEditingController();
   final TextEditingController _latitudeController = TextEditingController();
   final TextEditingController _longitudeController = TextEditingController();
+  late UserBloc userBloc = context.read<UserBloc>();
+  late UserModel user;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    user = (userBloc.state as UserLoaded).user;
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     // Accessing the UserBloc after the widget tree is built
-    final userBloc = context.read<UserBloc>();
 
     userBloc.stream.listen((state) {
       if (state is UserLoaded) {
@@ -87,10 +95,10 @@ class _AddLostItemScreenState extends State<AddLostItemScreen> {
                     decoration: InputDecoration(labelText: 'Description'),
                     maxLines: 5, // Allows up to 5 lines for the description
                   ),
-                  TextField(
-                    controller: _statusController,
-                    decoration: InputDecoration(labelText: 'Status'),
-                  ),
+                  // TextField(
+                  //   controller: _statusController,
+                  //   decoration: InputDecoration(labelText: 'Status'),
+                  // ),
                   GestureDetector(
                     onTap: () async {
                       DateTime? pickedDate = await showDatePicker(
@@ -118,30 +126,30 @@ class _AddLostItemScreenState extends State<AddLostItemScreen> {
                     controller: _contactInfoController,
                     decoration: InputDecoration(labelText: 'Contact Info'),
                   ),
-                  TextField(
-                    controller: _ownerIdController,
-                    decoration: InputDecoration(labelText: 'Owner ID'),
-                  ),
-                  TextField(
-                    controller: _ownerNameController,
-                    decoration: InputDecoration(labelText: 'Owner Name'),
-                  ),
-                  TextField(
-                    controller: _ownerEmailController,
-                    decoration: InputDecoration(labelText: 'Owner Email'),
-                  ),
-                  TextField(
-                    controller: _ownerAddressController,
-                    decoration: InputDecoration(labelText: 'Owner Address'),
-                  ),
-                  TextField(
-                    controller: _latitudeController,
-                    decoration: InputDecoration(labelText: 'Latitude'),
-                  ),
-                  TextField(
-                    controller: _longitudeController,
-                    decoration: InputDecoration(labelText: 'Longitude'),
-                  ),
+                  // TextField(
+                  //   controller: _ownerIdController,
+                  //   decoration: InputDecoration(labelText: 'Owner ID'),
+                  // ),
+                  // TextField(
+                  //   controller: _ownerNameController,
+                  //   decoration: InputDecoration(labelText: 'Owner Name'),
+                  // ),
+                  // TextField(
+                  //   controller: _ownerEmailController,
+                  //   decoration: InputDecoration(labelText: 'Owner Email'),
+                  // ),
+                  // TextField(
+                  //   controller: _ownerAddressController,
+                  //   decoration: InputDecoration(labelText: 'Owner Address'),
+                  // ),
+                  // TextField(
+                  //   controller: _latitudeController,
+                  //   decoration: InputDecoration(labelText: 'Latitude'),
+                  // ),
+                  // TextField(
+                  //   controller: _longitudeController,
+                  //   decoration: InputDecoration(labelText: 'Longitude'),
+                  // ),
                   SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
@@ -150,19 +158,19 @@ class _AddLostItemScreenState extends State<AddLostItemScreen> {
                             CreateLostItemEvent(
                               name: _nameController.text,
                               description: _descriptionController.text,
-                              status: _statusController.text,
+                              status: "lost",
                               dateLost:
                                   DateTime.parse(_dateLostController.text),
                               contactInfo: _contactInfoController.text,
-                              ownerId: _ownerIdController.text,
-                              ownerName: _ownerNameController.text,
-                              ownerEmail: _ownerEmailController.text,
-                              ownerAddress: _ownerAddressController.text,
-                              latitude: double.parse(_latitudeController.text),
-                              longitude:
-                                  double.parse(_longitudeController.text),
+                              ownerId: user.id,
+                              ownerName: user.name,
+                              ownerEmail: user.email,
+                              ownerAddress: user.address,
+                              latitude: user.location[1],
+                              longitude: user.location[0],
                             ),
                           );
+                      Navigator.pop(context, "added");
                     },
                     child: Text('Submit'),
                   ),

@@ -46,6 +46,10 @@ class LostItemBloc extends Bloc<LostItemEvent, LostItemState> {
           longitude: event.longitude);
 
       emit(lostItemCreated(lostItem));
+      add(getNearByLostItemsEvent(
+          latitude: event.longitude,
+          longitude: event.latitude,
+          maxDistance: 10000.0));
     } catch (e) {
       // log(e.toString());
       emit(LostItemError(e.toString()));

@@ -100,7 +100,7 @@ class _MyAppState extends State<MyApp> {
             return MaterialApp(
               onGenerateRoute: (settings) => generateRoute(settings),
               debugShowCheckedModeBanner: false,
-              theme: AppTheme.darkThemeMode,
+              theme: AppTheme.darkThemeMode.copyWith(),
               home: const LoginPage(),
             );
           }
