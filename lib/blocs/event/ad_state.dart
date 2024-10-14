@@ -18,3 +18,11 @@ class AdError extends AdState {
 
   AdError({required this.error});
 }
+
+class AdAdded extends AdState {}
+
+class AdAddError extends AdState {
+  final String error;
+
+  AdAddError({required this.error});
+}

@@ -166,8 +166,8 @@ class _AddLostItemScreenState extends State<AddLostItemScreen> {
                               ownerName: user.name,
                               ownerEmail: user.email,
                               ownerAddress: user.address,
-                              latitude: user.location[1],
-                              longitude: user.location[0],
+                              latitude: user.location[1].toDouble(),
+                              longitude: user.location[0].toDouble(),
                             ),
                           );
                       Navigator.pop(context, "added");

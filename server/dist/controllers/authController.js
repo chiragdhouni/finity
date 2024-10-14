@@ -17,7 +17,7 @@ const user_1 = __importDefault(require("../models/user"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, email, password, address } = req.body;
+    const { name, email, password, address, profilePicture } = req.body;
     try {
         const existingUser = yield user_1.default.findOne({ email });
         if (existingUser) {
@@ -29,6 +29,7 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             email,
             password: hashedPassword,
             address,
+            profilePicture: "",
             location: { type: "Point", coordinates: [0.0, 0.0] }, // Initialize with default coordinates
             itemsListed: [],
             itemsLended: [],

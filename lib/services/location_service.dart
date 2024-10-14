@@ -15,27 +15,31 @@ class LocationService {
       token = '';
       prefs.setString('x-auth-token', token);
     }
+    try {
+      final url = Uri.parse('${Config.serverURL}auth/$userId/location');
+      final response = await http.patch(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'x-auth-token': token,
+        },
+        body: jsonEncode(<String, dynamic>{
+          'latitude': latitude,
+          'longitude': longitude,
+        }),
+      );
 
-    final url = Uri.parse('${Config.serverURL}auth/$userId/location');
-    final response = await http.patch(
-      url,
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'x-auth-token': token,
-      },
-      body: jsonEncode(<String, dynamic>{
-        'latitude': latitude,
-        'longitude': longitude,
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      // Optionally handle the successful response
-      log('Location updated successfully');
-    } else {
-      // Include more detail about the failure
-      log('Failed to update location: ${response.statusCode} - ${response.body}');
-      throw Exception('Failed to update location: ${response.body}');
+      if (response.statusCode == 200) {
+        // Optionally handle the successful response
+        log('Location updated successfully');
+      } else {
+        // Include more detail about the failure
+        log('Failed to update location: ${response.statusCode} - ${response.body}');
+        throw Exception('Failed to update location: ${response.body}');
+      }
+    } catch (e) {
+      log('Error updating location: $e');
+      throw Exception('Error updating location: $e');
     }
   }
 

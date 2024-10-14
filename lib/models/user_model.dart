@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 class UserModel {
@@ -5,12 +6,13 @@ class UserModel {
   final String name;
   final String email;
   final String? token; // Made optional
+  final String? profilePicture; // Made optional
   final String password;
   final String address;
   final List<String> events;
   final List<NotificationModel>
       notifications; // Updated to use NotificationModel
-  late final List<double> location; // Updated to List<double>
+  List<double> location; // Updated to List<double>
   final List<String> itemsLended;
   final List<String> itemsBorrowed;
   final List<String> itemsListed;
@@ -21,6 +23,7 @@ class UserModel {
     required this.name,
     required this.email,
     this.token,
+    this.profilePicture,
     required this.password,
     required this.address,
     required this.events,
@@ -39,6 +42,7 @@ class UserModel {
       'name': name,
       'email': email,
       'token': token,
+      'profilePicture': profilePicture,
       'password': password,
       'address': address,
       'location': {
@@ -60,6 +64,7 @@ class UserModel {
       name: map['name'] as String? ?? '',
       email: map['email'] as String? ?? '',
       token: map['token'] as String?,
+      profilePicture: map['profilePicture'] as String?,
       password: map['password'] as String? ?? '',
       address: map['address'] as String? ?? '',
       location: map['location'] != null
@@ -84,6 +89,40 @@ class UserModel {
   factory UserModel.fromJson(String jsonString) {
     final Map<String, dynamic> json = jsonDecode(jsonString);
     return UserModel.fromMap(json);
+  }
+
+  UserModel copyWith({
+    String? id,
+    String? name,
+    String? email,
+    String? token,
+    String? profilePicture,
+    String? password,
+    String? address,
+    List<String>? events,
+    //? notifications,
+    List<double>? location,
+    List<String>? itemsLended,
+    List<String>? itemsBorrowed,
+    List<String>? itemsListed,
+    List<String>? itemsRequested,
+  }) {
+    return UserModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      token: token ?? this.token,
+      profilePicture: profilePicture ?? this.profilePicture,
+      password: password ?? this.password,
+      address: address ?? this.address,
+      events: events ?? this.events,
+      notifications: notifications ?? this.notifications,
+      location: location ?? this.location,
+      itemsLended: itemsLended ?? this.itemsLended,
+      itemsBorrowed: itemsBorrowed ?? this.itemsBorrowed,
+      itemsListed: itemsListed ?? this.itemsListed,
+      itemsRequested: itemsRequested ?? this.itemsRequested,
+    );
   }
 }
 
@@ -125,6 +164,24 @@ class NotificationModel {
       createdAt: map['createdAt'] != null
           ? DateTime.parse(map['createdAt'] as String)
           : DateTime.now(), // Fallback to current date if null
+    );
+  }
+
+  NotificationModel copyWith({
+    String? userId,
+    String? itemId,
+    String? type,
+    String? message,
+    bool? read,
+    DateTime? createdAt,
+  }) {
+    return NotificationModel(
+      userId: userId ?? this.userId,
+      itemId: itemId ?? this.itemId,
+      type: type ?? this.type,
+      message: message ?? this.message,
+      read: read ?? this.read,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 }

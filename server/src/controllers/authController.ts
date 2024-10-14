@@ -4,7 +4,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import bcryptjs from 'bcryptjs';
 
 export const registerUser = async (req: Request, res: Response) => {
-  const { name, email, password, address } = req.body;
+  const { name, email, password, address ,profilePicture} = req.body;
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -17,6 +17,7 @@ export const registerUser = async (req: Request, res: Response) => {
       email,
       password: hashedPassword,
       address,
+      profilePicture :"",
       location: { type: "Point", coordinates: [0.0, 0.0] }, // Initialize with default coordinates
       itemsListed: [],
       itemsLended: [],

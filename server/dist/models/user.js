@@ -39,6 +39,7 @@ const UserSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true },
     password: { type: String, required: true },
+    profilePicture: { type: String },
     address: { type: String, required: true },
     events: { type: [mongoose_1.default.Schema.Types.ObjectId], ref: 'Event', default: [] },
     itemsListed: { type: [mongoose_1.default.Schema.Types.ObjectId], ref: 'Item', default: [] },

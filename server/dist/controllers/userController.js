@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserById = void 0;
+exports.updateUser = exports.getUserById = void 0;
 const user_1 = __importDefault(require("../models/user"));
 const getUserById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
@@ -32,3 +32,21 @@ const getUserById = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.getUserById = getUserById;
+const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    try {
+        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+        if (!userId) {
+            return res.status(400).json({ error: 'User ID not found in request' });
+        }
+        const user = yield user_1.default.findByIdAndUpdate(userId, req.body, { new: true });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.status(200).json({ user });
+    }
+    catch (err) {
+        res.status(500).json({ error: 'Error updating user', details: err });
+    }
+});
+exports.updateUser = updateUser;

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
@@ -20,6 +21,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     email: '',
     token: '',
     address: '',
+    profilePicture: '',
     password: '',
     location: [],
     itemsListed: [],
@@ -36,6 +38,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     on<SetUserFromModel>(_onSetUserFromModel);
     on<UpdateLocation>(_onUpdateLocation);
     on<LogoutUser>(_onLogoutUser);
+    on<UpdateUserDetailEvent>(_onUpdateUserDetail);
     // on<LoadUserEvent>(_onLoadUser);
     // add(InitializeSocket());
   }
@@ -122,10 +125,18 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   Future<void> _onUpdateLocation(
       UpdateLocation event, Emitter<UserState> emit) async {
     log('Updating location for user ${_user.id} to [lat=${event.latitude}, long=${event.longitude}]');
-    _user.location = [event.latitude, event.longitude];
-    await LocationService.updateUserLocation(
-        _user.id, event.longitude, event.latitude);
-    emit(UserLoaded(_user));
+    try {
+      // Switch latitude and longitude here to store in correct order
+      _user.location = [event.longitude, event.latitude];
+      log('User location updated: ${_user.location}');
+      // Correct the parameter order for longitude and latitude
+      await LocationService.updateUserLocation(
+          _user.id, event.latitude, event.longitude);
+      emit(UserLoaded(_user));
+      log('Location updated successfully');
+    } catch (e) {
+      log('Error updating location: $e');
+    }
   }
 
   void _onLogoutUser(LogoutUser event, Emitter<UserState> emit) {
@@ -158,4 +169,17 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   //     emit(UserError(e.toString()));
   //   }
   // }
+
+  FutureOr<void> _onUpdateUserDetail(
+      UpdateUserDetailEvent event, Emitter<UserState> emit) async {
+    log('Updating user details for user ID=${_user.id}');
+    emit(UserLoading());
+    try {
+      UserModel user = await _userService.updateUser(event.user);
+      _user = user;
+      emit(UserLoaded(user));
+    } catch (e) {
+      log('Error updating user details: $e');
+    }
+  }
 }

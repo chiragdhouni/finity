@@ -25,4 +25,23 @@ class UserService {
       throw Exception('Failed to create lost item');
     }
   }
+
+  Future<UserModel> updateUser(UserModel user) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('x-auth-token');
+    if (token == null) {
+      token = '';
+      prefs.setString('x-auth-token', token);
+    }
+    final response = await http.put(
+      Uri.parse('${Config.serverURL}user/updateUser'),
+      headers: {'Content-Type': 'application/json', 'x-auth-token': token},
+      body: json.encode(user.toJson()),
+    );
+    if (response.statusCode == 201) {
+      return UserModel.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to create lost item');
+    }
+  }
 }

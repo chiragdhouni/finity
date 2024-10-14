@@ -8,6 +8,7 @@ interface IUser extends Document {
   name: string;
   email: string;
   password: string;
+  profilePicture?: string;
   address: string;
   events: Types.ObjectId[];
   itemsListed: Types.ObjectId[];
@@ -46,6 +47,7 @@ const UserSchema: Schema<IUser> = new Schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
+  profilePicture: { type: String },
   address: { type: String, required: true },
   events: { type: [mongoose.Schema.Types.ObjectId], ref: 'Event', default: [] },
   itemsListed: { type: [mongoose.Schema.Types.ObjectId], ref: 'Item', default: [] },

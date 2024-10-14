@@ -29,3 +29,9 @@ class LogoutUser extends UserEvent {}
 class LoadUserEvent extends UserEvent {
   LoadUserEvent();
 }
+
+class UpdateUserDetailEvent extends UserEvent {
+  final UserModel user;
+
+  UpdateUserDetailEvent(this.user);
+}
