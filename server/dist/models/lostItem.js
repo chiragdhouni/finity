@@ -24,6 +24,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
+const AddressSchema = new mongoose_1.Schema({
+    address: { type: String },
+    city: { type: String },
+    state: { type: String },
+    country: { type: String },
+    zipCode: { type: String },
+});
 const LostItemSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     description: { type: String, required: true },
@@ -42,6 +49,7 @@ const LostItemSchema = new mongoose_1.Schema({
         coordinates: { type: [Number], required: true },
     },
     foundAt: { type: Date, expires: '2d' }, // TTL index to delete the document 2 days after foundAt
+    address: AddressSchema,
 });
 LostItemSchema.index({ location: '2dsphere' });
 // Middleware to set foundAt when status is changed to "found"

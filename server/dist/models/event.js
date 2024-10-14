@@ -24,6 +24,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
+const AddressSchema = new mongoose_1.Schema({
+    address: { type: String },
+    city: { type: String },
+    state: { type: String },
+    country: { type: String },
+    zipCode: { type: String },
+});
 const EventSchema = new mongoose_1.Schema({
     title: { type: String, required: true },
     image: { type: String, required: true },
@@ -32,10 +39,10 @@ const EventSchema = new mongoose_1.Schema({
         id: { type: mongoose_1.default.Schema.Types.ObjectId, required: true },
         name: { type: String, required: true },
         email: { type: String, required: true },
-        address: { type: String, required: true },
+        address: AddressSchema
     },
     date: { type: Date, required: true },
-    address: { type: String, required: true },
+    address: AddressSchema,
     location: {
         type: { type: String, enum: ['Point'], required: true },
         coordinates: { type: [Number], required: true },

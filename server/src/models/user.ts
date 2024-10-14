@@ -4,12 +4,29 @@ import { Server } from 'socket.io';
 // Assume `io` is your Socket.IO server instance
 let io: Server;
 
+interface IAddress {
+  address?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  zipCode?: string;
+}
+
+const AddressSchema: Schema = new Schema({
+    address: { type: String },
+    city: { type: String },
+    state: { type: String },
+    country: { type: String },
+    zipCode: { type: String },
+  });
+
+
 interface IUser extends Document {
   name: string;
   email: string;
   password: string;
   profilePicture?: string;
-  address: string;
+  address: IAddress;
   events: Types.ObjectId[];
   itemsListed: Types.ObjectId[];
   itemsLended: Types.ObjectId[];
@@ -43,12 +60,14 @@ const NotificationSchema: Schema<INotification> = new Schema({
 }, 
 );
 
+
+
 const UserSchema: Schema<IUser> = new Schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
   profilePicture: { type: String },
-  address: { type: String, required: true },
+  address: AddressSchema,
   events: { type: [mongoose.Schema.Types.ObjectId], ref: 'Event', default: [] },
   itemsListed: { type: [mongoose.Schema.Types.ObjectId], ref: 'Item', default: [] },
   itemsLended: { type: [mongoose.Schema.Types.ObjectId], ref: 'Item', default: [] },
@@ -62,6 +81,7 @@ const UserSchema: Schema<IUser> = new Schema({
       default: [0.0, 0.0],
     },
   },
+
 });
 
 // Create a 2dsphere index for geospatial queries if location is provided

@@ -27,6 +27,13 @@ exports.initializeSocket = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 // Assume `io` is your Socket.IO server instance
 let io;
+const AddressSchema = new mongoose_1.Schema({
+    address: { type: String },
+    city: { type: String },
+    state: { type: String },
+    country: { type: String },
+    zipCode: { type: String },
+});
 const NotificationSchema = new mongoose_1.Schema({
     userId: { type: mongoose_1.default.Schema.Types.ObjectId, required: true },
     itemId: { type: mongoose_1.default.Schema.Types.ObjectId },
@@ -40,7 +47,7 @@ const UserSchema = new mongoose_1.Schema({
     email: { type: String, required: true },
     password: { type: String, required: true },
     profilePicture: { type: String },
-    address: { type: String, required: true },
+    address: AddressSchema,
     events: { type: [mongoose_1.default.Schema.Types.ObjectId], ref: 'Event', default: [] },
     itemsListed: { type: [mongoose_1.default.Schema.Types.ObjectId], ref: 'Item', default: [] },
     itemsLended: { type: [mongoose_1.default.Schema.Types.ObjectId], ref: 'Item', default: [] },

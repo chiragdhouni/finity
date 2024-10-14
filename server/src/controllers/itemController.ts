@@ -5,7 +5,7 @@ import { ObjectId } from 'mongodb';
 
 // Adding an item to be listed for lending
 export const addItem = async (req: Request, res: Response) => {
-  const { name, description, category, ownerId, dueDate } = req.body;
+  const { name, description, category, ownerId, dueDate ,address} = req.body;
   try {
     if (!name || !description || !category || !ownerId) {
       return res.status(400).send('Missing required fields');
@@ -29,6 +29,7 @@ export const addItem = async (req: Request, res: Response) => {
       status: 'available',
       location: owner.location,
       dueDate: dueDate ? new Date(dueDate) : null, // Parse and set the due date if provided
+      address :address,
     });
 
     await item.save();

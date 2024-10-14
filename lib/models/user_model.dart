@@ -1,6 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:finity/models/address_model.dart';
+
 class UserModel {
   final String id;
   final String name;
@@ -8,7 +10,7 @@ class UserModel {
   final String? token; // Made optional
   final String? profilePicture; // Made optional
   final String password;
-  final String address;
+  final AddressModel address; // Updated to use AddressModel
   final List<String> events;
   final List<NotificationModel>
       notifications; // Updated to use NotificationModel
@@ -25,7 +27,7 @@ class UserModel {
     this.token,
     this.profilePicture,
     required this.password,
-    required this.address,
+    required this.address, // AddressModel required
     required this.events,
     List<NotificationModel>? notifications, // Optional with default value
     List<double>? location, // Optional with default value
@@ -44,7 +46,7 @@ class UserModel {
       'token': token,
       'profilePicture': profilePicture,
       'password': password,
-      'address': address,
+      'address': address.toMap(), // Convert AddressModel to Map
       'location': {
         'type': 'Point',
         'coordinates': location,
@@ -66,7 +68,8 @@ class UserModel {
       token: map['token'] as String?,
       profilePicture: map['profilePicture'] as String?,
       password: map['password'] as String? ?? '',
-      address: map['address'] as String? ?? '',
+      address: AddressModel.fromMap(
+          map['address'] as Map<String, dynamic>), // Parse AddressModel
       location: map['location'] != null
           ? [
               (map['location']['coordinates'][0] as num).toDouble(),
@@ -98,9 +101,8 @@ class UserModel {
     String? token,
     String? profilePicture,
     String? password,
-    String? address,
+    AddressModel? address, // Allow updating of AddressModel
     List<String>? events,
-    //? notifications,
     List<double>? location,
     List<String>? itemsLended,
     List<String>? itemsBorrowed,
@@ -114,7 +116,8 @@ class UserModel {
       token: token ?? this.token,
       profilePicture: profilePicture ?? this.profilePicture,
       password: password ?? this.password,
-      address: address ?? this.address,
+      address:
+          address ?? this.address, // Use updated AddressModel or existing one
       events: events ?? this.events,
       notifications: notifications ?? this.notifications,
       location: location ?? this.location,

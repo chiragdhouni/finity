@@ -24,6 +24,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
+const AddressSchema = new mongoose_1.Schema({
+    address: { type: String },
+    city: { type: String },
+    state: { type: String },
+    country: { type: String },
+    zipCode: { type: String },
+});
 const ItemSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     description: { type: String, required: true },
@@ -33,19 +40,20 @@ const ItemSchema = new mongoose_1.Schema({
         id: { type: mongoose_1.default.Schema.Types.ObjectId, required: true }, // ObjectId type
         name: { type: String, required: true },
         email: { type: String, required: true },
-        address: { type: String, required: true }
+        address: AddressSchema
     },
     borrower: {
         id: { type: mongoose_1.default.Schema.Types.ObjectId, default: null }, // ObjectId type
         name: { type: String, default: null },
         email: { type: String, default: null },
-        address: { type: String, default: null }
+        address: AddressSchema
     },
     dueDate: { type: Date, default: null },
     location: {
         type: { type: String, enum: ['Point'], required: true },
         coordinates: { type: [Number], required: true },
     },
+    address: AddressSchema,
 });
 // Create a 2dsphere index for geospatial queries
 ItemSchema.index({ location: '2dsphere' });

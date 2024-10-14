@@ -17,7 +17,7 @@ const item_1 = __importDefault(require("../models/item"));
 const user_1 = __importDefault(require("../models/user"));
 // Adding an item to be listed for lending
 const addItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, description, category, ownerId, dueDate } = req.body;
+    const { name, description, category, ownerId, dueDate, address } = req.body;
     try {
         if (!name || !description || !category || !ownerId) {
             return res.status(400).send('Missing required fields');
@@ -39,6 +39,7 @@ const addItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             status: 'available',
             location: owner.location,
             dueDate: dueDate ? new Date(dueDate) : null, // Parse and set the due date if provided
+            address: address,
         });
         yield item.save();
         owner.itemsListed.push(item._id);

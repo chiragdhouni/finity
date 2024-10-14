@@ -168,7 +168,10 @@ class _AppState extends State<App> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: const [
-        Text('Items Near You', style: TextStyle(fontSize: 18)),
+        Padding(
+            padding: EdgeInsets.only(left: 10, top: 10),
+            child: Text('Items Near You',
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold))),
         DisplayItemsScreen(),
       ],
     );

@@ -4,6 +4,7 @@ import 'package:finity/features/home/ui/pages/item_detail_screen.dart';
 import 'package:finity/models/item_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 class DisplayItemsScreen extends StatefulWidget {
   const DisplayItemsScreen({super.key});
@@ -90,7 +91,7 @@ class _DisplayItemsScreenState extends State<DisplayItemsScreen> {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.grey[850],
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(15.0),
           boxShadow: const [
             BoxShadow(
               color: Colors.black26,
@@ -101,23 +102,103 @@ class _DisplayItemsScreenState extends State<DisplayItemsScreen> {
         ),
         child: ListTile(
           contentPadding: const EdgeInsets.all(15.0),
-          trailing: Text(
-            item.dueDate.toString(),
-            style: const TextStyle(color: Colors.white70),
-          ),
-          tileColor: Colors.grey[850],
-          title: Text(
-            item.name,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
+          leading: CircleAvatar(
+            backgroundColor: Colors.purple[400],
+            child: Text(
+              (index + 1).toString(),
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
-          subtitle: Text(
-            item.description,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(color: Colors.white60),
+          title: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  item.name,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Chip(
+                label: Text(
+                  item.status,
+                  style: const TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+                backgroundColor: item.status == 'Borrowed'
+                    ? Colors.red[400]
+                    : Colors.green[400],
+              ),
+            ],
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 5),
+              Row(
+                children: [
+                  const Icon(Icons.category, color: Colors.white60, size: 18),
+                  const SizedBox(width: 5),
+                  Text(
+                    item.category,
+                    style: const TextStyle(color: Colors.white70),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 5),
+              Row(
+                children: [
+                  const Icon(Icons.location_on,
+                      color: Colors.white60, size: 18),
+                  const SizedBox(width: 5),
+                  Text(
+                    item.location.toString(),
+                    style: const TextStyle(color: Colors.white70),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 5),
+              Row(
+                children: [
+                  const Icon(Icons.person, color: Colors.white60, size: 18),
+                  const SizedBox(width: 5),
+                  Text(
+                    'Owner: ${item.owner.name}',
+                    style: const TextStyle(color: Colors.white70),
+                  ),
+                ],
+              ),
+              if (item.borrower != null)
+                Row(
+                  children: [
+                    const Icon(Icons.person_outline,
+                        color: Colors.white60, size: 18),
+                    const SizedBox(width: 5),
+                    Text(
+                      'Borrower: ${item.borrower!.name}',
+                      style: const TextStyle(color: Colors.white70),
+                    ),
+                  ],
+                ),
+              const SizedBox(height: 5),
+              Row(
+                children: [
+                  const Icon(Icons.date_range, color: Colors.white60, size: 18),
+                  const SizedBox(width: 5),
+                  Text(
+                    'Due: ${DateFormat.yMMMd().format(item.dueDate)}',
+                    style: const TextStyle(color: Colors.white70),
+                  ),
+                ],
+              ),
+            ],
           ),
           onTap: () {
             // Navigate to item details screen

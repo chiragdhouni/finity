@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'package:finity/models/address_model.dart'; // Assuming AddressModel is correctly imported
+
 class EventModel {
   String id;
   String title;
@@ -5,7 +8,7 @@ class EventModel {
   String description;
   Owner owner;
   DateTime date;
-  String address;
+  AddressModel address; // Changed to AddressModel
   Location location;
 
   EventModel({
@@ -15,7 +18,7 @@ class EventModel {
     required this.description,
     required this.owner,
     required this.date,
-    required this.address,
+    required this.address, // Updated type
     required this.location,
   });
 
@@ -27,7 +30,8 @@ class EventModel {
       description: json['description'],
       owner: Owner.fromJson(json['owner']),
       date: DateTime.parse(json['date']),
-      address: json['address'],
+      address: AddressModel.fromMap(
+          json['address']), // Parse address as AddressModel
       location: Location.fromJson(json['location']),
     );
   }
@@ -40,7 +44,7 @@ class EventModel {
       'description': description,
       'owner': owner.toJson(),
       'date': date.toIso8601String(),
-      'address': address,
+      'address': address.toMap(), // Convert address to map
       'location': location.toJson(),
     };
   }
@@ -50,13 +54,13 @@ class Owner {
   String id;
   String name;
   String email;
-  String address;
+  AddressModel address; // Changed to AddressModel
 
   Owner({
     required this.id,
     required this.name,
     required this.email,
-    required this.address,
+    required this.address, // Updated type
   });
 
   factory Owner.fromJson(Map<String, dynamic> json) {
@@ -64,7 +68,8 @@ class Owner {
       id: json['id'],
       name: json['name'],
       email: json['email'],
-      address: json['address'],
+      address: AddressModel.fromMap(
+          json['address']), // Parse address as AddressModel
     );
   }
 
@@ -73,7 +78,7 @@ class Owner {
       'id': id,
       'name': name,
       'email': email,
-      'address': address,
+      'address': address.toMap(), // Convert address to map
     };
   }
 }

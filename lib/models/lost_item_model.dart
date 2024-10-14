@@ -1,4 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+
+import 'package:finity/models/address_model.dart'; // Assuming you have AddressModel
+
 class LostItem {
   String id;
   String name;
@@ -9,6 +12,7 @@ class LostItem {
   List<String> claims;
   Owner owner;
   Location location;
+  AddressModel address; // New address field of type AddressModel
 
   LostItem({
     required this.id,
@@ -20,6 +24,7 @@ class LostItem {
     required this.claims,
     required this.owner,
     required this.location,
+    required this.address, // Initialize address
   });
 
   factory LostItem.fromJson(Map<String, dynamic> json) {
@@ -33,6 +38,7 @@ class LostItem {
       claims: List<String>.from(json['claims'] ?? []),
       owner: Owner.fromJson(json['owner']),
       location: Location.fromJson(json['location']),
+      address: AddressModel.fromJson(json['address']), // Parse address
     );
   }
 
@@ -47,6 +53,7 @@ class LostItem {
       'claims': claims,
       'owner': owner.toJson(),
       'location': location.toJson(),
+      'address': address.toJson(), // Convert address to JSON
     };
   }
 
@@ -60,6 +67,7 @@ class LostItem {
     List<String>? claims,
     Owner? owner,
     Location? location,
+    AddressModel? address, // New copyWith for address
   }) {
     return LostItem(
       id: id ?? this.id,
@@ -71,6 +79,7 @@ class LostItem {
       claims: claims ?? this.claims,
       owner: owner ?? this.owner,
       location: location ?? this.location,
+      address: address ?? this.address, // Handle address in copyWith
     );
   }
 }
@@ -79,7 +88,7 @@ class Owner {
   String id;
   String name;
   String email;
-  String address;
+  AddressModel address; // Change address to AddressModel
 
   Owner({
     required this.id,
@@ -93,7 +102,7 @@ class Owner {
       id: json['id'] ?? '',
       name: json['name'] ?? '',
       email: json['email'] ?? '',
-      address: json['address'] ?? '',
+      address: AddressModel.fromJson(json['address']), // Parse AddressModel
     );
   }
 
@@ -102,7 +111,7 @@ class Owner {
       'id': id,
       'name': name,
       'email': email,
-      'address': address,
+      'address': address.toJson(), // Convert address to JSON
     };
   }
 
@@ -110,13 +119,13 @@ class Owner {
     String? id,
     String? name,
     String? email,
-    String? address,
+    AddressModel? address, // New copyWith for AddressModel
   }) {
     return Owner(
       id: id ?? this.id,
       name: name ?? this.name,
       email: email ?? this.email,
-      address: address ?? this.address,
+      address: address ?? this.address, // Handle address in copyWith
     );
   }
 }

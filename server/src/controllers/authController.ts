@@ -24,6 +24,7 @@ export const registerUser = async (req: Request, res: Response) => {
       itemsBorrowed: [],
       itemsRequested: [],
       notifications: [],
+      
     });
 
     await user.save();

@@ -1,5 +1,22 @@
 import mongoose, { Schema, Document, Types } from 'mongoose';
 
+interface IAddress {
+    address?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+    zipCode?: string;
+  }
+  
+  const AddressSchema: Schema = new Schema({
+      address: { type: String },
+      city: { type: String },
+      state: { type: String },
+      country: { type: String },
+      zipCode: { type: String },
+    });
+  
+  
 interface ILostItem extends Document {
     name: string;
     description: string;
@@ -11,13 +28,14 @@ interface ILostItem extends Document {
         id: Types.ObjectId;
         name: string;
         email: string;
-        address: string;
+        address: IAddress;
     };
     location: {
         type: string;
         coordinates: [number, number];
     };
     foundAt?: Date; // Optional field to track when the item is marked as found
+    address : IAddress;
 }
 
 const LostItemSchema: Schema = new Schema({
@@ -38,6 +56,7 @@ const LostItemSchema: Schema = new Schema({
         coordinates: { type: [Number], required: true },
     },
     foundAt: { type: Date, expires: '2d' }, // TTL index to delete the document 2 days after foundAt
+    address: AddressSchema,
 });
 
 LostItemSchema.index({ location: '2dsphere' });

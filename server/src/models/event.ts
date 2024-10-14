@@ -1,5 +1,22 @@
 import mongoose, { Schema, Document, Types } from 'mongoose';
 
+interface IAddress {
+    address?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+    zipCode?: string;
+  }
+  
+  const AddressSchema: Schema = new Schema({
+      address: { type: String },
+      city: { type: String },
+      state: { type: String },
+      country: { type: String },
+      zipCode: { type: String },
+    });
+  
+  
 interface IEvent extends Document {
     title: string;
     image: string;
@@ -8,14 +25,15 @@ interface IEvent extends Document {
         id: Types.ObjectId;
         name: string;
         email: string;
-        address: string;
+        address: IAddress;
     };
     date: Date;
-    address: string;
+    address: IAddress;
     location: {
         type: string;
         coordinates: [number, number];
     };
+
 }
 
 const EventSchema: Schema = new Schema({
@@ -26,10 +44,10 @@ const EventSchema: Schema = new Schema({
         id: { type: mongoose.Schema.Types.ObjectId, required: true },
         name: { type: String, required: true },
         email: { type: String, required: true },
-        address: { type: String, required: true },
+        address: AddressSchema
     },
     date: { type: Date, required: true },
-    address: { type: String, required: true },
+    address: AddressSchema,
     location: {
         type: { type: String, enum: ['Point'], required: true },
         coordinates: { type: [Number], required: true },

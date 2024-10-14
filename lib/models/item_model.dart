@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:finity/models/address_model.dart'; // Assuming AddressModel is correctly imported
 
 class ItemModel {
   final String id;
@@ -10,6 +11,10 @@ class ItemModel {
   final Borrower? borrower;
   final DateTime dueDate;
   final Location location;
+  final List<String>? images;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final AddressModel address; // AddressModel used here
 
   ItemModel({
     required this.id,
@@ -21,6 +26,10 @@ class ItemModel {
     this.borrower,
     required this.dueDate,
     required this.location,
+    this.images = const <String>[], // Default empty list if null
+    required this.createdAt,
+    required this.updatedAt,
+    required this.address, // AddressModel instance
   });
 
   Map<String, dynamic> toMap() {
@@ -32,19 +41,20 @@ class ItemModel {
       'status': status,
       'owner': owner.toMap(),
       'borrower': borrower?.toMap(),
-      'dueDate': dueDate.toIso8601String(), // Convert DateTime to ISO string
+      'dueDate': dueDate.toIso8601String(),
       'location': location.toMap(),
+      'images': images,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+      'address': address.toMap(), // Convert address to map
     };
   }
 
   String toJson() => json.encode(toMap());
 
-  factory ItemModel.fromJson(String source) =>
-      ItemModel.fromMap(json.decode(source) as Map<String, dynamic>);
-
   factory ItemModel.fromMap(Map<String, dynamic> map) {
     return ItemModel(
-      id: map['_id'] as String,
+      id: map['id'] as String,
       name: map['name'] as String,
       description: map['description'] as String,
       category: map['category'] as String,
@@ -55,8 +65,16 @@ class ItemModel {
           : null,
       dueDate: DateTime.parse(map['dueDate'] as String),
       location: Location.fromMap(map['location'] as Map<String, dynamic>),
+      images: List<String>.from(map['images'] as List<dynamic>),
+      createdAt: DateTime.parse(map['createdAt'] as String),
+      updatedAt: DateTime.parse(map['updatedAt'] as String),
+      address: AddressModel.fromMap(
+          map['address'] as Map<String, dynamic>), // Parse address from map
     );
   }
+
+  factory ItemModel.fromJson(String source) =>
+      ItemModel.fromMap(json.decode(source) as Map<String, dynamic>);
 }
 
 class Location {
@@ -92,13 +110,13 @@ class Borrower {
   final String? id;
   final String? name;
   final String? email;
-  final String? address;
+  final AddressModel? address; // Change address to AddressModel
 
   Borrower({
     this.id,
     this.name,
     this.email,
-    this.address,
+    this.address, // Use AddressModel for address
   });
 
   Map<String, dynamic> toMap() {
@@ -106,7 +124,7 @@ class Borrower {
       'id': id,
       'name': name,
       'email': email,
-      'address': address,
+      'address': address?.toMap(), // Convert address to map
     };
   }
 
@@ -115,7 +133,9 @@ class Borrower {
       id: map['id'] as String?,
       name: map['name'] as String?,
       email: map['email'] as String?,
-      address: map['address'] as String?,
+      address: map['address'] != null
+          ? AddressModel.fromMap(map['address'] as Map<String, dynamic>)
+          : null, // Parse address as AddressModel
     );
   }
 
@@ -129,13 +149,13 @@ class Owner {
   final String id;
   final String name;
   final String email;
-  final String address;
+  final AddressModel address; // Change address to AddressModel
 
   Owner({
     required this.id,
     required this.name,
     required this.email,
-    required this.address,
+    required this.address, // Use AddressModel for address
   });
 
   Map<String, dynamic> toMap() {
@@ -143,7 +163,7 @@ class Owner {
       'id': id,
       'name': name,
       'email': email,
-      'address': address,
+      'address': address.toMap(), // Convert address to map
     };
   }
 
@@ -152,7 +172,8 @@ class Owner {
       id: map['id'] as String,
       name: map['name'] as String,
       email: map['email'] as String,
-      address: map['address'] as String,
+      address: AddressModel.fromMap(map['address']
+          as Map<String, dynamic>), // Parse address as AddressModel
     );
   }
 
