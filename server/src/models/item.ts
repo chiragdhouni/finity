@@ -42,7 +42,7 @@ interface IItem extends Document {
     type: string;
     coordinates: [number, number];
   };
-  address : IAddress;
+
   
 }
 
@@ -68,7 +68,7 @@ const ItemSchema: Schema = new Schema({
     type: { type: String, enum: ['Point'], required: true },
     coordinates: { type: [Number], required: true },
   },
-  address: AddressSchema,
+
 });
 
 // Create a 2dsphere index for geospatial queries

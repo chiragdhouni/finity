@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:finity/models/address_model.dart';
 import 'package:finity/models/user_model.dart';
 import 'package:finity/services/location_service.dart';
 import 'package:finity/services/user_service.dart';
@@ -20,7 +21,13 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     name: '',
     email: '',
     token: '',
-    address: '',
+    address: AddressModel(
+      address: '',
+      city: '',
+      state: '',
+      country: '',
+      zipCode: '',
+    ),
     profilePicture: '',
     password: '',
     location: [],
@@ -133,7 +140,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       await LocationService.updateUserLocation(
           _user.id, event.latitude, event.longitude);
       emit(UserLoaded(_user));
-      log('Location updated successfully');
+      log('Location updated successfully  location =  ${_user.location}');
     } catch (e) {
       log('Error updating location: $e');
     }
@@ -146,7 +153,13 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       name: '',
       email: '',
       token: '',
-      address: '',
+      address: AddressModel(
+        address: '',
+        city: '',
+        state: '',
+        country: '',
+        zipCode: '',
+      ),
       password: '',
       location: [],
       events: [],

@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:finity/blocs/user/user_bloc.dart'; // Import UserBloc
 import 'package:finity/features/profile/ui/enum/ItemType.dart';
 import 'package:finity/features/profile/ui/widgets/Item_card.dart';
-import 'package:finity/models/user_model.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -94,7 +94,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  userData.address,
+                                  userData.address.toString(),
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
                                     fontSize: 16,

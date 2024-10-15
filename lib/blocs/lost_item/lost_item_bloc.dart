@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:finity/models/address_model.dart';
+import 'package:finity/models/user_model.dart';
 import 'package:finity/services/claim_lost_item_service.dart';
 import 'package:finity/services/lost_item_service.dart';
 import 'package:finity/models/lost_item_model.dart';
@@ -38,10 +40,8 @@ class LostItemBloc extends Bloc<LostItemEvent, LostItemState> {
           status: event.status,
           dateLost: event.dateLost,
           contactInfo: event.contactInfo,
-          ownerId: event.ownerId,
-          ownerName: event.ownerName,
-          ownerEmail: event.ownerEmail,
-          ownerAddress: event.ownerAddress,
+          address: event.address,
+          user: event.user,
           latitude: event.latitude,
           longitude: event.longitude);
 

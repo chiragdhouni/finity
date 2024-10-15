@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:finity/blocs/user/user_bloc.dart';
+import 'package:finity/models/address_model.dart';
 import 'package:finity/services/auth_service.dart';
 import 'package:flutter/material.dart';
 

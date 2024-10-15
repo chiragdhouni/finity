@@ -10,6 +10,7 @@ class LostItem {
   DateTime dateLost;
   String contactInfo;
   List<String> claims;
+  List<String> images;
   Owner owner;
   Location location;
   AddressModel address; // New address field of type AddressModel
@@ -22,6 +23,7 @@ class LostItem {
     required this.dateLost,
     required this.contactInfo,
     required this.claims,
+    this.images = const [],
     required this.owner,
     required this.location,
     required this.address, // Initialize address
@@ -36,6 +38,7 @@ class LostItem {
       dateLost: DateTime.tryParse(json['dateLost']) ?? DateTime.now(),
       contactInfo: json['contactInfo'] ?? '',
       claims: List<String>.from(json['claims'] ?? []),
+      images: List<String>.from(json['images'] ?? []),
       owner: Owner.fromJson(json['owner']),
       location: Location.fromJson(json['location']),
       address: AddressModel.fromJson(json['address']), // Parse address
@@ -49,6 +52,8 @@ class LostItem {
       'description': description,
       'status': status,
       'dateLost': dateLost.toIso8601String(),
+      'images': images,
+
       'contactInfo': contactInfo,
       'claims': claims,
       'owner': owner.toJson(),
@@ -63,6 +68,7 @@ class LostItem {
     String? description,
     String? status,
     DateTime? dateLost,
+    List<String>? images,
     String? contactInfo,
     List<String>? claims,
     Owner? owner,
@@ -75,6 +81,7 @@ class LostItem {
       description: description ?? this.description,
       status: status ?? this.status,
       dateLost: dateLost ?? this.dateLost,
+      images: images ?? this.images,
       contactInfo: contactInfo ?? this.contactInfo,
       claims: claims ?? this.claims,
       owner: owner ?? this.owner,

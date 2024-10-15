@@ -1,10 +1,11 @@
-import 'dart:convert';
+import 'dart:developer';
+
 import 'package:finity/models/address_model.dart'; // Assuming AddressModel is correctly imported
 
 class EventModel {
   String id;
   String title;
-  String image;
+  List<String> image;
   String description;
   Owner owner;
   DateTime date;
@@ -23,17 +24,23 @@ class EventModel {
   });
 
   factory EventModel.fromJson(Map<String, dynamic> json) {
-    return EventModel(
-      id: json['_id'] ?? '',
-      title: json['title'],
-      image: json['image'],
-      description: json['description'],
-      owner: Owner.fromJson(json['owner']),
-      date: DateTime.parse(json['date']),
-      address: AddressModel.fromMap(
-          json['address']), // Parse address as AddressModel
-      location: Location.fromJson(json['location']),
-    );
+    try {
+      return EventModel(
+        id: json['_id'] ?? '',
+        title: json['title'] ?? '',
+        image: List<String>.from(json['image'] ?? []), // Ensure it's a List
+        description: json['description'] ?? '',
+        owner: Owner.fromJson(json['owner'] ?? {}), // Ensure non-null
+        date: DateTime.parse(json['date'] ??
+            DateTime.now().toIso8601String()), // Provide a default date if null
+        address: AddressModel.fromMap(
+            json['address'] ?? {}), // Ensure it can handle empty
+        location: Location.fromJson(json['location'] ?? {}), // Ensure non-null
+      );
+    } catch (e) {
+      log('Error parsing EventModel: $e');
+      throw Exception('Failed to parse EventModel');
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -64,13 +71,18 @@ class Owner {
   });
 
   factory Owner.fromJson(Map<String, dynamic> json) {
-    return Owner(
-      id: json['id'],
-      name: json['name'],
-      email: json['email'],
-      address: AddressModel.fromMap(
-          json['address']), // Parse address as AddressModel
-    );
+    try {
+      return Owner(
+        id: json['id'] ?? '',
+        name: json['name'] ?? '',
+        email: json['email'] ?? '',
+        address: AddressModel.fromMap(
+            json['address'] ?? {}), // Parse address as AddressModel
+      );
+    } catch (e) {
+      log('Error parsing Owner: $e');
+      throw Exception('Failed to parse Owner');
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -94,9 +106,10 @@ class Location {
 
   factory Location.fromJson(Map<String, dynamic> json) {
     return Location(
-      type: json['type'],
-      coordinates:
-          List<double>.from(json['coordinates'].map((x) => x.toDouble())),
+      type: json['type'] ?? 'Point', // Default type if null
+      coordinates: List<double>.from(
+          json['coordinates']?.map((x) => x.toDouble()) ??
+              []), // Ensure it's a List
     );
   }
 

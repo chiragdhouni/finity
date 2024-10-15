@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:finity/blocs/user/user_bloc.dart';
 import 'package:finity/core/config/config.dart';
+import 'package:finity/models/address_model.dart';
 import 'package:finity/models/user_model.dart';
 import 'package:flutter/material.dart';
 
@@ -19,7 +20,7 @@ class AuthService {
     required String email,
     required String password,
     required String name,
-    required String address,
+    required AddressModel address,
   }) async {
     UserModel user = UserModel(
       id: "",

@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:finity/core/config/config.dart';
+import 'package:finity/models/address_model.dart';
 import 'package:finity/models/lost_item_model.dart';
+import 'package:finity/models/user_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,12 +15,10 @@ class LostItemService {
     required String status,
     required DateTime dateLost,
     required String contactInfo,
-    required String ownerId,
-    required String ownerName,
-    required String ownerEmail,
-    required String ownerAddress,
+    required UserModel user,
     required double latitude,
     required double longitude,
+    required AddressModel address,
   }) async {
     // Constructing the LostItem model
     LostItem lostItem = LostItem(
@@ -30,15 +30,16 @@ class LostItemService {
       contactInfo: contactInfo,
       claims: [],
       owner: Owner(
-        id: ownerId,
-        name: ownerName,
-        email: ownerEmail,
-        address: ownerAddress,
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        address: user.address,
       ),
       location: Location(
         type: 'Point',
         coordinates: [longitude, latitude],
       ),
+      address: address,
     );
     // log(json.encode(lostItem.toJson()));
 

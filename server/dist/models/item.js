@@ -53,7 +53,6 @@ const ItemSchema = new mongoose_1.Schema({
         type: { type: String, enum: ['Point'], required: true },
         coordinates: { type: [Number], required: true },
     },
-    address: AddressSchema,
 });
 // Create a 2dsphere index for geospatial queries
 ItemSchema.index({ location: '2dsphere' });

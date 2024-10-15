@@ -87,19 +87,34 @@ const updateEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.updateEvent = updateEvent;
 // Delete an event
 const deleteEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
-        const event = yield event_1.default.findByIdAndDelete(req.params.id);
-        if (!event)
+        const event = yield event_1.default.findById(req.params.id);
+        // Check if the event exists
+        if (!event) {
             return res.status(404).json({ message: 'Event not found' });
+        }
+        // Ensure the user is authorized to delete the event
+        if (event.owner.id.toString() !== ((_a = req.user) === null || _a === void 0 ? void 0 : _a._id).toString()) {
+            return res.status(403).json({ message: 'You are not authorized to delete this event' });
+        }
+        // Find the owner of the event
         const owner = yield user_1.default.findById(event.owner.id);
         if (!owner) {
-            return res.status(404).send('Owner not found');
+            return res.status(404).json({ message: 'Owner not found' });
         }
+        // Remove the event from the owner's list
         owner.events = owner.events.filter((eventId) => eventId.toString() !== event._id.toString());
+        // Save the updated owner
+        yield owner.save();
+        // Delete the event
+        yield event_1.default.findByIdAndDelete(req.params.id);
+        // Send success response
         res.status(200).json({ message: 'Event deleted successfully' });
     }
     catch (error) {
-        console.error(`Error adding item: ${error.message}`);
+        console.error(`Error deleting event: ${error.message}`);
+        res.status(500).json({ message: 'Internal server error' });
     }
 });
 exports.deleteEvent = deleteEvent;

@@ -4,13 +4,15 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:finity/core/config/config.dart';
+import 'package:finity/models/address_model.dart';
 import 'package:finity/models/item_model.dart';
+import 'package:finity/models/user_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ItemRepo {
   //add item to lend others
-  Future<void> addItem(String userId, String itemName, String description,
+  Future<void> addItem(UserModel user, String itemName, String description,
       String itemCategory, DateTime dueDate) async {
     ItemModel item = ItemModel(
       id: "",
@@ -19,23 +21,25 @@ class ItemRepo {
       category: itemCategory,
       status: "available",
       owner: Owner(
-        id: userId,
-        name: "",
-        email: "",
-        address: "",
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        address: user.address,
       ),
       dueDate: dueDate,
       location: Location(
         type: "Point",
         coordinates: [],
       ),
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
     );
     try {
       // Convert the item to a JSON map
       Map<String, dynamic> itemJson = item.toMap();
 
       // Add the ownerId to the JSON map
-      itemJson['ownerId'] = userId;
+      itemJson['ownerId'] = user.id;
 
       // Encode the JSON map to a JSON string
       String body = jsonEncode(itemJson);

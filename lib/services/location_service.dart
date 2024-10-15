@@ -78,6 +78,7 @@ class LocationService {
     }
 
     // When we reach here, permissions are granted and we can
+
     return await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
   }

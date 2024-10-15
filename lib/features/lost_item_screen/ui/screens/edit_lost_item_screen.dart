@@ -3,6 +3,7 @@
 import 'dart:developer';
 
 import 'package:finity/blocs/lost_item/lost_item_bloc.dart';
+import 'package:finity/models/address_model.dart';
 import 'package:finity/models/lost_item_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,9 +26,14 @@ class _EditLostItemScreenState extends State<EditLostItemScreen> {
   late TextEditingController _contactInfoController;
   late TextEditingController _ownerNameController;
   late TextEditingController _ownerEmailController;
-  late TextEditingController _ownerAddressController;
+  late TextEditingController _addressController;
+  late TextEditingController _cityController;
+  late TextEditingController _stateController;
+  late TextEditingController _countryController;
+  late TextEditingController _zipCodeController;
   late TextEditingController _latitudeController;
   late TextEditingController _longitudeController;
+
   DateTime? _dateLost;
 
   @override
@@ -43,8 +49,19 @@ class _EditLostItemScreenState extends State<EditLostItemScreen> {
     _ownerNameController = TextEditingController(text: widget.item.owner.name);
     _ownerEmailController =
         TextEditingController(text: widget.item.owner.email);
-    _ownerAddressController =
-        TextEditingController(text: widget.item.owner.address);
+
+    // Initialize the address-related controllers
+    _addressController =
+        TextEditingController(text: widget.item.owner.address.address);
+    _cityController =
+        TextEditingController(text: widget.item.owner.address.city);
+    _stateController =
+        TextEditingController(text: widget.item.owner.address.state);
+    _countryController =
+        TextEditingController(text: widget.item.owner.address.country);
+    _zipCodeController =
+        TextEditingController(text: widget.item.owner.address.zipCode);
+
     _latitudeController = TextEditingController(
         text: widget.item.location.coordinates.first.toString());
     _longitudeController = TextEditingController(
@@ -61,7 +78,11 @@ class _EditLostItemScreenState extends State<EditLostItemScreen> {
     _contactInfoController.dispose();
     _ownerNameController.dispose();
     _ownerEmailController.dispose();
-    _ownerAddressController.dispose();
+    _addressController.dispose();
+    _cityController.dispose();
+    _stateController.dispose();
+    _countryController.dispose();
+    _zipCodeController.dispose();
     _latitudeController.dispose();
     _longitudeController.dispose();
     super.dispose();
@@ -105,7 +126,14 @@ class _EditLostItemScreenState extends State<EditLostItemScreen> {
                   _buildTextField(_contactInfoController, 'Contact Info'),
                   _buildTextField(_ownerNameController, 'Owner Name'),
                   _buildTextField(_ownerEmailController, 'Owner Email'),
-                  _buildTextField(_ownerAddressController, 'Owner Address'),
+
+                  // Address form fields
+                  _buildTextField(_addressController, 'Address'),
+                  _buildTextField(_cityController, 'City'),
+                  _buildTextField(_stateController, 'State'),
+                  _buildTextField(_countryController, 'Country'),
+                  _buildTextField(_zipCodeController, 'Zip Code', true),
+
                   _buildTextField(_latitudeController, 'Latitude', true),
                   _buildTextField(_longitudeController, 'Longitude', true),
                   _buildDatePicker(),
@@ -121,7 +149,13 @@ class _EditLostItemScreenState extends State<EditLostItemScreen> {
                           owner: widget.item.owner.copyWith(
                             name: _ownerNameController.text,
                             email: _ownerEmailController.text,
-                            address: _ownerAddressController.text,
+                            address: AddressModel(
+                              address: _addressController.text,
+                              city: _cityController.text,
+                              state: _stateController.text,
+                              country: _countryController.text,
+                              zipCode: _zipCodeController.text,
+                            ),
                           ),
                           location: Location(
                             type: "Point",

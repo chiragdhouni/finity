@@ -64,6 +64,11 @@ class _EventSliderState extends State<EventSlider> {
             items: state.events.map((event) {
               return Builder(
                 builder: (BuildContext context) {
+                  // Display the first image in the list
+                  String imageUrl = event.image.isNotEmpty
+                      ? event.image[0]
+                      : 'https://example.com/default-image.jpg';
+
                   return InkWell(
                     onTap: () {
                       // Navigate to EventDetailScreen
@@ -77,7 +82,7 @@ class _EventSliderState extends State<EventSlider> {
                       decoration: BoxDecoration(
                         color: Colors.amber,
                         image: DecorationImage(
-                          image: NetworkImage(event.image),
+                          image: NetworkImage(imageUrl),
                           fit: BoxFit.cover,
                         ),
                       ),

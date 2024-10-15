@@ -15,7 +15,7 @@ class AuthSignUpEvent extends AuthEvent {
   final String name;
   final String email;
   final String password;
-  final String address;
+  final AddressModel address;
   AuthSignUpEvent(
       {required this.email,
       required this.password,

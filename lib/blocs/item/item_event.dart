@@ -4,14 +4,14 @@ part of 'item_bloc.dart';
 sealed class ItemEvent {}
 
 class AddItemEvent extends ItemEvent {
-  final String userId;
+  final UserModel user;
   final String itemName;
   final String description;
   final String itemCategory;
   final DateTime dueDate;
 
   AddItemEvent({
-    required this.userId,
+    required this.user,
     required this.itemName,
     required this.description,
     required this.itemCategory,

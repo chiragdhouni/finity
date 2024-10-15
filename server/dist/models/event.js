@@ -33,7 +33,7 @@ const AddressSchema = new mongoose_1.Schema({
 });
 const EventSchema = new mongoose_1.Schema({
     title: { type: String, required: true },
-    image: { type: String, required: true },
+    image: { type: [String], required: true }, // Updated to an array of strings
     description: { type: String, required: true },
     owner: {
         id: { type: mongoose_1.default.Schema.Types.ObjectId, required: true },

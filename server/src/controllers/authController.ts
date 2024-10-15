@@ -16,7 +16,7 @@ export const registerUser = async (req: Request, res: Response) => {
       name,
       email,
       password: hashedPassword,
-      address,
+      address : address,
       profilePicture :"",
       location: { type: "Point", coordinates: [0.0, 0.0] }, // Initialize with default coordinates
       itemsListed: [],

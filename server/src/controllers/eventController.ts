@@ -79,16 +79,38 @@ export const updateEvent = async (req: Request, res: Response) => {
 // Delete an event
 export const deleteEvent = async (req: Request, res: Response) => {
     try {
-        const event = await Event.findByIdAndDelete(req.params.id);
-        if (!event) return res.status(404).json({ message: 'Event not found' });
+        const event = await Event.findById(req.params.id);
+        
+        // Check if the event exists
+        if (!event) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
+
+        // Ensure the user is authorized to delete the event
+        if (event.owner.id.toString() !== (req.user?._id as ObjectId).toString()) {
+            return res.status(403).json({ message: 'You are not authorized to delete this event' });
+        }
+
+        // Find the owner of the event
         const owner = await User.findById(event.owner.id);
         if (!owner) {
-            return res.status(404).send('Owner not found');
+            return res.status(404).json({ message: 'Owner not found' });
         }
+
+        // Remove the event from the owner's list
         owner.events = owner.events.filter((eventId) => eventId.toString() !== (event._id as ObjectId).toString());
+
+        // Save the updated owner
+        await owner.save();
+
+        // Delete the event
+        await Event.findByIdAndDelete(req.params.id);
+
+        // Send success response
         res.status(200).json({ message: 'Event deleted successfully' });
     } catch (error) {
-        console.error(`Error adding item: ${(error as Error).message}`);
+        console.error(`Error deleting event: ${(error as Error).message}`);
+        res.status(500).json({ message: 'Internal server error' });
     }
 };
 

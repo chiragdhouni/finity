@@ -10,23 +10,19 @@ class CreateLostItemEvent extends LostItemEvent {
   final String status;
   final DateTime dateLost;
   final String contactInfo;
-  final String ownerId;
-  final String ownerName;
-  final String ownerEmail;
-  final String ownerAddress;
+  final UserModel user;
+  final AddressModel address;
   final double latitude;
   final double longitude;
 
   CreateLostItemEvent({
     required this.name,
     required this.description,
+    required this.address,
     required this.status,
     required this.dateLost,
     required this.contactInfo,
-    required this.ownerId,
-    required this.ownerName,
-    required this.ownerEmail,
-    required this.ownerAddress,
+    required this.user,
     required this.latitude,
     required this.longitude,
   });

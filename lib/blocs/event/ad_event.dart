@@ -18,11 +18,11 @@ class FetchNearByAdEvent extends AdEvent {
 class AddAdEvent extends AdEvent {
   final String title;
   final String description;
-  final String address;
+  final AddressModel address;
   final String ownerId;
-  final String date;
-  final String image;
-  final Map<String, dynamic> location;
+  final DateTime date;
+  final List<String> image;
+  final Location location;
 
   AddAdEvent({
     required this.title,

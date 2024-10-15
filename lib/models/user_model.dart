@@ -119,7 +119,7 @@ class UserModel {
       address:
           address ?? this.address, // Use updated AddressModel or existing one
       events: events ?? this.events,
-      notifications: notifications ?? this.notifications,
+      notifications: notifications,
       location: location ?? this.location,
       itemsLended: itemsLended ?? this.itemsLended,
       itemsBorrowed: itemsBorrowed ?? this.itemsBorrowed,

@@ -35,6 +35,7 @@ const LostItemSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     description: { type: String, required: true },
     status: { type: String, required: true, enum: ['lost', 'found'] },
+    image: { type: [String], required: true },
     dateLost: { type: Date, required: true },
     contactInfo: { type: String, required: true },
     claims: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: 'Claim' }],

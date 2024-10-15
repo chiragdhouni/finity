@@ -1,11 +1,8 @@
-import 'dart:async';
 import 'package:finity/features/lost_item_screen/ui/widgets/lost_item_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:finity/blocs/lost_item/lost_item_bloc.dart';
 import 'package:finity/blocs/user/user_bloc.dart';
-
-import 'package:finity/models/lost_item_model.dart';
 
 class NearByItemScreen extends StatefulWidget {
   const NearByItemScreen({super.key});

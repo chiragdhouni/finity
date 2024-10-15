@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+
 import 'package:finity/models/item_model.dart';
+import 'package:finity/models/user_model.dart';
 import 'package:finity/services/item_service.dart';
 import 'package:flutter/material.dart';
 
@@ -23,7 +25,7 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
     emit(ItemLoading());
     try {
       await itemRepo.addItem(
-        event.userId,
+        event.user,
         event.itemName,
         event.description,
         event.itemCategory,

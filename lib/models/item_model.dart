@@ -14,7 +14,6 @@ class ItemModel {
   final List<String>? images;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final AddressModel address; // AddressModel used here
 
   ItemModel({
     required this.id,
@@ -29,7 +28,6 @@ class ItemModel {
     this.images = const <String>[], // Default empty list if null
     required this.createdAt,
     required this.updatedAt,
-    required this.address, // AddressModel instance
   });
 
   Map<String, dynamic> toMap() {
@@ -46,7 +44,6 @@ class ItemModel {
       'images': images,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
-      'address': address.toMap(), // Convert address to map
     };
   }
 
@@ -68,8 +65,8 @@ class ItemModel {
       images: List<String>.from(map['images'] as List<dynamic>),
       createdAt: DateTime.parse(map['createdAt'] as String),
       updatedAt: DateTime.parse(map['updatedAt'] as String),
-      address: AddressModel.fromMap(
-          map['address'] as Map<String, dynamic>), // Parse address from map
+      //   address: AddressModel.fromMap(
+      //       map['address'] as Map<String, dynamic>), // Parse address from map
     );
   }
 

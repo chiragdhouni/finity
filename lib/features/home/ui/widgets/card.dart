@@ -242,10 +242,9 @@ class _AddItemDialogState extends State<AddItemDialog>
                           _formKey.currentState!.save();
                           BlocProvider.of<ItemBloc>(context).add(
                             AddItemEvent(
-                              userId: (BlocProvider.of<UserBloc>(context).state
+                              user: (BlocProvider.of<UserBloc>(context).state
                                       as UserLoaded)
-                                  .user
-                                  .id, // Use UserBloc to get userId
+                                  .user,
                               itemName: _name,
                               description: _description,
                               itemCategory: _category,
