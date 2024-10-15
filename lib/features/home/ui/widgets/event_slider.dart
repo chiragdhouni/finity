@@ -55,6 +55,10 @@ class _EventSliderState extends State<EventSlider> {
         } else if (state is AdError) {
           return Center(child: Text('Error: ${state.error}'));
         } else if (state is AdSuccess) {
+          List<String> eventName =
+              state.events.map((event) => event.title as String).toList();
+          state.events.map((event) => event.title).toList();
+          log('Events: $eventName');
           return CarouselSlider(
             options: CarouselOptions(
               height: 190.0,
