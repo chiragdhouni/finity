@@ -8,12 +8,12 @@ class ItemModel {
   final String category;
   final String status;
   final Owner owner;
-  final Borrower? borrower;
+  final Borrower? borrower; // Nullable borrower
   final DateTime dueDate;
   final Location location;
   final List<String>? images;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? createdAt; // Nullable createdAt
+  final DateTime? updatedAt; // Nullable updatedAt
 
   ItemModel({
     required this.id,
@@ -22,12 +22,12 @@ class ItemModel {
     required this.category,
     required this.status,
     required this.owner,
-    this.borrower,
+    this.borrower, // Nullable borrower
     required this.dueDate,
     required this.location,
     this.images = const <String>[], // Default empty list if null
-    required this.createdAt,
-    required this.updatedAt,
+    this.createdAt, // Nullable
+    this.updatedAt, // Nullable
   });
 
   Map<String, dynamic> toMap() {
@@ -38,20 +38,18 @@ class ItemModel {
       'category': category,
       'status': status,
       'owner': owner.toMap(),
-      'borrower': borrower?.toMap(),
+      'borrower': borrower?.toMap(), // Nullable borrower
       'dueDate': dueDate.toIso8601String(),
       'location': location.toMap(),
       'images': images,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'createdAt': createdAt?.toIso8601String(), // Nullable
+      'updatedAt': updatedAt?.toIso8601String(), // Nullable
     };
   }
 
-  String toJson() => json.encode(toMap());
-
   factory ItemModel.fromMap(Map<String, dynamic> map) {
     return ItemModel(
-      id: map['id'] as String,
+      id: map['_id'] as String,
       name: map['name'] as String,
       description: map['description'] as String,
       category: map['category'] as String,
@@ -59,14 +57,18 @@ class ItemModel {
       owner: Owner.fromMap(map['owner'] as Map<String, dynamic>),
       borrower: map['borrower'] != null
           ? Borrower.fromMap(map['borrower'] as Map<String, dynamic>)
-          : null,
+          : null, // Safely handle null borrower
       dueDate: DateTime.parse(map['dueDate'] as String),
       location: Location.fromMap(map['location'] as Map<String, dynamic>),
-      images: List<String>.from(map['images'] as List<dynamic>),
-      createdAt: DateTime.parse(map['createdAt'] as String),
-      updatedAt: DateTime.parse(map['updatedAt'] as String),
-      //   address: AddressModel.fromMap(
-      //       map['address'] as Map<String, dynamic>), // Parse address from map
+      images: map['images'] != null
+          ? List<String>.from(map['images'])
+          : <String>[], // Default to empty list if images are null
+      createdAt: map['createdAt'] != null
+          ? DateTime.parse(map['createdAt'] as String)
+          : null, // Handle missing createdAt
+      updatedAt: map['updatedAt'] != null
+          ? DateTime.parse(map['updatedAt'] as String)
+          : null, // Handle missing updatedAt
     );
   }
 
@@ -107,13 +109,13 @@ class Borrower {
   final String? id;
   final String? name;
   final String? email;
-  final AddressModel? address; // Change address to AddressModel
+  final AddressModel? address; // Nullable AddressModel
 
   Borrower({
     this.id,
     this.name,
     this.email,
-    this.address, // Use AddressModel for address
+    this.address,
   });
 
   Map<String, dynamic> toMap() {
@@ -121,18 +123,18 @@ class Borrower {
       'id': id,
       'name': name,
       'email': email,
-      'address': address?.toMap(), // Convert address to map
+      'address': address?.toMap(), // Nullable address
     };
   }
 
   factory Borrower.fromMap(Map<String, dynamic> map) {
     return Borrower(
-      id: map['id'] as String?,
-      name: map['name'] as String?,
-      email: map['email'] as String?,
+      id: map['id'] as String?, // Nullable id
+      name: map['name'] as String?, // Nullable name
+      email: map['email'] as String?, // Nullable email
       address: map['address'] != null
           ? AddressModel.fromMap(map['address'] as Map<String, dynamic>)
-          : null, // Parse address as AddressModel
+          : null, // Handle null address
     );
   }
 
@@ -146,13 +148,13 @@ class Owner {
   final String id;
   final String name;
   final String email;
-  final AddressModel address; // Change address to AddressModel
+  final AddressModel address; // AddressModel
 
   Owner({
     required this.id,
     required this.name,
     required this.email,
-    required this.address, // Use AddressModel for address
+    required this.address, // AddressModel required
   });
 
   Map<String, dynamic> toMap() {
@@ -160,7 +162,7 @@ class Owner {
       'id': id,
       'name': name,
       'email': email,
-      'address': address.toMap(), // Convert address to map
+      'address': address.toMap(), // AddressModel to map
     };
   }
 
@@ -169,8 +171,7 @@ class Owner {
       id: map['id'] as String,
       name: map['name'] as String,
       email: map['email'] as String,
-      address: AddressModel.fromMap(map['address']
-          as Map<String, dynamic>), // Parse address as AddressModel
+      address: AddressModel.fromMap(map['address'] as Map<String, dynamic>),
     );
   }
 

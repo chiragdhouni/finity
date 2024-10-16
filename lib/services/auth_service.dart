@@ -80,11 +80,11 @@ class AuthService {
 
         // Store the token from the response
         await prefs.setString('x-auth-token', jsonDecode(res.body)['token']);
-        log('token stored: ${jsonDecode(res.body)['token']}');
+        // log('token stored: ${jsonDecode(res.body)['token']}');
         return "login successful";
       }
-      log('Sign in failed with status: ${res.statusCode}');
-      log('Sign in failed with status: ${res.body}');
+      // log('Sign in failed with status: ${res.statusCode}');
+      // log('Sign in failed with status: ${res.body}');
       return "error from server";
     } catch (e) {
       log('Sign in error: $e');

@@ -58,7 +58,7 @@ class _EventSliderState extends State<EventSlider> {
           List<String> eventName =
               state.events.map((event) => event.title as String).toList();
           state.events.map((event) => event.title).toList();
-          log('Events: $eventName');
+          // log('Events: $eventName');
           return CarouselSlider(
             options: CarouselOptions(
               height: 190.0,

@@ -17,7 +17,7 @@ class EventRepo {
         'latitude': (37.7749).toString(),
         'maxDistance': maxDistance.toString(),
       };
-      log('Query Params: $queryParams');
+      // log('Query Params: $queryParams');
 
       final Uri url = Uri.parse("${Config.serverURL}events/near")
           .replace(queryParameters: queryParams);
@@ -39,9 +39,9 @@ class EventRepo {
       );
 
       if (response.statusCode == 200) {
-        log('Response: ${response.body}');
+        // log('Response: ${response.body}');
         final List<dynamic> jsonEvents = jsonDecode(response.body);
-        log('Events: $jsonEvents');
+        // log('Events: $jsonEvents');
 
         final List<EventModel> events = jsonEvents.map((json) {
           return EventModel.fromJson(json);

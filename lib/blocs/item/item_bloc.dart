@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 
@@ -44,6 +45,8 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
     try {
       List<ItemModel>? data = await itemRepo.fetchNearbyItems(
           event.latitude, event.longitude, event.maxDistance);
+      // List<String> itemName = data!.map((e) => e.name).toList();
+      // log('Item names: $itemName');
       if (data != null && data.isNotEmpty) {
         emit(ItemFetched(data));
       } else {

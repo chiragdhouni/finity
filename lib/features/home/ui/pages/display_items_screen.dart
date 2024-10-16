@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:finity/blocs/item/item_bloc.dart';
 import 'package:finity/blocs/user/user_bloc.dart'; // Import UserBloc
 import 'package:finity/features/home/ui/pages/item_detail_screen.dart';
@@ -26,8 +28,8 @@ class _DisplayItemsScreenState extends State<DisplayItemsScreen> {
     UserState userState = context.read<UserBloc>().state;
 
     if (userState is UserLoaded) {
-      double latitude = userState.user.location[0];
-      double longitude = userState.user.location[1];
+      double latitude = userState.user.location[1];
+      double longitude = userState.user.location[0];
 
       context.read<ItemBloc>().add(FetchNearbyItemsEvent(
             latitude: latitude,
@@ -61,6 +63,7 @@ class _DisplayItemsScreenState extends State<DisplayItemsScreen> {
         if (state is ItemLoading) {
           return const Center(child: CircularProgressIndicator());
         } else if (state is ItemFetched) {
+          log('Items fetched: ${state.data!.length}');
           if (state.data == null || state.data!.isEmpty) {
             return const Center(child: Text('No items found'));
           }
