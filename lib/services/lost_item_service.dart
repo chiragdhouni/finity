@@ -20,7 +20,7 @@ class LostItemService {
     required double longitude,
     required AddressModel address,
   }) async {
-    // Constructing the LostItem model
+    // Construct the LostItem model
     LostItem lostItem = LostItem(
       id: '', // ID will be assigned by the database
       name: name,
@@ -40,21 +40,25 @@ class LostItemService {
         coordinates: [longitude, latitude],
       ),
       address: address,
+      images: [], // Initialize empty images list
     );
-    // log(json.encode(lostItem.toJson()));
-
+    // log(lostItem.toJson().toString());
+    // Get token from SharedPreferences
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('x-auth-token');
     if (token == null) {
-      token = '';
-      prefs.setString('x-auth-token', token);
+      throw Exception('Token is not available');
     }
+
+    // Make the POST request
     final response = await http.post(
       Uri.parse('${Config.serverURL}lostItems/add'),
       headers: {'Content-Type': 'application/json', 'x-auth-token': token},
       body: json.encode(lostItem.toJson()),
     );
+
     log(response.body);
+    log(response.statusCode.toString());
     if (response.statusCode == 201) {
       return LostItem.fromJson(json.decode(response.body));
     } else {
@@ -67,12 +71,13 @@ class LostItemService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('x-auth-token');
     if (token == null) {
-      token = '';
-      prefs.setString('x-auth-token', token);
+      throw Exception('Token is not available');
     }
+
     final response = await http.get(
-        Uri.parse('${Config.serverURL}/lostItems/$id'),
-        headers: {'Content-Type': 'application/json', 'x-auth-token': token});
+      Uri.parse('${Config.serverURL}lostItems/$id'),
+      headers: {'Content-Type': 'application/json', 'x-auth-token': token},
+    );
 
     if (response.statusCode == 200) {
       return LostItem.fromJson(json.decode(response.body));
@@ -81,26 +86,14 @@ class LostItemService {
     }
   }
 
-  // // Get all lost items
-  // Future<List<LostItem>> getAllLostItems() async {
-  //   final response = await http.get(Uri.parse('$baseUrl/lost-items'));
-
-  //   if (response.statusCode == 200) {
-  //     Iterable l = json.decode(response.body);
-  //     return List<LostItem>.from(l.map((model) => LostItem.fromJson(model)));
-  //   } else {
-  //     throw Exception('Failed to load lost items');
-  //   }
-  // }
-
   // Update a lost item by ID
   Future<LostItem> updateLostItem(String id, LostItem lostItem) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('x-auth-token');
     if (token == null) {
-      token = '';
-      prefs.setString('x-auth-token', token);
+      throw Exception('Token is not available');
     }
+
     final response = await http.put(
       Uri.parse('${Config.serverURL}lostItems/update/$id'),
       headers: {'Content-Type': 'application/json', 'x-auth-token': token},
@@ -119,38 +112,20 @@ class LostItemService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('x-auth-token');
     if (token == null) {
-      token = '';
-      prefs.setString('x-auth-token', token);
+      throw Exception('Token is not available');
     }
+
     final response = await http.delete(
-        Uri.parse('${Config.serverURL}lostItems/delete/$id'),
-        headers: {'Content-Type': 'application/json', 'x-auth-token': token});
+      Uri.parse('${Config.serverURL}lostItems/delete/$id'),
+      headers: {'Content-Type': 'application/json', 'x-auth-token': token},
+    );
 
     if (response.statusCode != 200) {
       throw Exception('Failed to delete lost item');
     }
   }
 
-  // // Search for lost items by location
-  // Future<List<LostItem>> searchLostItemsByLocation({
-  //   required double longitude,
-  //   required double latitude,
-  //   required double maxDistance,
-  // }) async {
-  //   final response = await http.get(
-  //     Uri.parse(
-  //         '${Config.serverURL}/lostItems/search?longitude=$longitude&latitude=$latitude&maxDistance=$maxDistance'),
-  //   );
-
-  //   if (response.statusCode == 200) {
-  //     Iterable l = json.decode(response.body);
-  //     return List<LostItem>.from(l.map((model) => LostItem.fromJson(model)));
-  //   } else {
-  //     throw Exception('Failed to search lost items by location');
-  //   }
-  // }
-
-  //get near by lost items
+  // Get nearby lost items
   Future<List<LostItem>> getNearByLostItems({
     required double longitude,
     required double latitude,
@@ -158,41 +133,43 @@ class LostItemService {
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('x-auth-token');
-
-    // Set a default token if not found
     if (token == null) {
-      token = '';
-      prefs.setString('x-auth-token', token);
+      throw Exception('Token is not available');
     }
-    // log('token $token');
-    // log('${Config.serverURL}lostItems/nearby?longitude=$longitude&latitude=$latitude&maxDistance=$maxDistance');
+
     final response = await http.get(
       Uri.parse(
-          '${Config.serverURL}lostItems/nearby?longitude=$latitude&latitude=$longitude&maxDistance=$maxDistance'),
+          '${Config.serverURL}lostItems/nearby?longitude=$longitude&latitude=$latitude&maxDistance=$maxDistance'),
       headers: {'Content-Type': 'application/json', 'x-auth-token': token},
     );
-
-    // log(response.body);
-    // log(response.statusCode.toString());
+    log(response.body);
+    log(response.statusCode.toString());
     if (response.statusCode == 200) {
-      Iterable l = json.decode(response.body);
-      return List<LostItem>.from(l.map((model) => LostItem.fromJson(model)));
+      Iterable list = json.decode(response.body);
+      return List<LostItem>.from(list.map((model) => LostItem.fromJson(model)));
     } else {
-      throw Exception('Failed to search lost items by location');
+      throw Exception('Failed to get nearby lost items');
     }
   }
 
   // Search for lost items by query
   Future<List<LostItem>> searchLostItems(String searchQuery) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('x-auth-token');
+    if (token == null) {
+      throw Exception('Token is not available');
+    }
+
     final response = await http.get(
-      Uri.parse('${Config.serverURL}lostItems/search?query=$searchQuery'),
+      Uri.parse('${Config.serverURL}/lostItems/search?query=$searchQuery'),
+      headers: {'Content-Type': 'application/json', 'x-auth-token': token},
     );
 
     if (response.statusCode == 200) {
-      Iterable l = json.decode(response.body);
-      return List<LostItem>.from(l.map((model) => LostItem.fromJson(model)));
+      Iterable list = json.decode(response.body);
+      return List<LostItem>.from(list.map((model) => LostItem.fromJson(model)));
     } else {
-      throw Exception('Failed to search lost items by query');
+      throw Exception('Failed to search lost items');
     }
   }
 }

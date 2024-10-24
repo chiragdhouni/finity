@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:finity/models/address_model.dart';
 import 'package:finity/models/user_model.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +20,6 @@ class _AddLostItemScreenState extends State<AddLostItemScreen> {
   // Controllers for text fields
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  // final TextEditingController _statusController = TextEditingController();
   final TextEditingController _dateLostController = TextEditingController();
   final TextEditingController _contactInfoController = TextEditingController();
   final TextEditingController _ownerIdController = TextEditingController();
@@ -39,28 +40,24 @@ class _AddLostItemScreenState extends State<AddLostItemScreen> {
   void initState() {
     super.initState();
     user = (userBloc.state as UserLoaded).user;
+    _prefillTextFieldsWithUserData();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    userBloc.stream.listen((state) {
-      if (state is UserLoaded) {
-        final user = state.user;
-        _ownerIdController.text = user.id;
-        _ownerNameController.text = user.name;
-        _ownerEmailController.text = user.email;
-        _ownerAddressController.text = user.address.address!;
-        _latitudeController.text = user.location[1].toString();
-        _longitudeController.text = user.location[0].toString();
-        _stateController.text = user.address.state!;
-        _cityController.text = user.address.city!;
-        _zipCodeController.text = user.address.zipCode!;
-        _countryController.text = user.address.country!;
-        _dateLostController.text = DateTime.now().toString().split(' ')[0];
-      }
-    });
+  void _prefillTextFieldsWithUserData() {
+    // Prefill fields with user data
+    _ownerIdController.text = user.id;
+    _ownerNameController.text = user.name;
+    _ownerEmailController.text = user.email;
+    _ownerAddressController.text = user.address.address ?? '';
+    _latitudeController.text =
+        user.location.isNotEmpty ? user.location[1].toString() : '';
+    _longitudeController.text =
+        user.location.isNotEmpty ? user.location[0].toString() : '';
+    _stateController.text = user.address.state ?? '';
+    _cityController.text = user.address.city ?? '';
+    _zipCodeController.text = user.address.zipCode ?? '';
+    _countryController.text = user.address.country ?? '';
+    _dateLostController.text = DateTime.now().toString().split(' ')[0];
   }
 
   @override
@@ -82,12 +79,18 @@ class _AddLostItemScreenState extends State<AddLostItemScreen> {
                         'Lost item ${state.lostItem.name} created successfully!'),
                   ),
                 );
-              }
-              if (state is LostItemError) {
+              } else if (state is LostItemError) {
                 // Show a snackbar to indicate that an error occurred
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('Error creating lost item: ${state.message}'),
+                  ),
+                );
+              } else if (state is LostItemLoading) {
+                // Show a loading indicator
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Creating lost item...'),
                   ),
                 );
               }
@@ -172,20 +175,13 @@ class _AddLostItemScreenState extends State<AddLostItemScreen> {
                   ),
                   const SizedBox(height: 10),
                   // Latitude and Longitude
-                  TextField(
-                    controller: _latitudeController,
-                    decoration: const InputDecoration(labelText: 'Latitude'),
-                  ),
-                  const SizedBox(height: 10),
-                  TextField(
-                    controller: _longitudeController,
-                    decoration: const InputDecoration(labelText: 'Longitude'),
-                  ),
                   const SizedBox(height: 20),
                   // Submit Button
                   ElevatedButton(
                     onPressed: () {
-                      // Trigger the event to create the lost item using the bloc
+                      // Log the submission process
+                      log("Submit button clicked");
+
                       AddressModel address = AddressModel(
                         address: _ownerAddressController.text,
                         city: _cityController.text,
@@ -193,6 +189,7 @@ class _AddLostItemScreenState extends State<AddLostItemScreen> {
                         country: _countryController.text,
                         zipCode: _zipCodeController.text,
                       );
+
                       context.read<LostItemBloc>().add(
                             CreateLostItemEvent(
                               name: _nameController.text,
@@ -203,11 +200,15 @@ class _AddLostItemScreenState extends State<AddLostItemScreen> {
                                   DateTime.parse(_dateLostController.text),
                               contactInfo: _contactInfoController.text,
                               user: user,
-                              latitude: double.parse(_latitudeController.text),
+                              latitude:
+                                  double.tryParse(_latitudeController.text) ??
+                                      0.0,
                               longitude:
-                                  double.parse(_longitudeController.text),
+                                  double.tryParse(_longitudeController.text) ??
+                                      0.0,
                             ),
                           );
+                      log("Lost item creation event triggered");
                       Navigator.pop(context, "added");
                     },
                     child: const Text('Submit'),

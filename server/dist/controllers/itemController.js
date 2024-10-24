@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getItemByIds = exports.rejectBorrowRequest = exports.searchItems = exports.returnItem = exports.getNearbyItems = exports.lendItem = exports.requestToBorrowItem = exports.addItem = void 0;
+exports.getItemByCategory = exports.getItemByIds = exports.rejectBorrowRequest = exports.searchItems = exports.returnItem = exports.getNearbyItems = exports.lendItem = exports.requestToBorrowItem = exports.addItem = void 0;
 const item_1 = __importDefault(require("../models/item"));
 const user_1 = __importDefault(require("../models/user"));
 // Adding an item to be listed for lending
@@ -310,3 +310,61 @@ const getItemByIds = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.getItemByIds = getItemByIds;
+const getItemByCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
+    const { category } = req.query;
+    try {
+        // Ensure category is provided
+        if (!category) {
+            return res.status(400).send('Missing required parameter: category');
+        }
+        // Ensure user location is available
+        const userLocation = (_b = (_a = req.user) === null || _a === void 0 ? void 0 : _a.location) === null || _b === void 0 ? void 0 : _b.coordinates;
+        if (!userLocation || userLocation.length !== 2) {
+            return res.status(400).send('Missing user location (latitude and longitude)');
+        }
+        // Convert longitude and latitude to string
+        const longitude = userLocation[0].toString();
+        const latitude = userLocation[1].toString();
+        // Check if longitude and latitude are valid strings that can be parsed as numbers
+        if (isNaN(parseFloat(longitude)) || isNaN(parseFloat(latitude))) {
+            return res.status(400).send('Invalid user location coordinates');
+        }
+        const items = yield item_1.default.aggregate([
+            {
+                $geoNear: {
+                    near: {
+                        type: 'Point',
+                        coordinates: [parseFloat(longitude), parseFloat(latitude)], // Parse strings back to numbers
+                    },
+                    distanceField: 'dist.calculated', // Calculates distance for each item
+                    spherical: true,
+                },
+            },
+            {
+                $match: {
+                    category: category, // Match the category
+                    status: 'available', // Only return available items
+                },
+            },
+            {
+                $project: {
+                    name: 1,
+                    description: 1,
+                    category: 1,
+                    status: 1,
+                    owner: 1,
+                    borrower: 1,
+                    dueDate: 1,
+                    location: 1,
+                    address: 1,
+                },
+            },
+        ]);
+        res.status(200).json(items); // Respond with items
+    }
+    catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+exports.getItemByCategory = getItemByCategory;

@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:finity/core/config/config.dart';
-import 'package:finity/models/address_model.dart';
+
 import 'package:finity/models/item_model.dart';
 import 'package:finity/models/user_model.dart';
 import 'package:http/http.dart' as http;
@@ -240,6 +240,50 @@ class ItemRepo {
       // Log the error and throw it for further handling
       log('Error getting items by ids: $error');
       throw error; // Ensure the function always returns or throws
+    }
+  }
+
+  Future<List<ItemModel>?> getItemsByCategory(String category) async {
+    final String apiUrl = '${Config.serverURL}items/'; // Adjust API endpoint
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('x-auth-token');
+
+      // Set a default token if not found
+      if (token == null) {
+        token = '';
+        prefs.setString('x-auth-token', token);
+      }
+
+      // Build the query parameters
+      final response = await http.get(
+        Uri.parse(apiUrl).replace(
+          queryParameters: {
+            'category': category,
+          },
+        ),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'X-Auth-Token': token,
+        },
+      );
+
+      // Check if the request was successful
+      if (response.statusCode == 200) {
+        List<dynamic> jsonData = jsonDecode(response.body);
+
+        // Parse the list of items and map them to ItemModel objects
+        List<ItemModel> items =
+            jsonData.map((item) => ItemModel.fromJson(item)).toList();
+
+        return items;
+      } else {
+        throw Exception(
+            'Failed to load items by category. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      log('Error fetching items by category: $error');
+      return null;
     }
   }
 }

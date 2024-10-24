@@ -6,7 +6,7 @@ const claimController_1 = require("../controllers/claimController");
 const auth_1 = require("../middlewares/auth");
 const lostItemRouter = (0, express_1.Router)();
 lostItemRouter.post('/add', auth_1.auth, lostItemController_1.createLostItem);
-lostItemRouter.get('/nearby', lostItemController_1.getNearbyLostItems);
+lostItemRouter.get('/nearby', auth_1.auth, lostItemController_1.getNearbyLostItems);
 lostItemRouter.get('/getAll', lostItemController_1.getAllLostItems);
 lostItemRouter.get('/search', lostItemController_1.searchLostItem);
 lostItemRouter.get('/:id', lostItemController_1.getLostItemById);

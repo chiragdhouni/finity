@@ -96,7 +96,10 @@ class _AppState extends State<App> {
                   const SizedBox(height: 15),
                   _buildSearchField(),
                   const SizedBox(height: 10),
+                  CategoryRow(),
+                  const SizedBox(height: 10),
                   _buildSearchResults(),
+                  const SizedBox(height: 10),
                 ],
               ),
             ),
@@ -173,6 +176,51 @@ class _AppState extends State<App> {
             child: Text('Items Near You',
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold))),
         DisplayItemsScreen(),
+      ],
+    );
+  }
+}
+
+class CategoryRow extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildCategoryIcon(Icons.electric_bolt, "electronics"),
+          _buildCategoryIcon(Icons.pan_tool_sharp, "Tools"),
+          _buildCategoryIcon(Icons.power, "Games"),
+          _buildCategoryIcon(Icons.local_pizza, "Pizza"),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCategoryIcon(IconData iconData, String label) {
+    return Column(
+      children: [
+        Container(
+          padding: EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.orangeAccent, // Color of the circle
+          ),
+          child: Icon(
+            iconData,
+            color: Colors.white,
+            size: 30,
+          ),
+        ),
+        SizedBox(height: 8),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ],
     );
   }

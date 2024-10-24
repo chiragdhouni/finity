@@ -23,8 +23,8 @@ class _NearByItemScreenState extends State<NearByItemScreen> {
     final userState = userBloc.state;
 
     if (userState is UserLoaded) {
-      double latitude = userState.user.location[0];
-      double longitude = userState.user.location[1];
+      double latitude = userState.user.location[1];
+      double longitude = userState.user.location[0];
 
       // Fetch nearby lost items
       context.read<LostItemBloc>().add(
@@ -55,6 +55,8 @@ class _NearByItemScreenState extends State<NearByItemScreen> {
         } else if (state is NearByLostItemSuccess) {
           if (state.lostItems.isEmpty) {
             return const Center(child: Text('No items found nearby'));
+          } else if (state is LostItemError) {
+            return Center(child: Text(state.toString()));
           }
           return ListView.builder(
             shrinkWrap: true,

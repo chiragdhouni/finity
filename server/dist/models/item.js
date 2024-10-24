@@ -37,16 +37,16 @@ const ItemSchema = new mongoose_1.Schema({
     category: { type: String, required: true },
     status: { type: String, required: true, enum: ['available', 'lended', 'borrowed'] },
     owner: {
-        id: { type: mongoose_1.default.Schema.Types.ObjectId, required: true }, // ObjectId type
+        id: { type: mongoose_1.default.Schema.Types.ObjectId, required: true },
         name: { type: String, required: true },
         email: { type: String, required: true },
-        address: AddressSchema
+        address: AddressSchema,
     },
     borrower: {
-        id: { type: mongoose_1.default.Schema.Types.ObjectId, default: null }, // ObjectId type
+        id: { type: mongoose_1.default.Schema.Types.ObjectId, default: null },
         name: { type: String, default: null },
         email: { type: String, default: null },
-        address: AddressSchema
+        address: { type: AddressSchema, default: null },
     },
     dueDate: { type: Date, default: null },
     location: {

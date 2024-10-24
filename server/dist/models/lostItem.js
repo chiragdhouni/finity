@@ -43,7 +43,7 @@ const LostItemSchema = new mongoose_1.Schema({
         id: { type: mongoose_1.default.Schema.Types.ObjectId, required: true },
         name: { type: String, required: true },
         email: { type: String, required: true },
-        address: { type: String, required: true }
+        address: AddressSchema,
     },
     location: {
         type: { type: String, enum: ['Point'], required: true },

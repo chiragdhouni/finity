@@ -19,6 +19,7 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
     on<SearchItemsEvent>(_onSearchItemsEvent);
     on<ItemBorrowEvent>(_onItemBorrowEvent);
     on<getItemByIdsEvent>(_onGetItemByIdsEvent);
+    on<getItemByCategory>(_onGetItemByCategory);
   }
 
   FutureOr<void> _onAddItemEvent(
@@ -91,6 +92,19 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
     try {
       List<ItemModel> items = await itemRepo.getItemByIds(event.itemIds);
       emit(ItemByIdsFetched(items));
+    } catch (e) {
+      emit(ItemError(error: e.toString()));
+    }
+  }
+
+  FutureOr<void> _onGetItemByCategory(
+      getItemByCategory event, Emitter<ItemState> emit) async {
+    // Implement the logic to get items by their category
+    emit(ItemLoading());
+    try {
+      List<ItemModel>? items =
+          await itemRepo.getItemsByCategory(event.category);
+      emit(ItemFetched(items));
     } catch (e) {
       emit(ItemError(error: e.toString()));
     }

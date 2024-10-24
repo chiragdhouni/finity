@@ -1,20 +1,24 @@
 import { Router } from 'express';
 import {
-    createLostItem,
-    getLostItemById,
-    getAllLostItems,
-    updateLostItem,
-    deleteLostItem,
-    getNearbyLostItems,
-    searchLostItem
+  createLostItem,
+  getLostItemById,
+  getAllLostItems,
+  updateLostItem,
+  deleteLostItem,
+  getNearbyLostItems,
+  searchLostItem,
 } from '../controllers/lostItemController';
-import { acceptClaim, rejectClaim, submitClaim } from '../controllers/claimController';
+import {
+  acceptClaim,
+  rejectClaim,
+  submitClaim,
+} from '../controllers/claimController';
 import { auth } from '../middlewares/auth';
 
 const lostItemRouter = Router();
 
 lostItemRouter.post('/add', auth, createLostItem);
-lostItemRouter.get('/nearby', getNearbyLostItems);
+lostItemRouter.get('/nearby', auth, getNearbyLostItems);
 lostItemRouter.get('/getAll', getAllLostItems);
 lostItemRouter.get('/search', searchLostItem);
 lostItemRouter.get('/:id', getLostItemById);

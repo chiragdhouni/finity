@@ -1,3 +1,4 @@
+
 import { Request, Response } from 'express';
 import Item from '../models/item';
 import User from '../models/user';
@@ -5,7 +6,7 @@ import { ObjectId } from 'mongodb';
 
 // Adding an item to be listed for lending
 export const addItem = async (req: Request, res: Response) => {
-  const { name, description, category, ownerId, dueDate ,address} = req.body;
+  const { name, description, category, ownerId, dueDate, address } = req.body;
   try {
     if (!name || !description || !category || !ownerId) {
       return res.status(400).send('Missing required fields');
@@ -29,7 +30,7 @@ export const addItem = async (req: Request, res: Response) => {
       status: 'available',
       location: owner.location,
       dueDate: dueDate ? new Date(dueDate) : null, // Parse and set the due date if provided
-      address :address,
+      address: address,
     });
 
     await item.save();
@@ -81,7 +82,7 @@ export const requestToBorrowItem = async (req: Request, res: Response) => {
         type: notification.type,
         message: notification.message,
         read: notification.read,
-        createdAt : new Date(),
+        createdAt: new Date(),
       });
       await owner.save();
     }
@@ -129,11 +130,11 @@ export const lendItem = async (req: Request, res: Response) => {
 
       // Mark the old notification as read and remove it from owner's notifications
       const oldNotification = owner.notifications.find(
-        (n) => n.userId.toString() === (borrower._id  as any).toString() && n.type === 'borrowRequest'
+        (n) => n.userId.toString() === (borrower._id as any).toString() && n.type === 'borrowRequest'
       );
       if (oldNotification) {
         oldNotification.read = true;
-       
+
       }
 
       // owner.notifications.push({
@@ -152,12 +153,12 @@ export const lendItem = async (req: Request, res: Response) => {
       (requestedItemId) => requestedItemId.toString() !== itemId.toString()
     );
     borrower.notifications.push({
-      userId: item.owner.id  as any,
-      itemId: item._id  as any,
+      userId: item.owner.id as any,
+      itemId: item._id as any,
       type: 'borrowRequestAccepted',
       message: `Your borrow request for ${item.name} has been accepted.`,
       read: false,
-      createdAt : new Date(),
+      createdAt: new Date(),
     });
     await borrower.save();
 
@@ -236,12 +237,12 @@ export const returnItem = async (req: Request, res: Response) => {
 
       // Add a notification to the owner that the item was returned
       owner.notifications.push({
-        userId: borrower._id  as any,
-        itemId: item._id  as any,
+        userId: borrower._id as any,
+        itemId: item._id as any,
         type: 'itemReturned',
         message: `The item ${item.name} has been returned.`,
         read: false,
-        createdAt : new Date(),
+        createdAt: new Date(),
       });
 
       await owner.save();
@@ -290,11 +291,11 @@ export const rejectBorrowRequest = async (req: Request, res: Response) => {
     );
     borrower.notifications.push({
       userId: item.owner.id,
-      itemId: item._id  as any,
+      itemId: item._id as any,
       type: 'borrowRequestRejected',
       message: `Your borrow request for ${item.name} has been rejected.`,
       read: false,
-      createdAt : new Date(),
+      createdAt: new Date(),
     });
     await borrower.save();
 
@@ -302,11 +303,11 @@ export const rejectBorrowRequest = async (req: Request, res: Response) => {
     if (owner) {
       owner.notifications.push({
         userId: borrower._id as any,
-        itemId: item._id  as any,
+        itemId: item._id as any,
         type: 'borrowRequestRejected',
         message: `You have rejected the borrow request for ${item.name}.`,
         read: false,
-        createdAt : new Date(),
+        createdAt: new Date(),
       });
       await owner.save();
     }
@@ -328,5 +329,66 @@ export const getItemByIds = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(`Error getting items by ids: ${(error as Error).message}`);
     res.status(400).send(error);
+  }
+};
+export const getItemByCategory = async (req: Request, res: Response) => {
+  const { category } = req.query;
+
+  try {
+    // Ensure category is provided
+    if (!category) {
+      return res.status(400).send('Missing required parameter: category');
+    }
+
+    // Ensure user location is available
+    const userLocation = req.user?.location?.coordinates;
+    if (!userLocation || userLocation.length !== 2) {
+      return res.status(400).send('Missing user location (latitude and longitude)');
+    }
+
+    // Convert longitude and latitude to string
+    const longitude = userLocation[0].toString();
+    const latitude = userLocation[1].toString();
+
+    // Check if longitude and latitude are valid strings that can be parsed as numbers
+    if (isNaN(parseFloat(longitude)) || isNaN(parseFloat(latitude))) {
+      return res.status(400).send('Invalid user location coordinates');
+    }
+
+    const items = await Item.aggregate([
+      {
+        $geoNear: {
+          near: {
+            type: 'Point',
+            coordinates: [parseFloat(longitude), parseFloat(latitude)], // Parse strings back to numbers
+          },
+          distanceField: 'dist.calculated', // Calculates distance for each item
+          spherical: true,
+        },
+      },
+      {
+        $match: {
+          category: category as string, // Match the category
+          status: 'available', // Only return available items
+        },
+      },
+      {
+        $project: {
+          name: 1,
+          description: 1,
+          category: 1,
+          status: 1,
+          owner: 1,
+          borrower: 1,
+          dueDate: 1,
+          location: 1,
+          address: 1,
+        },
+      },
+    ]);
+
+    res.status(200).json(items); // Respond with items
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message });
   }
 };

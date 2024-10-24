@@ -70,7 +70,8 @@ class _EventSliderState extends State<EventSlider> {
                 builder: (BuildContext context) {
                   // Display the first image in the list
                   String imageUrl = event.image.isNotEmpty
-                      ? event.image[0]
+                      ? "https://images.unsplash.com/photo-1664193314424-7f823ccaa301?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                      // event.image[0]
                       : 'https://example.com/default-image.jpg';
 
                   return InkWell(

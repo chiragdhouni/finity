@@ -52,3 +52,9 @@ class getItemByIdsEvent extends ItemEvent {
 
   getItemByIdsEvent(this.itemIds);
 }
+
+class getItemByCategory extends ItemEvent {
+  final String category;
+
+  getItemByCategory(this.category);
+}
